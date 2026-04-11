@@ -598,10 +598,15 @@ function updateCalc(charId, level) {
   sortedSkills.forEach(s => {
     let rLvl = parseInt(s.level) * 10;
     if(!isNaN(rLvl) && level >= rLvl) {
-      let maxAllowed = Math.min(20, level - rLvl + 1); // Mỗi cấp qua reqLvl đc cộng thêm 1 điểm
-      let p = Math.min(pts, maxAllowed);
-      alloc[s.name] = p;
-      pts -= p;
+      if (rLvl >= 90) {
+        // Kỹ năng 9x, 12x không tốn điểm cộng, chỉ đi luyện ở bãi để tự lên cấp
+        alloc[s.name] = "Luyện";
+      } else {
+        let maxAllowed = Math.min(20, level - rLvl + 1); // Mỗi cấp qua reqLvl đc cộng thêm 1 điểm
+        let p = Math.min(pts, maxAllowed);
+        alloc[s.name] = p;
+        pts -= p;
+      }
     } else {
       alloc[s.name] = 0;
     }
@@ -610,15 +615,21 @@ function updateCalc(charId, level) {
   const lbl = document.getElementById('skill-lbl-level');
   if(lbl) lbl.textContent = level;
   const leftOver = document.getElementById('skill-leftover');
-  if(leftOver) leftOver.innerHTML = `Đã phân bổ theo độ ưu tiên. Còn dư <b>${pts} điểm</b>, hãy tự cộng vào các chiêu hỗ trợ vòng ngoài hoặc Trấn phái.`;
+  if(leftOver) leftOver.innerHTML = `Đã phân bổ điểm tuần tự. Còn dư <b>${pts} điểm</b>, hãy tự cộng vào các chiêu hỗ trợ vòng ngoài hoặc chừa lại.`;
 
   // Dynamic Skill UI
   document.querySelectorAll('.skill-item').forEach(el => {
     const sName = el.dataset.name;
     const ptEl = el.querySelector('.skill-pt');
-    const p = alloc[sName] || 0;
+    const p = alloc[sName];
+    
     if(ptEl) {
-      ptEl.innerHTML = p > 0 ? `<span style="color:var(--gold);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(212,175,55,0.1);padding:2px 6px;border-radius:4px">+${p}/20 đ</span>` : `<span style="color:var(--text-muted);margin-left:8px;font-size:14px">+0/20 đ</span>`;
+      if (p === "Luyện") {
+        ptEl.innerHTML = `<span style="color:var(--orange);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(211,84,0,0.1);padding:2px 6px;border-radius:4px" title="Kỹ năng tự thăng cấp bằng cách đánh quái, không tốn điểm">🎯 Đánh Quái Để Lên Cấp</span>`;
+      } else {
+        let numericP = p || 0;
+        ptEl.innerHTML = numericP > 0 ? `<span style="color:var(--gold);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(212,175,55,0.1);padding:2px 6px;border-radius:4px">+${numericP}/20 đ</span>` : `<span style="color:var(--text-muted);margin-left:8px;font-size:14px">+0/20 đ</span>`;
+      }
     }
     
     const sLvl = parseInt(el.dataset.lvl);
