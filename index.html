@@ -272,6 +272,14 @@ body {
 .training-tips { list-style: none; display: grid; gap: 4px; }
 .training-tips li { font-size: 12px; color: var(--text-secondary); padding-left: 16px; position: relative; }
 .training-tips li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
+.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
+.filter-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border-subtle); background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer; transition: var(--transition); font-family: var(--font-body); font-weight: 500; font-size: 13px; }
+.filter-btn:hover { background: var(--bg-glass); border-color: var(--text-muted); color: var(--text-primary); }
+.filter-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold) !important; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
+.fav-btn { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-subtle); border-radius: 50%; width: 32px; height: 32px; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0; backdrop-filter: blur(4px); }
+.char-card:hover .fav-btn { opacity: 0.5; }
+.fav-btn:hover { opacity: 1 !important; transform: scale(1.1); }
+.fav-btn.active { opacity: 1; border-color: var(--crimson); text-shadow: 0 0 10px red; background: var(--crimson-dim); }
 .training-level-input {
   display: flex; align-items: center; gap: 16px; padding: 16px 24px;
   background: var(--bg-card); border: 1px solid var(--border-subtle);
@@ -304,7 +312,7 @@ body {
   <nav id="main-nav">
     <div class="nav-brand"><span class="nav-icon">⚔️</span><span class="nav-title">VLTK Planner</span></div>
     <div class="nav-links">
-      <a class="nav-link active" data-page="team" onclick="go('team')"><span>👥</span><span>Đội Hình</span></a>
+      <a class="nav-link active" data-page="team" onclick="go('team', 'all')"><span>📚</span><span>Các Phái</span></a>
       <a class="nav-link" data-page="training" onclick="go('training')"><span>🗺️</span><span>Bãi Train</span></a>
     </div>
   </nav>
@@ -313,141 +321,40 @@ body {
 <script>
 // ═══ DATA ═══
 const characters = [
-  {
-    id:'duongmon', name:'Đường Môn', branch:'Nỏ Tiễn', role:'Main DPS', element:'Mộc',
-    emoji:'🎯', color:'#2ecc71', colorGlow:'rgba(46,204,113,0.3)',
-    description:'Sát thương AoE tầm xa cực mạnh. Bạo Vũ Lê Hoa dọn quái nhanh nhất game.',
-    baseStats:{sm:20,tp:30,sk:20,nl:10},
-    buildGuide:{
-      summary:'Dồn Thân Pháp → Sinh Khí. SM đủ mặc đồ, NL không tăng.',
-      phases:[
-        {level:'1-40',sm:'Đủ mặc đồ (~80)',tp:'2đ/lv',sk:'Còn lại',nl:'0',note:'Ưu tiên TP để tăng chính xác + sát thương nỏ'},
-        {level:'40-60',sm:'Đủ mặc đồ (~120)',tp:'2đ/lv',sk:'Còn lại',nl:'0',note:'Bắt đầu AoE mạnh, TP là nguồn sát thương chính'},
-        {level:'60-80',sm:'Mốc 165 rồi dừng',tp:'3đ/lv',sk:'Còn lại',nl:'0',note:'⚠️ Tẩy tủy lần 1 ở cấp 60-65! SM đạt mốc áo cấp 10'},
-        {level:'80-90',sm:'Giữ 165',tp:'3đ/lv',sk:'Còn lại',nl:'0',note:'Chuẩn bị nhận skill 9x tại cấp 90'},
-        {level:'90-100',sm:'Giữ 165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'🎁 Nhận skill 9x miễn phí! Dồn TP tối đa sát thương'},
-        {level:'100-120',sm:'Giữ 165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'Tăng TP để không miss quái cấp cao'},
-        {level:'120-150',sm:'Giữ 165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'⚠️ Tẩy tủy lần 2! TP tối đa, SM đủ mặc đồ xanh'}
-      ],
-      calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:60,p:2},{f:61,t:150,p:3}],nlFixed:0}
-    },
-    skills:[
-      {name:'Bạo Vũ Lê Hoa',type:'AoE',priority:1,desc:'Skill AoE chính — mưa tiễn diện rộng, dọn quái cực nhanh. MAX đầu tiên.',level:'1x'},
-      {name:'Tụ Tiễn Thuật',type:'Single',priority:2,desc:'Sát thương đơn mục tiêu cao, dùng đánh Boss.',level:'1x'},
-      {name:'Liên Hoàn Tiễn',type:'Multi',priority:3,desc:'Bắn liên tục nhiều mũi tên, DPS ổn định.',level:'3x'},
-      {name:'Đường Môn Ám Khí Thuật',type:'Passive',priority:4,desc:'Tăng chính xác và sát thương ám khí.',level:'1x'},
-      {name:'Thiên La Vạn Tiễn',type:'AoE Ultimate',priority:5,desc:'🎁 Skill 9x (free cấp 90) — AoE cực mạnh.',level:'9x'}
-    ],
-    equipment:[
-      {stat:'Hút Nội Lực',importance:'⭐⭐⭐⭐⭐',note:'BẮT BUỘC — ĐM không tăng NL, cần hút để duy trì skill'},
-      {stat:'Hút Sinh Lực',importance:'⭐⭐⭐⭐',note:'Tăng khả năng tự hồi khi train'},
-      {stat:'Chính xác',importance:'⭐⭐⭐⭐',note:'Tăng tỉ lệ trúng đích cho nỏ tiễn'},
-      {stat:'Tốc độ đánh',importance:'⭐⭐⭐⭐',note:'Mốc 126%, 158% — xuất chiêu nhanh hơn'},
-      {stat:'Sát thương vật lý',importance:'⭐⭐⭐',note:'Tăng damage tổng'},
-      {stat:'Kháng tất cả',importance:'⭐⭐',note:'Chống chết trong PK'}
-    ]
-  },
-  {
-    id:'ngamy', name:'Nga My', branch:'Buff/Heal', role:'Healer / Buffer', element:'Thủy',
-    emoji:'💚', color:'#3498db', colorGlow:'rgba(52,152,219,0.3)',
-    description:'Healer không thể thiếu. Hồi máu + buff cho cả party. Nga My chết = team xóa.',
-    baseStats:{sm:15,tp:20,sk:20,nl:25},
-    buildGuide:{
-      summary:'Dồn Sinh Khí tối đa → SM đủ mặc đồ. Healer phải SỐNG.',
-      phases:[
-        {level:'1-40',sm:'Đủ mặc đồ',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'SK là ưu tiên #1 — healer chết = team wipe'},
-        {level:'40-60',sm:'Đủ mặc đồ',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'Bắt đầu heal hiệu quả, buff Phật Tâm'},
-        {level:'60-80',sm:'~250 rồi dừng',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'⚠️ Tẩy tủy! SM mốc 250 cho áo cao cấp'},
-        {level:'80-90',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'Phổ Độ Chúng Sinh cần max'},
-        {level:'90-100',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'🎁 Skill 9x — heal mạnh hơn nữa'},
-        {level:'100-120',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'Heal lượng lớn, NM là trụ cột party'},
-        {level:'120-150',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'⚠️ Tẩy tủy lần 2! SK tối đa để tank được quái mạnh'}
-      ],
-      calc:{smTarget:250,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:50}
-    },
-    skills:[
-      {name:'Phổ Độ Chúng Sinh',type:'Heal AoE',priority:1,desc:'Skill heal chính — hồi máu + tăng kháng cho party. MAX!',level:'5x'},
-      {name:'Từ Hàng Phổ Độ',type:'Heal Burst',priority:2,desc:'Heal cực mạnh 1 mục tiêu, dùng khi khẩn cấp cứu tank.',level:'3x'},
-      {name:'Phật Tâm Từ Hữu',type:'Buff HP',priority:3,desc:'Tăng HP tối đa cho party theo % Sinh Khí.',level:'3x'},
-      {name:'Mộng Điệp',type:'Buff Regen',priority:4,desc:'Hồi SL + NL cho đồng đội.',level:'3x'},
-      {name:'Thanh Âm Vạn Xướng',type:'Cleanse',priority:5,desc:'Giải hiệu ứng xấu (choáng, độc, chậm) cho party.',level:'5x'},
-      {name:'Lưu Thủy',type:'Buff Speed',priority:6,desc:'Tăng tốc độ di chuyển cho party.',level:'3x'}
-    ],
-    equipment:[
-      {stat:'Tăng Sinh Khí',importance:'⭐⭐⭐⭐⭐',note:'BẮT BUỘC — càng nhiều HP càng khó chết'},
-      {stat:'Kháng tất cả',importance:'⭐⭐⭐⭐⭐',note:'Giảm sát thương nhận vào'},
-      {stat:'Tốc độ hồi SL/NL',importance:'⭐⭐⭐⭐',note:'Duy trì heal liên tục'},
-      {stat:'Hút Nội Lực',importance:'⭐⭐⭐',note:'Bổ sung mana cho skill heal'},
-      {stat:'Phản đòn',importance:'⭐⭐',note:'Chống bị rush trong PK'}
-    ]
-  },
-  {
-    id:'thieulam', name:'Thiếu Lâm', branch:'Bổng Pháp', role:'Tank', element:'Kim',
-    emoji:'🛡️', color:'#e67e22', colorGlow:'rgba(230,126,34,0.3)',
-    description:'Tank chịu đòn, gom quái cho Đường Môn AoE. Bổng quét rộng hiệu quả với auto.',
-    baseStats:{sm:30,tp:15,sk:25,nl:10},
-    buildGuide:{
-      summary:'Dồn Sinh Khí tối đa → SM đủ mặc đồ. Tank = KHÔNG ĐƯỢC CHẾT.',
-      phases:[
-        {level:'1-40',sm:'2đ/lv',tp:'0',sk:'Còn lại',nl:'0',note:'SM tăng đều để mặc đồ + lực tay gom quái'},
-        {level:'40-60',sm:'2đ/lv',tp:'0',sk:'Còn lại',nl:'0',note:'Bổng quét AoE gom quái tốt, SM cho lực tay'},
-        {level:'60-80',sm:'~200 rồi dừng',tp:'0',sk:'Dồn hết',nl:'0',note:'⚠️ Tẩy tủy! SM mốc 200, còn lại dồn SK'},
-        {level:'80-90',sm:'Giữ 200',tp:'0',sk:'Dồn hết',nl:'0',note:'Bất Động Minh Vương + Dịch Cân Kinh max'},
-        {level:'90-100',sm:'Giữ 200',tp:'0',sk:'Dồn hết',nl:'0',note:'🎁 Skill 9x — Hoành Tảo Thiên Quân AoE choáng'},
-        {level:'100-120',sm:'Giữ 200',tp:'Tăng TP 1đ/lv',sk:'Dồn hết',nl:'0',note:'Thêm TP để không miss quái, tăng né'},
-        {level:'120-150',sm:'Giữ 200',tp:'Giữ TP',sk:'Dồn hết',nl:'0',note:'⚠️ Tẩy tủy lần 2! SK tối đa cho tank endgame'}
-      ],
-      calc:{smTarget:200,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}
-    },
-    skills:[
-      {name:'Bất Động Minh Vương',type:'Buff Tank',priority:1,desc:'Tăng HP + kháng tính — skill sống còn. MAX ngay!',level:'1x'},
-      {name:'Dịch Cân Kinh',type:'Buff Resist',priority:2,desc:'Tăng kháng tính cực mạnh, giảm sát thương nhận vào.',level:'3x'},
-      {name:'La Hán Trận',type:'Counter',priority:3,desc:'Phản đòn — quái đánh TL = tự nhận damage lại.',level:'3x'},
-      {name:'Như Lai Thiên Diệp',type:'Buff',priority:4,desc:'Hỗ trợ tăng máu và kháng cơ bản.',level:'1x'},
-      {name:'Hoành Tảo Thiên Quân',type:'AoE Stun',priority:5,desc:'🎁 Skill 9x — AoE choáng diện rộng, gom quái.',level:'9x'}
-    ],
-    equipment:[
-      {stat:'Tăng Sinh Khí / HP',importance:'⭐⭐⭐⭐⭐',note:'BẮT BUỘC — tank cần nhiều HP nhất'},
-      {stat:'Kháng tất cả',importance:'⭐⭐⭐⭐⭐',note:'Giảm mọi loại sát thương'},
-      {stat:'Phản đòn',importance:'⭐⭐⭐⭐',note:'Quái đánh = tự chết'},
-      {stat:'Hút Sinh Lực',importance:'⭐⭐⭐⭐',note:'Tự hồi máu khi đánh'},
-      {stat:'Hút Nội Lực',importance:'⭐⭐',note:'Duy trì buff Bất Động'}
-    ]
-  },
-  {
-    id:'vodang', name:'Võ Đang', branch:'Khí Tông', role:'Debuff / Control', element:'Thổ',
-    emoji:'🌀', color:'#9b59b6', colorGlow:'rgba(155,89,182,0.3)',
-    description:'Nội công mạnh, khống chế choáng diện rộng. NL hộ thể biến VĐ thành "tank thứ 2".',
-    baseStats:{sm:15,tp:20,sk:20,nl:25},
-    buildGuide:{
-      summary:'Dồn Nội Lực tối đa → SK còn lại. NL = sát thương + hộ thể.',
-      phases:[
-        {level:'1-40',sm:'Đủ mặc đồ (~110)',tp:'0',sk:'1đ/lv',nl:'Dồn hết',note:'NL là sát thương + "máu thứ 2" qua Tọa Vọng'},
-        {level:'40-60',sm:'Giữ 110',tp:'0',sk:'1đ/lv',nl:'Dồn hết',note:'Nộ Lôi Chỉ choáng hiệu quả'},
-        {level:'60-80',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'⚠️ Tẩy tủy! Tối ưu NL tối đa'},
-        {level:'80-90',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'Tọa Vọng + NC cao = gần như bất tử'},
-        {level:'90-100',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'🎁 Skill 9x — Bác Cấp Nhi Phục AoE control'},
-        {level:'100-120',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'NL cực cao, Tọa Vọng hộ thể vô cùng dày'},
-        {level:'120-150',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'⚠️ Tẩy tủy lần 2! NL tối đa, sát thương + hộ thể endgame'}
-      ],
-      calc:{smTarget:110,smReachAt:40,tpRate:[{f:1,t:150,p:0}],nlFixed:-1}
-    },
-    skills:[
-      {name:'Tọa Vọng Vô Ngã',type:'Buff Shield',priority:1,desc:'Chuyển sát thương vào NL thay HP — "máu thứ 2". MAX!',level:'1x'},
-      {name:'Thái Cực Thần Công',type:'Buff NC',priority:2,desc:'Tăng nội công + phòng thủ.',level:'1x'},
-      {name:'Nộ Lôi Chỉ',type:'DPS + Stun',priority:3,desc:'Sát thương chính + tỉ lệ choáng cao.',level:'3x'},
-      {name:'Vô Ngã Vô Kiếm',type:'DPS',priority:4,desc:'Tăng sát thương nội công.',level:'3x'},
-      {name:'Thế Vân Tung',type:'Buff Speed',priority:5,desc:'Tăng tốc độ di chuyển.',level:'1x'},
-      {name:'Bác Cấp Nhi Phục',type:'AoE Control',priority:6,desc:'🎁 Skill 9x — AoE choáng + sát thương diện rộng.',level:'9x'}
-    ],
-    equipment:[
-      {stat:'Hút Nội Lực',importance:'⭐⭐⭐⭐⭐',note:'BẮT BUỘC — duy trì NL cho Tọa Vọng hộ thể'},
-      {stat:'Chuyển hóa ST → NL',importance:'⭐⭐⭐⭐⭐',note:'Bị đánh = hồi NL, siêu bền'},
-      {stat:'Tăng Nội Công',importance:'⭐⭐⭐⭐',note:'Tăng sát thương + NL tối đa'},
-      {stat:'Kháng tất cả',importance:'⭐⭐⭐',note:'Giảm sát thương nhận vào'},
-      {stat:'Tốc độ đánh',importance:'⭐⭐⭐',note:'Choáng nhanh hơn'}
-    ]
-  }
+  // HỆ KIM
+  {id:'tldao',name:'Thiếu Lâm',branch:'Đao Pháp',role:'Kỵ Binh Khống Chế',element:'Kim',emoji:'🗡️',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Cưỡi ngựa chém nhanh, tốc độ di chuyển cao. Dùng để săn các phái máu giấy.',baseStats:{sm:30,tp:15,sk:25,nl:10},buildGuide:{summary:'SM đủ dùng, TP lấy chính xác, còn lại dồn hết SK.',phases:[{level:'1-60',sm:'Mốc 165',tp:'0',sk:'Còn lại',nl:'0',note:'Dùng Bổng train siêu lẹ đến cấp 60'},{level:'60-90',sm:'Mốc 210',tp:'1đ/lv',sk:'Dồn hết',nl:'0',note:'Bắt đầu cưỡi ngựa chém Vô Tướng Trảm'},{level:'90-150',sm:'Mốc 260',tp:'Mốc 150',sk:'Dồn hết',nl:'0',note:'Max trâu bò, máu cực to'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:60,t:150,p:1}],nlFixed:0}},skills:[{name:'Bất Động Minh Vương',type:'Buff',priority:1,desc:'Sinh Tồn max kháng',level:'1x'},{name:'Vô Tướng Trảm',type:'DPS',priority:2,desc:'Đao chém trên ngựa 9x',level:'9x'},{name:'Dịch Cân Kinh',type:'Kháng',priority:3,desc:'Buff phòng thủ',level:'3x'}],equipment:[{stat:'Sinh Lực',importance:'⭐⭐⭐⭐⭐',note:'Càng nhìu máu càng tốt'},{stat:'Băng Sát',importance:'⭐⭐⭐⭐',note:'Làm chậm mục tiêu'}]},
+  {id:'tlbong',name:'Thiếu Lâm',branch:'Bổng Pháp',role:'Tank / AoE',element:'Kim',emoji:'🛡️',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Gom quái cực tốt, phản đòn La Hán Trận. Đi đầu chịu đòn cho team.',baseStats:{sm:30,tp:15,sk:25,nl:10},buildGuide:{summary:'SK là ưu tiên. Máu trâu + phản đòn = Quái tự chết.',phases:[{level:'1-90',sm:'Mốc 200',tp:'0',sk:'Dồn hết',nl:'0',note:'Hoành Tảo Thiên Quân dọn bãi siêu lẹ'},{level:'90-150',sm:'Mốc 260',tp:'0',sk:'Dồn hết',nl:'0',note:'Lên 9x Bổng choáng rất bá đạo'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Hoành Tảo Thiên Quân',type:'AoE',priority:1,desc:'Choáng quét diện rộng 9x',level:'9x'},{name:'La Hán Trận',type:'Counter',priority:2,desc:'Phản đòn cực gắt',level:'3x'},{name:'Sư Tử Hống',type:'Choáng',priority:3,desc:'Gầm choáng',level:'1x'}],equipment:[{stat:'Phản đòn %',importance:'⭐⭐⭐⭐⭐',note:'Phối hợp La Hán Trận'},{stat:'Thời gian phục hồi',importance:'⭐⭐⭐⭐',note:'Chống bị khóa'}]},
+  {id:'tlquyen',name:'Thiếu Lâm',branch:'Quyền Pháp',role:'Sát Thủ Bộ Binh',element:'Kim',emoji:'👊',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Chiêu thức liên tục đơn mục tiêu, đấm bất động đối phương. Không thể cưỡi ngựa.',baseStats:{sm:30,tp:15,sk:25,nl:10},buildGuide:{summary:'Đấm nhanh, hiệu ứng choáng liên tục. Cần máu.',phases:[{level:'1-90',sm:'Mốc 200',tp:'0',sk:'Dồn hết',nl:'0',note:'Train bằng Bổng, PK bằng Quyền'},{level:'90-150',sm:'Mốc 260',tp:'0',sk:'Dồn hết',nl:'0',note:'Đạt Ma Độ Giang đấm liên hoàn'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Đạt Ma Độ Giang',type:'DPS',priority:1,desc:'Quyền 9x đấm choáng liên tục',level:'9x'},{name:'Bất Động Minh Vương',type:'Buff',priority:2,desc:'Sinh Tồn cực mạnh',level:'1x'}],equipment:[{stat:'Tốc đánh',importance:'⭐⭐⭐⭐⭐',note:'Đấm nhanh không cho đối thủ nhúc nhích'},{stat:'Tốc độ chạy',importance:'⭐⭐⭐⭐',note:'Chạy bộ cần rất nhanh'}]},
+  
+  {id:'tvchuy',name:'Thiên Vương',branch:'Chùy Pháp',role:'Sốc Sát Thương',element:'Kim',emoji:'🔨',color:'#d35400',colorGlow:'rgba(211,84,0,0.3)',description:'Lực tay to nhất game, khả năng xuất chiêu 1 đập chết luôn đối thủ yếu máu, chống kỵ binh.',baseStats:{sm:30,tp:10,sk:30,nl:10},buildGuide:{summary:'Sức Mạnh quyết định tất cả. Một đập bay màu.',phases:[{level:'1-90',sm:'Dồn hết',tp:'0',sk:'1đ/lv',nl:'0',note:'Gây dame cực to'},{level:'90-150',sm:'Dồn hết',tp:'Mốc 100',sk:'Vừa đủ',nl:'0',note:'Thêm TP để không bị miss'}],calc:{smTarget:500,smReachAt:150,tpRate:[{f:90,t:150,p:1}],nlFixed:0}},skills:[{name:'Truy Tinh Trục Nguyệt',type:'DPS',priority:1,desc:'Chùy 9x Sát thương siêu khủng',level:'9x'},{name:'Tĩnh Tâm Quyết',type:'Hỗ trợ',priority:2,desc:'Tăng tốc đánh',level:'3x'}],equipment:[{stat:'Sát thương vật lý',importance:'⭐⭐⭐⭐⭐',note:'Max damage'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Mốc 94%'}]},
+  {id:'tvthuong',name:'Thiên Vương',branch:'Thương Pháp',role:'Đâm Liên Hoàn',element:'Kim',emoji:'🔱',color:'#d35400',colorGlow:'rgba(211,84,0,0.3)',description:'Tốc độ đánh nhanh, đâm liên tục gây giật lag đối phương không thể đánh trả.',baseStats:{sm:30,tp:10,sk:30,nl:10},buildGuide:{summary:'Cân bằng SM và SK, thương cần sống dai đâm lâu.',phases:[{level:'1-90',sm:'Mốc 260',tp:'0',sk:'Còn lại',nl:'0',note:'Dame thương nhỏ, cần đâm nhìu'},{level:'90-150',sm:'Mốc 350',tp:'0',sk:'Dồn hết',nl:'0',note:'SK dồi dào để đứng tank đánh nát giáp địch'}],calc:{smTarget:350,smReachAt:100,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Huyết Chiến Bát Phương',type:'DPS',priority:1,desc:'Thương 9x đâm liên tục dồn sát thương',level:'9x'},{name:'Kim Chung Tráo',type:'Buff',priority:2,desc:'Tăng mọi loại kháng tính',level:'1x'}],equipment:[{stat:'Tốc đánh',importance:'⭐⭐⭐⭐⭐',note:'Mốc tốc đánh tối đa'},{stat:'Băng sát ngoại',importance:'⭐⭐⭐⭐',note:'Làm chậm kết hợp đâm liên tục'}]},
+  {id:'tvdao',name:'Thiên Vương',branch:'Đao Pháp',role:'DPS Cưỡi Ngựa',element:'Kim',emoji:'🐎',color:'#d35400',colorGlow:'rgba(211,84,0,0.3)',description:'Cơ động vô cùng tận. Lướt qua lướt lại chém đối thủ trên yên ngựa.',baseStats:{sm:30,tp:10,sk:30,nl:10},buildGuide:{summary:'SM nhiều, TP cực cao để tăng chính xác ngựa.',phases:[{level:'1-90',sm:'Mốc 260',tp:'Mốc 150',sk:'Còn lại',nl:'0',note:'Cưỡi ngựa chém rất dính'},{level:'90-150',sm:'Mốc 320',tp:'Mốc 200',sk:'Còn lại',nl:'0',note:'Tối ưu damage và độ chính xác'}],calc:{smTarget:320,smReachAt:100,tpRate:[{f:1,t:90,p:1},{f:90,t:150,p:2}],nlFixed:0}},skills:[{name:'Phá Thiên Trảm',type:'DPS Ngựa',priority:1,desc:'Đao 9x chém cực rát',level:'9x'},{name:'Đoạn Hồn Thích',type:'Khống chế',priority:2,desc:'Lướt tới làm choáng',level:'1x'}],equipment:[{stat:'Hút Sinh Lực',importance:'⭐⭐⭐⭐⭐',note:'Train bãi cực sống dai'},{stat:'Tốc độ di chuyển',importance:'⭐⭐⭐⭐',note:'Chạy và chém'}]},
+
+  // HỆ MỘC
+  {id:'dmno',name:'Đường Môn',branch:'Nỏ Tiễn',role:'AoE Nuke DPS',element:'Mộc',emoji:'🎯',color:'#2ecc71',colorGlow:'rgba(46,204,113,0.3)',description:'Sát thương AoE tầm xa cực mạnh. Bạo Vũ Lê Hoa, Thiên La Vạn Tiễn dọn bãi.',baseStats:{sm:20,tp:30,sk:20,nl:10},buildGuide:{summary:'Thân Pháp là vua vạn vật. SM đủ mặc đồ đồ.',phases:[{level:'1-90',sm:'165',tp:'Dồn hết',sk:'Còn lại',nl:'0',note:'Bạo Vũ Lê Hoa cần TP cao lực tay lớn'},{level:'90-150',sm:'165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'Thiên La Vạn Tiễn càn quét sơn hà'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}},skills:[{name:'Thiên La Vạn Tiễn',type:'AoE',priority:1,desc:'Skill 9x Nỏ dọn quái lẹ',level:'9x'},{name:'Đường Môn Ám Khí',type:'Nội tại',priority:2,desc:'Tăng damage',level:'1x'}],equipment:[{stat:'Hút Nội Lực',importance:'⭐⭐⭐⭐⭐',note:'NL bằng 0 nên bắt buộc hút'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Bắn nhanh = sát thương'}]},
+  {id:'dmtieu',name:'Đường Môn',branch:'Phi Tiêu',role:'Hit & Run',element:'Mộc',emoji:'🔪',color:'#2ecc71',colorGlow:'rgba(46,204,113,0.3)',description:'Cơ động cực cao trên ngựa, Phi tiêu nảy giữa nhiều mục tiêu, cướp góc cực tốt.',baseStats:{sm:20,tp:30,sk:20,nl:10},buildGuide:{summary:'Tăng y như Nỏ tiễn. Tp là sức mạnh.',phases:[{level:'1-90',sm:'165',tp:'Dồn hết',sk:'Còn lại',nl:'0',note:'Phi tiêu nảy tốn nhìu TP'},{level:'90-150',sm:'165',tp:'Dồn hết',sk:'0',nl:'0',note:'Nhiếp Hồn Nguyệt Ảnh bắn phát nảy chết cả bầy'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}},skills:[{name:'Nhiếp Hồn Nguyệt Ảnh',type:'Phi tiêu',priority:1,desc:'Skill 9x Phi tiêu nảy đa mục tiêu',level:'9x'},{name:'Tâm Nhãn',type:'Hỗ trợ',priority:2,desc:'Tăng chính xác, tốc độ',level:'3x'}],equipment:[{stat:'Băng Sát Ngoại',importance:'⭐⭐⭐⭐⭐',note:'Thả diều đỉnh cao'},{stat:'Thời gian phục hồi',importance:'⭐⭐⭐⭐',note:'Ngựa bị đánh không lag'}]},
+  {id:'dmdao',name:'Đường Môn',branch:'Phi Đao',role:'Sát Thủ Đơn',element:'Mộc',emoji:'🗡️',color:'#2ecc71',colorGlow:'rgba(46,204,113,0.3)',description:'Đơn mục tiêu trên ngựa sát thương bạo kích khủng, khắc tinh cứng Võ Đang.',baseStats:{sm:20,tp:30,sk:20,nl:10},buildGuide:{summary:'Tp maxing. Sk thêm chút máu để áp sát.',phases:[{level:'1-90',sm:'165',tp:'Dồn hết',sk:'Còn lại',nl:'0',note:'Cần TP cao để đao k bị trượt'},{level:'90-150',sm:'165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'Đoạn Mộc Phệ Tâm đam quá kinh khủng'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}},skills:[{name:'Đoạn Mộc Phệ Tâm',type:'Cận/Xa',priority:1,desc:'Phi Đao 9x kết liễu nhanh Võ Đang',level:'9x'},{name:'Độc Thích Cốt',type:'Nội tại',priority:2,desc:'Thêm độc sát',level:'3x'}],equipment:[{stat:'Độc Sát Ngoại',importance:'⭐⭐⭐⭐⭐',note:'Gây choáng lâu'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Đao bay liên hoàn'}]},
+  
+  {id:'ndchuong',name:'Ngũ Độc',branch:'Chưởng Độc',role:'Sát Thương Độc',element:'Mộc',emoji:'☠️',color:'#1abc9c',colorGlow:'rgba(26,188,156,0.3)',description:'Sát thương 100% là Độc sát nên k phụ thuộc SM. Chạy quanh ném bùa là bất bại.',baseStats:{sm:20,tp:15,sk:25,nl:20},buildGuide:{summary:'Toàn bộ vào Sinh Khí. Hệ máu trâu nhất game.',phases:[{level:'1-90',sm:'Mốc Áo',tp:'0',sk:'Dồn hết',nl:'0',note:'Skill tốn xíu mana, hồi tự nhiên'},{level:'90-150',sm:'165',tp:'0',sk:'Dồn hết',nl:'0',note:'Âm Phong Thực Cốt bào máu quá tốc độ.'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Âm Phong Thực Cốt',type:'AoE Nội',priority:1,desc:'9x Chưởng độc sát chồng chéo',level:'9x'},{name:'Vạn Cổ Thực Tâm',type:'Bùa',priority:2,desc:'Giảm kháng Mộc',level:'5x'},{name:'Vô Hình Cổ',type:'Buff',priority:3,desc:'Độc rỉa máu từ xa',level:'3x'}],equipment:[{stat:'Kỹ năng môn phái',importance:'⭐⭐⭐⭐⭐',note:'+1/2 Skill làm Độc sát tăng mũ'},{stat:'Kháng Kim',importance:'⭐⭐⭐⭐',note:'Chống tụi Thiên Vương đâm'}]},
+  {id:'nddao',name:'Ngũ Độc',branch:'Đao Độc',role:'Tả Xung Hữu Đột',element:'Mộc',emoji:'🔪',color:'#1abc9c',colorGlow:'rgba(26,188,156,0.3)',description:'Đao chém trên ngựa diện rộng, lấy bùa giảm phòng địch, chửi vô tận máu.',baseStats:{sm:20,tp:15,sk:25,nl:20},buildGuide:{summary:'Cân bằng Sức mạnh và Sinh khí, cưỡi ngựa tung hoành.',phases:[{level:'1-90',sm:'210',tp:'Mốc 100',sk:'Dồn hết',nl:'0',note:'Đao cần chính xác'},{level:'90-150',sm:'260',tp:'Mốc 150',sk:'Dồn hết',nl:'0',note:'Huyền Âm Trảm sát thương rất to'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:60,t:150,p:1}],nlFixed:0}},skills:[{name:'Huyền Âm Trảm',type:'AoE Ngựa',priority:1,desc:'Đao 9x chém diện rộng trúng độc',level:'9x'},{name:'Bách Cổ Giáng Huyết',type:'Bùa',priority:2,desc:'Tăng dame bản thân',level:'3x'}],equipment:[{stat:'Sát thương vật lý',importance:'⭐⭐⭐⭐⭐',note:'Cho chém đau hơn'},{stat:'Hút sinh lực',importance:'⭐⭐⭐⭐',note:'Đánh chùm cực dai máu'}]},
+
+  // HỆ THỦY
+  {id:'nmbuff',name:'Nga My',branch:'Support',role:'Healer Tối Thượng',element:'Thủy',emoji:'💚',color:'#3498db',colorGlow:'rgba(52,152,219,0.3)',description:'Trụ cột không thể thiếu của mọi Party. Hồi máu, buff max kháng, hồi sinh.',baseStats:{sm:15,tp:20,sk:20,nl:25},buildGuide:{summary:'Trâu nhất có thể. Sinh Khí maxing.',phases:[{level:'1-90',sm:'165',tp:'0',sk:'Dồn hết',nl:'Vừa đủ',note:'Đi đâu cũng có ng rước, vất vả đoạn đầu'},{level:'90-150',sm:'260',tp:'0',sk:'Dồn hết',nl:'Vừa đủ',note:'Mặc đồ Động Minh Kháng max'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:50}},skills:[{name:'Phổ Độ Chúng Sinh',type:'Buff AoE',priority:1,desc:'Tăng HP, buff max kháng party',level:'5x'},{name:'Mộng Điệp',type:'Buff',priority:2,desc:'Hồi SL/NL tự động',level:'3x'}],equipment:[{stat:'Sinh Lực',importance:'⭐⭐⭐⭐⭐',note:'Phải trâu'},{stat:'Tốc độ hồi SL',importance:'⭐⭐⭐⭐',note:'Hồi máu max nhanh'}]},
+  {id:'nmkiem',name:'Nga My',branch:'Kiếm Pháp',role:'Băng Sát Nội',element:'Thủy',emoji:'⚔️',color:'#3498db',colorGlow:'rgba(52,152,219,0.3)',description:'Hệ kiếm mang sát thương băng siêu lớn, đóng băng đối thủ đứng im.',baseStats:{sm:15,tp:20,sk:20,nl:25},buildGuide:{summary:'Tăng cực nhiều Nội lực. Sinh khí ít.',phases:[{level:'1-90',sm:'Mốc Áo',tp:'0',sk:'Vừa đủ',nl:'Dồn hết',note:'Skill 9x tốn quá nhiều mana'},{level:'90-150',sm:'165',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'Tam Ngã Kiếm đóng băng cực sâu'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:150}},skills:[{name:'Tam Ngã Luân Hồi Kiếm',type:'DPS Băng',priority:1,desc:'Kiếm 9x khóa mục tiêu',level:'9x'},{name:'Lưu Thủy',type:'Buff',priority:2,desc:'Tăng tốc di chuyển',level:'3x'}],equipment:[{stat:'Tốc độ xuất chiêu',importance:'⭐⭐⭐⭐⭐',note:'Ra kiếm k độ trễ'},{stat:'Thời gian làm chậm',importance:'⭐⭐⭐⭐',note:'Giữ mục tiêu đứng im'}]},
+  {id:'tydao',name:'Thúy Yên',branch:'Đao Pháp',role:'Sát Thủ Tàng Hình',element:'Thủy',emoji:'🥷',color:'#2980b9',colorGlow:'rgba(41,128,185,0.3)',description:'Khả năng Tàng hình vô song, bất chợt xuất hiện Đoạt Mạng những phái ít HP.',baseStats:{sm:20,tp:25,sk:15,nl:20},buildGuide:{summary:'Tốc độ + Sát Thương Ngoại. Rất khát SM.',phases:[{level:'1-90',sm:'Dồn hết',tp:'Mốc 150',sk:'Tối thiểu',nl:'0',note:'Dành cho ai thích phong cách sát thủ'},{level:'90-150',sm:'300+',tp:'Mốc 200',sk:'Vừa đủ',nl:'0',note:'Băng Tung Vô Ảnh nhảy dame'}],calc:{smTarget:350,smReachAt:150,tpRate:[{f:1,t:150,p:1}],nlFixed:0}},skills:[{name:'Băng Tung Vô Ảnh',type:'Đột Kích',priority:1,desc:'Phi dao 9x kết liễu',level:'9x'},{name:'Tàng Hình',type:'Nội tại',priority:2,desc:'Bí ẩn trong bóng tối',level:'3x'}],equipment:[{stat:'Băng Sát',importance:'⭐⭐⭐⭐⭐',note:'Phối hợp chiêu phái'},{stat:'Tốc độ chạy',importance:'⭐⭐⭐⭐',note:'Chạy trốn thật nhanh'}]},
+  {id:'tysongdao',name:'Thúy Yên',branch:'Song Đao',role:'DPS Nội Công',element:'Thủy',emoji:'🤺',color:'#2980b9',colorGlow:'rgba(41,128,185,0.3)',description:'Đánh hai dao với tầm xa diện rộng, là cỗ máy sát thương Băng của team Thủy.',baseStats:{sm:20,tp:25,sk:15,nl:20},buildGuide:{summary:'Trường phái Nội Công. Skill đẹp, hút mana.',phases:[{level:'1-90',sm:'165',tp:'0',sk:'1đ/lv',nl:'Dồn hết',note:'Chiêu tốn nl cực khủng'},{level:'90-150',sm:'165',tp:'0',sk:'Vừa đủ',nl:'Dồn hết',note:'Băng Cốt Tuyết Ảnh aoe rất lớn'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:200}},skills:[{name:'Băng Cốt Tuyết Ảnh',type:'AoE Nội',priority:1,desc:'Gây damage Băng',level:'9x'},{name:'Hộ Thể Tuyết Ảnh',type:'Kháng',priority:2,desc:'Tăng kháng Băng',level:'1x'}],equipment:[{stat:'Tốc đánh',importance:'⭐⭐⭐⭐⭐',note:'Ra chiêu cực mau'},{stat:'Hút Nội',importance:'⭐⭐⭐⭐',note:'Sống sót do ngốn nl'}]},
+
+  // HỆ HỎA
+  {id:'cbchuong',name:'Cái Bang',branch:'Chưởng Pháp',role:'Pháp Sư Tầm Xa',element:'Hỏa',emoji:'🐉',color:'#e74c3c',colorGlow:'rgba(231,76,60,0.3)',description:'Phi Long Tại Thiên rượt đuổi mục tiêu, Hỏa sát nội công cực đỉnh, Kháng Long Hữu Hồi.',baseStats:{sm:20,tp:15,sk:20,nl:25},buildGuide:{summary:'Thần kỳ là không cần nội lực, max Sinh khí!',phases:[{level:'1-90',sm:'Mốc Áo',tp:'0',sk:'Dồn hết',nl:'0',note:'Skill CB có Tàng Long chuyển HP/Mana'},{level:'90-150',sm:'165',tp:'0',sk:'Dồn hết',nl:'0',note:'Nuke cực cháy.'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Phi Long Tại Thiên',type:'Rồng',priority:1,desc:'Chiêu 9x rượt',level:'9x'},{name:'Túy Điệp Cuồng Vũ',type:'Né, Chạy',priority:2,desc:'Tăng tốc dchay, né rát',level:'3x'},{name:'Thâu Long Chuyển Phượng',type:'Hồi Mana',priority:3,desc:'Biến máu thành mana',level:'5x'}],equipment:[{stat:'Kháng Thủy',importance:'⭐⭐⭐⭐⭐',note:'Do kị hệ Thuỷ'},{stat:'Hỏa sát Nội',importance:'⭐⭐⭐⭐',note:'Tăng thuần damage'}]},
+  {id:'cbbong',name:'Cái Bang',branch:'Bổng Pháp',role:'Sát Thương Cận',element:'Hỏa',emoji:'🦯',color:'#e74c3c',colorGlow:'rgba(231,76,60,0.3)',description:'Trực diện cận chiến, sát thương Bổng cực nhanh và làm đối phương ngộp.',baseStats:{sm:20,tp:15,sk:20,nl:25},buildGuide:{summary:'Tăng nhiều Sức Mạnh và Sinh Khí.',phases:[{level:'1-90',sm:'260',tp:'Mốc 150',sk:'Còn lại',nl:'0',note:'Cần SM tay'},{level:'90-150',sm:'300+',tp:'Mốc 200',sk:'Dồn hết',nl:'0',note:'Thiên Hạ Vô Cẩu đánh sấp mặt'}],calc:{smTarget:300,smReachAt:100,tpRate:[{f:1,t:150,p:1}],nlFixed:0}},skills:[{name:'Thiên Hạ Vô Cẩu',type:'DPS Cận',priority:1,desc:'Bổng 9x rát chúa',level:'9x'},{name:'Giáng Long Bát Vũ',type:'AoE',priority:2,desc:'Clear bãi nhanh',level:'5x'}],equipment:[{stat:'Sát thương vật lý',importance:'⭐⭐⭐⭐⭐',note:'Ngoại công tay'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Đánh chùm'}]},
+  {id:'tnthuong',name:'Thiên Nhẫn',branch:'Thương Pháp',role:'Sát Thương Nền',element:'Hỏa',emoji:'🔥',color:'#c0392b',colorGlow:'rgba(192,57,43,0.3)',description:'Tạo nền lửa cháy thiêu trụi kẻ thù, dùng bùa kéo đối phương vào lửa.',baseStats:{sm:25,tp:15,sk:20,nl:20},buildGuide:{summary:'Trường phái Nội Công lửa, cực khát Nội lực.',phases:[{level:'1-90',sm:'Mốc Áo',tp:'0',sk:'1đ/lv',nl:'Dồn hết',note:'Combo bùa'},{level:'90-150',sm:'165',tp:'0',sk:'Cân đối',nl:'Dồn hết',note:'Thiên Ngoại Lưu Tinh đốt máu theo %'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:200}},skills:[{name:'Thiên Ngoại Lưu Tinh',type:'Nội Công Lửa',priority:1,desc:'Nền lửa khủng khiếp',level:'9x'},{name:'Bi Sầu Thùy Cấp',type:'Bùa',priority:2,desc:'Giảm max kháng',level:'5x'}],equipment:[{stat:'Kỹ Năng Phái +',importance:'⭐⭐⭐⭐⭐',note:'Quan trọng nhất của Hỏa Nội'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Đẩy lửa liên hoàn'}]},
+  {id:'tndao',name:'Thiên Nhẫn',branch:'Đao Pháp',role:'Kình Lực Ngoại',element:'Hỏa',emoji:'🔪',color:'#c0392b',colorGlow:'rgba(192,57,43,0.3)',description:'Vân Long Kích kết hợp bùa chú bạo kích ngoại công đoạt mạng.',baseStats:{sm:25,tp:15,sk:20,nl:20},buildGuide:{summary:'Thêm SM và SK, đánh cận chiến.',phases:[{level:'1-90',sm:'260',tp:'150',sk:'Còn lại',nl:'0',note:'Lực tay rất cao'},{level:'90-150',sm:'300',tp:'150',sk:'Còn lại',nl:'0',note:'Vân Long Kích chém lửa đa mục tiêu'}],calc:{smTarget:300,smReachAt:100,tpRate:[{f:1,t:150,p:1}],nlFixed:0}},skills:[{name:'Vân Long Kích',type:'DPS Ngoại',priority:1,desc:'Khoảng cách ngắn sát thương cực bạo',level:'9x'},{name:'Hỏa Liên Phần Hoa',type:'Passive',priority:2,desc:'Buff Hỏa sát thêm',level:'3x'}],equipment:[{stat:'Hỏa sát ngoại',importance:'⭐⭐⭐⭐⭐',note:'Gây dame tay cực lớn'},{stat:'Hút HP',importance:'⭐⭐⭐⭐',note:'Sống lâu ra đòn'}]},
+
+  // HỆ THỔ
+  {id:'vdkhik',name:'Võ Đang',branch:'Khí Tông',role:'Sấm Sét Nội',element:'Thổ',emoji:'🌀',color:'#9b59b6',colorGlow:'rgba(155,89,182,0.3)',description:'Vua choáng. Dùng khiên Nội thay HP khiến VĐ cực mệt để giết.',baseStats:{sm:15,tp:20,sk:20,nl:25},buildGuide:{summary:'Nội lực là Máu + Công.',phases:[{level:'1-90',sm:'110',tp:'0',sk:'0',nl:'Dồn hết',note:'Tọa Vọng Vô Ngã hút sát thương bằng Nội'},{level:'90-150',sm:'165',tp:'0',sk:'0',nl:'Dồn hết',note:'Bác Cấp Nhi Phục lôi đình sát trận'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:-1}},skills:[{name:'Bác Cấp Nhi Phục',type:'Sét AoE',priority:1,desc:'Choáng giật liên hoàn',level:'9x'},{name:'Tọa Vọng Vô Ngã',type:'Khiên',priority:2,desc:'Biến đổi sát thương vào mana',level:'1x'}],equipment:[{stat:'Chuyển sát thương thành Nội lực',importance:'⭐⭐⭐⭐⭐',note:'Đồ xịn nhất của VĐ'},{stat:'Tốc độ đánh',importance:'⭐⭐⭐⭐',note:'Ra sét mượt'}]},
+  {id:'vdkiem',name:'Võ Đang',branch:'Kiếm Pháp',role:'Sát Thủ Nhanh',element:'Thổ',emoji:'🗡️',color:'#9b59b6',colorGlow:'rgba(155,89,182,0.3)',description:'Tốc độ đánh số 1. Phóng kiếm như mưa, rượt mục tiêu k trượt phát nào.',baseStats:{sm:15,tp:20,sk:20,nl:25},buildGuide:{summary:'Sức mạnh. Tọa Vọng vẫn là chân ái nhưng k đẩy NL cao như Khí.',phases:[{level:'1-90',sm:'200',tp:'Mốc 150',sk:'Còn lại',nl:'Vừa',note:'Lấy SM xài kiếm lực to'},{level:'90-150',sm:'260',tp:'Mốc 200',sk:'Vừa',nl:'Còn lại',note:'Nhân Kiếm Hợp Nhất dí k trượt'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:1}],nlFixed:50}},skills:[{name:'Nhân Kiếm Hợp Nhất',type:'DPS Tay',priority:1,desc:'Tuyệt kỹ áp sát + tốc đánh 9x',level:'9x'},{name:'Tam Không',type:'Kiếm pháp',priority:2,desc:'Hỗ trợ chiêu kiếm',level:'5x'}],equipment:[{stat:'Lôi Sát Ngoại',importance:'⭐⭐⭐⭐⭐',note:'Gây choáng vật lý'},{stat:'Hút HP',importance:'⭐⭐⭐⭐',note:'Đứng tank bắn kiếm'}]},
+  {id:'cldao',name:'Côn Lôn',branch:'Đao Pháp',role:'Gió Cắt Nát',element:'Thổ',emoji:'🌪️',color:'#8e44ad',colorGlow:'rgba(142,68,173,0.3)',description:'Gió lốc diện rộng phá nát lớp buff đối thủ, cực kì hữu hiệu công thành chiến.',baseStats:{sm:20,tp:25,sk:15,nl:20},buildGuide:{summary:'Ngoại Công. Sát thương từ gió lớn.',phases:[{level:'1-90',sm:'260',tp:'Mốc 150',sk:'Còn lại',nl:'0',note:'Đủ SM mặc đao'},{level:'90-150',sm:'300',tp:'Mốc 150',sk:'Còn lại',nl:'0',note:'Ngạo Tuyết Tiêu Phong lốc văng đối phương'}],calc:{smTarget:300,smReachAt:100,tpRate:[{f:1,t:150,p:1}],nlFixed:0}},skills:[{name:'Ngạo Tuyết Tiêu Phong',type:'AoE Gió',priority:1,desc:'Lốc diện cực to 9x',level:'9x'},{name:'Trấn Phái',type:'Kháng Gió',priority:2,desc:'Kháng bùa độc/băng',level:'3x'}],equipment:[{stat:'Sát thương vật lý',importance:'⭐⭐⭐⭐⭐',note:'Lực tay to cắt mạnh'},{stat:'Hút sinh lực',importance:'⭐⭐⭐⭐',note:'Thả lốc hồi máu'}]},
+  {id:'clkiem',name:'Côn Lôn',branch:'Kiếm Pháp',role:'Lôi Sát Khủng',element:'Thổ',emoji:'⚡',color:'#8e44ad',colorGlow:'rgba(142,68,173,0.3)',description:'Lôi Động Cửu Thiên giáng sét trúng là đứng yên k lối thoát.',baseStats:{sm:20,tp:25,sk:15,nl:20},buildGuide:{summary:'Thuần Nội lực và máu. Giống VĐ Khí.',phases:[{level:'1-90',sm:'165',tp:'0',sk:'1đ/lv',nl:'Dồn hết',note:'Skill hao NL vô cùng'},{level:'90-150',sm:'165',tp:'0',sk:'Tăng thêm',nl:'Dồn hết',note:'Lôi Động Cửu Thiên đập sét cực to'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:200}},skills:[{name:'Lôi Động Cửu Thiên',type:'Sấm Sét',priority:1,desc:'Giật lôi đỉnh điểm',level:'9x'},{name:'Thanh Phong Phù',type:'Buff',priority:2,desc:'Tốc độ chạy bá',level:'3x'}],equipment:[{stat:'Nội lực tối đa',importance:'⭐⭐⭐⭐⭐',note:'Có mana k là ngỏm'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Giật không để nó chạy'}]}
 ];
 
 const trainingSpots = [
@@ -554,17 +461,33 @@ function go(page, param) {
 }
 
 function renderTeam() {
-  return `<div class="page-header"><h1 class="page-title">Đội Hình 4 ACC</h1>
-    <p class="page-subtitle">Đường Môn (DPS) + Nga My (Heal) + Thiếu Lâm (Tank) + Võ Đang (Control)</p></div>
-    <div class="team-grid">${characters.map(c => `
+  const fil = currentParam || 'all';
+  const favs = JSON.parse(localStorage.getItem('vltk_favs')||'[]');
+  let filtered = characters;
+  if(fil === 'fav') filtered = characters.filter(c => favs.includes(c.id));
+  else if(fil !== 'all') filtered = characters.filter(c => c.element === fil);
+  
+  return `<div class="page-header"><h1 class="page-title">Cẩm Nang Thập Đại Phái</h1>
+    <p class="page-subtitle">Tính toán điểm tiềm năng chuẩn xác cho 10 phái và hơn 20 đường build VLTK1</p></div>
+    <div class="filters">
+      <button class="filter-btn ${fil==='all'?'active':''}" onclick="go('team','all')">Tất cả</button>
+      <button class="filter-btn ${fil==='fav'?'active':''}" onclick="go('team','fav')">❤️ Yêu Thích</button>
+      <button class="filter-btn ${fil==='Kim'?'active':''}" onclick="go('team','Kim')">⚔️ Kim</button>
+      <button class="filter-btn ${fil==='Mộc'?'active':''}" onclick="go('team','Mộc')">🌿 Mộc</button>
+      <button class="filter-btn ${fil==='Thủy'?'active':''}" onclick="go('team','Thủy')">💧 Thủy</button>
+      <button class="filter-btn ${fil==='Hỏa'?'active':''}" onclick="go('team','Hỏa')">🔥 Hỏa</button>
+      <button class="filter-btn ${fil==='Thổ'?'active':''}" onclick="go('team','Thổ')">🪨 Thổ</button>
+    </div>
+    <div class="team-grid">${filtered.length ? filtered.map(c => `
       <div class="char-card" onclick="go('char','${c.id}')" style="--card-color:${c.color};--card-glow:${c.colorGlow}">
+        <button class="fav-btn ${favs.includes(c.id)?'active':''}" onclick="event.stopPropagation();toggleFav('${c.id}')">❤️</button>
         <div class="char-card-header"><div class="char-emoji">${c.emoji}</div>
           <div class="char-info"><h3>${c.name}</h3><span class="char-branch">${c.branch}</span></div></div>
         <span class="char-role" style="background:${c.colorGlow};color:${c.color}">${c.role}</span>
         <p class="char-desc">${c.description}</p>
         <div class="char-card-footer"><span class="char-element">Hệ ${c.element}</span>
           <span class="char-view-btn">Xem chi tiết →</span></div>
-      </div>`).join('')}</div>`;
+      </div>`).join('') : '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">Chưa có phái yêu thích nào trong danh sách!</p>'}</div>`;
 }
 
 function renderChar(id) {
@@ -622,6 +545,14 @@ function renderTraining() {
 }
 
 // ═══ UI HELPERS ═══
+function toggleFav(id) {
+  let favs = JSON.parse(localStorage.getItem('vltk_favs')||'[]');
+  if(favs.includes(id)) favs = favs.filter(x => x !== id);
+  else favs.push(id);
+  localStorage.setItem('vltk_favs', JSON.stringify(favs));
+  if(currentPage === 'team') render();
+}
+
 function switchTab(tab, btn) {
   document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
   document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
