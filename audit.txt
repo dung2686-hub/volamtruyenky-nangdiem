@@ -1,0 +1,24 @@
+tldao (Thiếu Lâm Đao Pháp): {smTarget:260,smReachAt:90,tpRate:[{f:60,t:150,p:1}],nlFixed:0}
+tlbong (Thiếu Lâm Bổng Pháp): {smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:1}],nlFixed:0}
+tlquyen (Thiếu Lâm Quyền Pháp): {smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:1}],nlFixed:0}
+tvchuy (Thiên Vương Chùy Pháp): {smTarget:500,smReachAt:150,tpRate:[{f:90,t:150,p:1}],nlFixed:0}
+tvthuong (Thiên Vương Thương Pháp): {smTarget:350,smReachAt:100,tpRate:[{f:1,t:150,p:0}],nlFixed:0}
+tvdao (Thiên Vương Đao Pháp): {smTarget:320,smReachAt:100,tpRate:[{f:1,t:90,p:1},{f:90,t:150,p:2}],nlFixed:0}
+dmno (Đường Môn Nỏ Tiễn): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}
+dmtieu (Đường Môn Phi Tiêu): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}
+dmdao (Đường Môn Phi Đao): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}
+dmbay (Đường Môn Bẫy (Boom)): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}
+ndchuong (Ngũ Độc Chưởng Độc): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}
+nddao (Ngũ Độc Đao Độc): {smTarget:260,smReachAt:90,tpRate:[{f:60,t:150,p:1}],nlFixed:0}
+nmbuff (Nga My Support): {smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:50}
+nmkiem (Nga My Kiếm Pháp): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:150}
+tydao (Thúy Yên Đao Pháp): {smTarget:350,smReachAt:150,tpRate:[{f:1,t:150,p:1}],nlFixed:0}
+tysongdao (Thúy Yên Song Đao): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:200}
+cbchuong (Cái Bang Chưởng Pháp): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}
+cbbong (Cái Bang Bổng Pháp): {smTarget:300,smReachAt:100,tpRate:[{f:1,t:150,p:1}],nlFixed:0}
+tnthuong (Thiên Nhẫn Thương Pháp): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:200}
+tndao (Thiên Nhẫn Đao Pháp): {smTarget:300,smReachAt:100,tpRate:[{f:1,t:150,p:1}],nlFixed:0}
+vdkhik (Võ Đang Khí Tông): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:-1}
+vdkiem (Võ Đang Kiếm Pháp): {smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:1}],nlFixed:50}
+cldao (Côn Lôn Đao Pháp): {smTarget:300,smReachAt:100,tpRate:[{f:1,t:150,p:1}],nlFixed:0}
+clkiem (Côn Lôn Kiếm Pháp): {smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:200}
