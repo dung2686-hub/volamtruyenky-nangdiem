@@ -504,23 +504,32 @@ function renderChar(id) {
       <div class="base-stat"><div class="base-stat-label">Thân Pháp gốc</div><div class="base-stat-value" style="color:var(--green)">${c.baseStats.tp}</div></div>
       <div class="base-stat"><div class="base-stat-label">Sinh Khí gốc</div><div class="base-stat-value" style="color:var(--orange)">${c.baseStats.sk}</div></div>
       <div class="base-stat"><div class="base-stat-label">Nội Lực gốc</div><div class="base-stat-value" style="color:var(--blue)">${c.baseStats.nl}</div></div></div>
+    
+    <div class="global-level-control" style="display:flex;align-items:center;gap:16px;padding:16px 24px;background:var(--bg-card);border:1px solid var(--border-subtle);border-radius:var(--radius-md);margin-bottom:24px">
+      <label style="font-weight:500;color:var(--gold)">📍 Level hiện tại:</label>
+      <input type="range" class="calc-slider" id="level-slider" min="1" max="150" value="50" oninput="syncLevel('${c.id}',this.value,'slider')" style="flex:1;accent-color:var(--gold)">
+      <input type="number" class="calc-level-number" id="level-number" min="1" max="150" value="50" oninput="syncLevel('${c.id}',this.value,'number')" style="width:60px;padding:4px 8px;background:var(--bg-base);border:1px solid var(--border-subtle);color:white;border-radius:4px">
+    </div>
+
     <div class="tabs">
       <button class="tab-btn active" onclick="switchTab('potential',this)">📊 Tiềm Năng</button>
       <button class="tab-btn" onclick="switchTab('skills',this)">⚔️ Kỹ Năng</button>
       <button class="tab-btn" onclick="switchTab('equipment',this)">🛡️ Trang Bị</button></div>
     <div class="tab-content active" id="tab-potential">
-      <div class="calculator"><h3 class="calc-title">🧮 Calculator Tiềm Năng</h3>
-        <div class="calc-level-input"><label>Level hiện tại:</label>
-          <input type="range" class="calc-slider" id="level-slider" min="1" max="150" value="50" oninput="syncLevel('${c.id}',this.value,'slider')">
-          <input type="number" class="calc-level-number" id="level-number" min="1" max="150" value="50" oninput="syncLevel('${c.id}',this.value,'number')"></div>
+      <div class="calculator"><h3 class="calc-title">🧮 Phân Bổ Tiềm Năng</h3>
         <div class="calc-bars" id="calc-bars"></div>
         <div class="calc-note" id="calc-note"></div></div>
       <h3 class="calc-title" style="margin-bottom:16px">📋 Hướng dẫn theo giai đoạn</h3>
       <table class="stats-table"><thead><tr><th>Mốc Level</th><th>Sức Mạnh</th><th>Thân Pháp</th><th>Sinh Khí</th><th>Nội Lực</th><th>Ghi chú</th></tr></thead>
         <tbody>${c.buildGuide.phases.map(p => `<tr><td class="highlight">${p.level}</td><td>${p.sm}</td><td>${p.tp}</td><td>${p.sk}</td><td>${p.nl}</td><td class="note-cell">${p.note}</td></tr>`).join('')}</tbody></table></div>
-    <div class="tab-content" id="tab-skills"><div class="skill-list">${c.skills.map(s => `
-      <div class="skill-item" data-lvl="${parseInt(s.level) * 10}"><div class="skill-priority p${s.priority}">#${s.priority}</div>
-        <div class="skill-info"><div class="skill-name">${s.name}</div>
+    <div class="tab-content" id="tab-skills">
+      <div style="margin-bottom:16px;padding:12px;background:var(--bg-glass);border-radius:var(--radius-sm);border-left:3px solid var(--blue);font-size:14px">
+        💡 <b>Gợi ý cộng điểm Kỹ năng ở Level <span id="skill-lbl-level">50</span>:</b><br>
+        <span id="skill-leftover" style="color:var(--text-secondary)"></span>
+      </div>
+      <div class="skill-list">${c.skills.map(s => `
+      <div class="skill-item" data-lvl="${parseInt(s.level) * 10}" data-name="${s.name}"><div class="skill-priority p${s.priority}">#${s.priority}</div>
+        <div class="skill-info"><div class="skill-name">${s.name} <span class="skill-pt"></span></div>
           <div class="skill-meta"><span class="skill-tag type">${s.type}</span><span class="skill-tag level">Cấp ${s.level}</span></div>
           <div class="skill-desc">${s.desc}</div></div></div>`).join('')}</div></div>
     <div class="tab-content" id="tab-equipment"><div class="equip-list">${c.equipment.map(e => `
@@ -580,10 +589,38 @@ function updateCalc(charId, level) {
     `<div class="calc-bar-row"><span class="calc-bar-label">${labels[k]}</span>
       <div class="calc-bar-track"><div class="calc-bar-fill" style="width:${Math.max((s[k]/mx)*100,2)}%;background:${colors[k]}"></div></div>
       <span class="calc-bar-value" style="color:${colors[k]}">${s[k]}</span></div>`).join('');
-  document.getElementById('calc-note').innerHTML = `<strong>Level ${level}</strong> — Tổng điểm: ${s.total} · ${getNote(c, level)}`;
+  document.getElementById('calc-note').innerHTML = `<strong>Level ${level}</strong> — Tổng điểm tiềm năng: ${s.total} · ${getNote(c, level)}`;
 
-  // Dynamic Skill Fading based on actual level
+  // Kỹ Năng update - Thuật toán phân bổ điểm VLTK
+  let pts = level - 1; // 1 điểm mỗi cấp
+  let alloc = {};
+  let sortedSkills = [...c.skills].sort((a,b) => a.priority - b.priority);
+  sortedSkills.forEach(s => {
+    let rLvl = parseInt(s.level) * 10;
+    if(!isNaN(rLvl) && level >= rLvl) {
+      let maxAllowed = Math.min(20, level - rLvl + 1); // Mỗi cấp qua reqLvl đc cộng thêm 1 điểm
+      let p = Math.min(pts, maxAllowed);
+      alloc[s.name] = p;
+      pts -= p;
+    } else {
+      alloc[s.name] = 0;
+    }
+  });
+
+  const lbl = document.getElementById('skill-lbl-level');
+  if(lbl) lbl.textContent = level;
+  const leftOver = document.getElementById('skill-leftover');
+  if(leftOver) leftOver.innerHTML = `Đã phân bổ theo độ ưu tiên. Còn dư <b>${pts} điểm</b>, hãy tự cộng vào các chiêu hỗ trợ vòng ngoài hoặc Trấn phái.`;
+
+  // Dynamic Skill UI
   document.querySelectorAll('.skill-item').forEach(el => {
+    const sName = el.dataset.name;
+    const ptEl = el.querySelector('.skill-pt');
+    const p = alloc[sName] || 0;
+    if(ptEl) {
+      ptEl.innerHTML = p > 0 ? `<span style="color:var(--gold);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(212,175,55,0.1);padding:2px 6px;border-radius:4px">+${p}/20 đ</span>` : `<span style="color:var(--text-muted);margin-left:8px;font-size:14px">+0/20 đ</span>`;
+    }
+    
     const sLvl = parseInt(el.dataset.lvl);
     if (!isNaN(sLvl)) {
       if (level < sLvl) {
