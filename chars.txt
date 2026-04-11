@@ -1,0 +1,24 @@
+tldao: Thiếu Lâm - Đao Pháp
+tlbong: Thiếu Lâm - Bổng Pháp
+tlquyen: Thiếu Lâm - Quyền Pháp
+tvchuy: Thiên Vương - Chùy Pháp
+tvthuong: Thiên Vương - Thương Pháp
+tvdao: Thiên Vương - Đao Pháp
+dmno: Đường Môn - Nỏ Tiễn
+dmtieu: Đường Môn - Phi Tiêu
+dmdao: Đường Môn - Phi Đao
+dmbay: Đường Môn - Bẫy (Boom)
+ndchuong: Ngũ Độc - Chưởng Độc
+nddao: Ngũ Độc - Đao Độc
+nmbuff: Nga My - Support
+nmkiem: Nga My - Kiếm Pháp
+tydao: Thúy Yên - Đao Pháp
+tysongdao: Thúy Yên - Song Đao
+cbchuong: Cái Bang - Chưởng Pháp
+cbbong: Cái Bang - Bổng Pháp
+tnthuong: Thiên Nhẫn - Thương Pháp
+tndao: Thiên Nhẫn - Đao Pháp
+vdkhik: Võ Đang - Khí Tông
+vdkiem: Võ Đang - Kiếm Pháp
+cldao: Côn Lôn - Đao Pháp
+clkiem: Côn Lôn - Kiếm Pháp
