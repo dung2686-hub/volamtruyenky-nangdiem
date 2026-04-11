@@ -325,9 +325,11 @@ const characters = [
         {level:'40-60',sm:'Đủ mặc đồ (~120)',tp:'2đ/lv',sk:'Còn lại',nl:'0',note:'Bắt đầu AoE mạnh, TP là nguồn sát thương chính'},
         {level:'60-80',sm:'Mốc 165 rồi dừng',tp:'3đ/lv',sk:'Còn lại',nl:'0',note:'⚠️ Tẩy tủy lần 1 ở cấp 60-65! SM đạt mốc áo cấp 10'},
         {level:'80-90',sm:'Giữ 165',tp:'3đ/lv',sk:'Còn lại',nl:'0',note:'Chuẩn bị nhận skill 9x tại cấp 90'},
-        {level:'90-100',sm:'Giữ 165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'🎁 Nhận skill 9x miễn phí! Dồn TP tối đa sát thương'}
+        {level:'90-100',sm:'Giữ 165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'🎁 Nhận skill 9x miễn phí! Dồn TP tối đa sát thương'},
+        {level:'100-120',sm:'Giữ 165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'Tăng TP để không miss quái cấp cao'},
+        {level:'120-150',sm:'Giữ 165',tp:'Dồn hết',sk:'Tối thiểu',nl:'0',note:'⚠️ Tẩy tủy lần 2! TP tối đa, SM đủ mặc đồ xanh'}
       ],
-      calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:60,p:2},{f:61,t:100,p:3}],nlFixed:0}
+      calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:60,p:2},{f:61,t:150,p:3}],nlFixed:0}
     },
     skills:[
       {name:'Bạo Vũ Lê Hoa',type:'AoE',priority:1,desc:'Skill AoE chính — mưa tiễn diện rộng, dọn quái cực nhanh. MAX đầu tiên.',level:'1x'},
@@ -357,9 +359,11 @@ const characters = [
         {level:'40-60',sm:'Đủ mặc đồ',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'Bắt đầu heal hiệu quả, buff Phật Tâm'},
         {level:'60-80',sm:'~250 rồi dừng',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'⚠️ Tẩy tủy! SM mốc 250 cho áo cao cấp'},
         {level:'80-90',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'Phổ Độ Chúng Sinh cần max'},
-        {level:'90-100',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'🎁 Skill 9x — heal mạnh hơn nữa'}
+        {level:'90-100',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'🎁 Skill 9x — heal mạnh hơn nữa'},
+        {level:'100-120',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'Heal lượng lớn, NM là trụ cột party'},
+        {level:'120-150',sm:'Giữ 250',tp:'0',sk:'Dồn hết',nl:'Đủ dùng skill',note:'⚠️ Tẩy tủy lần 2! SK tối đa để tank được quái mạnh'}
       ],
-      calc:{smTarget:250,smReachAt:60,tpRate:[{f:1,t:100,p:0}],nlFixed:50}
+      calc:{smTarget:250,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:50}
     },
     skills:[
       {name:'Phổ Độ Chúng Sinh',type:'Heal AoE',priority:1,desc:'Skill heal chính — hồi máu + tăng kháng cho party. MAX!',level:'5x'},
@@ -389,9 +393,11 @@ const characters = [
         {level:'40-60',sm:'2đ/lv',tp:'0',sk:'Còn lại',nl:'0',note:'Bổng quét AoE gom quái tốt, SM cho lực tay'},
         {level:'60-80',sm:'~200 rồi dừng',tp:'0',sk:'Dồn hết',nl:'0',note:'⚠️ Tẩy tủy! SM mốc 200, còn lại dồn SK'},
         {level:'80-90',sm:'Giữ 200',tp:'0',sk:'Dồn hết',nl:'0',note:'Bất Động Minh Vương + Dịch Cân Kinh max'},
-        {level:'90-100',sm:'Giữ 200',tp:'0',sk:'Dồn hết',nl:'0',note:'🎁 Skill 9x — Hoành Tảo Thiên Quân AoE choáng'}
+        {level:'90-100',sm:'Giữ 200',tp:'0',sk:'Dồn hết',nl:'0',note:'🎁 Skill 9x — Hoành Tảo Thiên Quân AoE choáng'},
+        {level:'100-120',sm:'Giữ 200',tp:'Tăng TP 1đ/lv',sk:'Dồn hết',nl:'0',note:'Thêm TP để không miss quái, tăng né'},
+        {level:'120-150',sm:'Giữ 200',tp:'Giữ TP',sk:'Dồn hết',nl:'0',note:'⚠️ Tẩy tủy lần 2! SK tối đa cho tank endgame'}
       ],
-      calc:{smTarget:200,smReachAt:60,tpRate:[{f:1,t:100,p:0}],nlFixed:0}
+      calc:{smTarget:200,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}
     },
     skills:[
       {name:'Bất Động Minh Vương',type:'Buff Tank',priority:1,desc:'Tăng HP + kháng tính — skill sống còn. MAX ngay!',level:'1x'},
@@ -420,9 +426,11 @@ const characters = [
         {level:'40-60',sm:'Giữ 110',tp:'0',sk:'1đ/lv',nl:'Dồn hết',note:'Nộ Lôi Chỉ choáng hiệu quả'},
         {level:'60-80',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'⚠️ Tẩy tủy! Tối ưu NL tối đa'},
         {level:'80-90',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'Tọa Vọng + NC cao = gần như bất tử'},
-        {level:'90-100',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'🎁 Skill 9x — Bác Cấp Nhi Phục AoE control'}
+        {level:'90-100',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'🎁 Skill 9x — Bác Cấp Nhi Phục AoE control'},
+        {level:'100-120',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'NL cực cao, Tọa Vọng hộ thể vô cùng dày'},
+        {level:'120-150',sm:'Giữ 110',tp:'0',sk:'Còn lại',nl:'Dồn hết',note:'⚠️ Tẩy tủy lần 2! NL tối đa, sát thương + hộ thể endgame'}
       ],
-      calc:{smTarget:110,smReachAt:40,tpRate:[{f:1,t:100,p:0}],nlFixed:-1}
+      calc:{smTarget:110,smReachAt:40,tpRate:[{f:1,t:150,p:0}],nlFixed:-1}
     },
     skills:[
       {name:'Tọa Vọng Vô Ngã',type:'Buff Shield',priority:1,desc:'Chuyển sát thương vào NL thay HP — "máu thứ 2". MAX!',level:'1x'},
@@ -490,9 +498,24 @@ const trainingSpots = [
     formation:'🎯ĐM(9x AoE) + 🛡️TL(9x choáng) + 🌀VĐ(9x control) + 💚NM(9x heal)'},
   {levelRange:'90-100',levelMin:90,levelMax:100,maps:['Mê Cung Tần Lăng','Sa Mạc','Trường Bạch Sơn'],
     partyTactic:'Full power party — AoE clear cực nhanh, sprint cuối',
-    details:'Sprint cuối! Cả 4 acc đã có skill 9x. Xài hết TTL. Đường lên 100.',
+    details:'Sprint cuối giai đoạn 1! Cả 4 acc đã có skill 9x. Xài hết TTL.',
     tips:['Xài hết TTL + TTL đặc biệt','Full power — tốc độ clear max','ĐM dồn hết TP tối đa sát thương'],
-    formation:'💥 Full power → 🛡️TL(gom+choáng) + 🎯ĐM(9x nuke) + 🌀VĐ(control) + 💚NM(sustain)'}
+    formation:'💥 Full power → 🛡️TL(gom+choáng) + 🎯ĐM(9x nuke) + 🌀VĐ(control) + 💚NM(sustain)'},
+  {levelRange:'100-110',levelMin:100,levelMax:110,maps:['Thất Thành Đại Chiến','Hoàng Hà Trận'],
+    partyTactic:'Mở nội dung endgame — quái cực mạnh, cần phối hợp chặt chẽ',
+    details:'Bước vào giai đoạn endgame. Quái rất mạnh, sát thương cao. Party cần phối hợp hoàn hảo. Bắt đầu farm đồ xanh.',
+    tips:['Farm đồ xanh/HKMP — nâng cấp trang bị đáng kể','NM heal 24/7 không được chậm','VĐ choáng liên tục giữ quái an toàn'],
+    formation:'💚NM(heal max) + 🛡️TL(tank endgame) + 🌀VĐ(control) + 🎯ĐM(DPS)'},
+  {levelRange:'110-130',levelMin:110,levelMax:130,maps:['Chiến Trường Thất Thành','Động Đình Hồ','Côn Lôn Sơn'],
+    partyTactic:'Farm đồ xanh + lên level — balance DPS và sống sót',
+    details:'Giai đoạn cày cuốc nặng. Farm đồ xanh + exp song song. Cần trang bị tốt để đứng bãi.',
+    tips:['⚠️ Tẩy tủy lần 2 cho cả 4 acc!','Tối ưu lại điểm tiềm năng cho endgame','Đổi đồ xanh/HKMP khi có cơ hội'],
+    formation:'🛡️TL(tank+gom) + 🎯ĐM(AoE max) + 🌀VĐ(debuff+control) + 💚NM(sustain)'},
+  {levelRange:'130-150',levelMin:130,levelMax:150,maps:['Thất Thành Nội Chiến','Long Hổ Đài','Thiên Cung'],
+    partyTactic:'Endgame cuối — full build, full skill, farm boss',
+    details:'Đỉnh cao! Party đạt sức mạnh tối đa. Farm boss, PK chiến trường. Build hoàn thiện.',
+    tips:['Full trang bị endgame','Tối ưu từng điểm tiềm năng cuối cùng','Party phối hợp hoàn hảo — mỗi acc đều quan trọng'],
+    formation:'💥 ENDGAME → 🛡️TL(bất tử) + 🎯ĐM(max crit) + 🌀VĐ(control god) + 💚NM(heal god)'}
 ];
 
 // ═══ CALCULATOR ═══
@@ -565,8 +588,8 @@ function renderChar(id) {
     <div class="tab-content active" id="tab-potential">
       <div class="calculator"><h3 class="calc-title">🧮 Calculator Tiềm Năng</h3>
         <div class="calc-level-input"><label>Level hiện tại:</label>
-          <input type="range" class="calc-slider" id="level-slider" min="1" max="100" value="50" oninput="syncLevel('${c.id}',this.value,'slider')">
-          <input type="number" class="calc-level-number" id="level-number" min="1" max="100" value="50" oninput="syncLevel('${c.id}',this.value,'number')"></div>
+          <input type="range" class="calc-slider" id="level-slider" min="1" max="150" value="50" oninput="syncLevel('${c.id}',this.value,'slider')">
+          <input type="number" class="calc-level-number" id="level-number" min="1" max="150" value="50" oninput="syncLevel('${c.id}',this.value,'number')"></div>
         <div class="calc-bars" id="calc-bars"></div>
         <div class="calc-note" id="calc-note"></div></div>
       <h3 class="calc-title" style="margin-bottom:16px">📋 Hướng dẫn theo giai đoạn</h3>
@@ -586,7 +609,7 @@ function renderTraining() {
   return `<div class="page-header"><h1 class="page-title">Bãi Train Party 4 ACC</h1>
     <p class="page-subtitle">Chiến thuật train chung: ĐM(DPS) + NM(Heal) + TL(Tank) + VĐ(Control)</p></div>
     <div class="training-level-input"><label>📍 Level hiện tại:</label>
-      <input type="number" id="training-level" min="1" max="100" value="${sv}" oninput="updateTraining()">
+      <input type="number" id="training-level" min="1" max="150" value="${sv}" oninput="updateTraining()">
       <span class="training-level-info" id="training-level-info"></span></div>
     <div class="training-timeline">${trainingSpots.map(s => `
       <div class="training-spot" data-min="${s.levelMin}" data-max="${s.levelMax}">
@@ -607,7 +630,7 @@ function switchTab(tab, btn) {
 }
 
 function syncLevel(charId, val, source) {
-  let level = Math.max(1, Math.min(100, parseInt(val) || 1));
+  let level = Math.max(1, Math.min(150, parseInt(val) || 1));
   const slider = document.getElementById('level-slider');
   const number = document.getElementById('level-number');
   if (source === 'slider' && number) number.value = level;
@@ -630,7 +653,7 @@ function updateCalc(charId, level) {
 }
 
 function updateTraining() {
-  const lv = Math.max(1, Math.min(100, parseInt(document.getElementById('training-level').value) || 1));
+  const lv = Math.max(1, Math.min(150, parseInt(document.getElementById('training-level').value) || 1));
   document.querySelectorAll('.training-spot').forEach(el => {
     el.classList.toggle('current', lv >= parseInt(el.dataset.min) && lv <= parseInt(el.dataset.max));
   });
