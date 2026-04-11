@@ -442,7 +442,8 @@ function calcStats(char, level) {
     sk = Math.round(b.sk + skr * (level - 1));
     nl = Math.max(total - sm - tp - sk, b.nl);
   } else {
-    nl = b.nl + (g.nlFixed || 0);
+    let nlDist = Math.round((Math.min(level, 90) / 90) * (g.nlFixed || 0));
+    nl = b.nl + nlDist;
     sk = Math.max(total - sm - tp - nl, b.sk);
   }
   return { sm, tp, sk, nl, total };
