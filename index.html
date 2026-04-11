@@ -323,7 +323,7 @@ body {
 const characters = [
   // HỆ KIM
   {id:'tldao',name:'Thiếu Lâm',branch:'Đao Pháp',role:'Kỵ Binh Khống Chế',element:'Kim',emoji:'🗡️',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Cưỡi ngựa chém nhanh, tốc độ di chuyển cao. Dùng để săn các phái máu giấy.',baseStats:{sm:30,tp:15,sk:25,nl:10},buildGuide:{summary:'SM đủ dùng, TP lấy chính xác, còn lại dồn hết SK.',phases:[{level:'1-60',sm:'Mốc 165',tp:'0',sk:'Còn lại',nl:'0',note:'Dùng Bổng train siêu lẹ đến cấp 60'},{level:'60-90',sm:'Mốc 210',tp:'1đ/lv',sk:'Dồn hết',nl:'0',note:'Bắt đầu cưỡi ngựa chém Vô Tướng Trảm'},{level:'90-150',sm:'Mốc 260',tp:'Mốc 150',sk:'Dồn hết',nl:'0',note:'Max trâu bò, máu cực to'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:60,t:150,p:1}],nlFixed:0}},skills:[{name:'Bất Động Minh Vương',type:'Buff',priority:1,desc:'Sinh Tồn max kháng',level:'1x'},{name:'Vô Tướng Trảm',type:'DPS',priority:2,desc:'Đao chém trên ngựa 9x',level:'9x'},{name:'Dịch Cân Kinh',type:'Kháng',priority:3,desc:'Buff phòng thủ',level:'3x'}],equipment:[{stat:'Sinh Lực',importance:'⭐⭐⭐⭐⭐',note:'Càng nhìu máu càng tốt'},{stat:'Băng Sát',importance:'⭐⭐⭐⭐',note:'Làm chậm mục tiêu'}]},
-  {id:'tlbong',name:'Thiếu Lâm',branch:'Bổng Pháp',role:'Tank / AoE',element:'Kim',emoji:'🛡️',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Gom quái cực tốt, phản đòn La Hán Trận. Đi đầu chịu đòn cho team.',baseStats:{sm:30,tp:15,sk:25,nl:10},buildGuide:{summary:'SK là ưu tiên. Máu trâu + phản đòn = Quái tự chết.',phases:[{level:'1-90',sm:'Mốc 200',tp:'0',sk:'Dồn hết',nl:'0',note:'Hoành Tảo Thiên Quân dọn bãi siêu lẹ'},{level:'90-150',sm:'Mốc 260',tp:'0',sk:'Dồn hết',nl:'0',note:'Lên 9x Bổng choáng rất bá đạo'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Hoành Tảo Thiên Quân',type:'AoE',priority:1,desc:'Choáng quét diện rộng 9x',level:'9x'},{name:'La Hán Trận',type:'Counter',priority:2,desc:'Phản đòn cực gắt',level:'3x'},{name:'Sư Tử Hống',type:'Choáng',priority:3,desc:'Gầm choáng',level:'1x'}],equipment:[{stat:'Phản đòn %',importance:'⭐⭐⭐⭐⭐',note:'Phối hợp La Hán Trận'},{stat:'Thời gian phục hồi',importance:'⭐⭐⭐⭐',note:'Chống bị khóa'}]},
+  {id:'tlbong',name:'Thiếu Lâm',branch:'Bổng Pháp',role:'Tank / AoE',element:'Kim',emoji:'🛡️',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Gom quái cực tốt, phản đòn La Hán Trận. Đi đầu chịu đòn cho team.',baseStats:{sm:30,tp:15,sk:25,nl:10},buildGuide:{summary:'SK là ưu tiên. Máu trâu + phản đòn = Quái tự chết.',phases:[{level:'1-90',sm:'Mốc 200',tp:'0',sk:'Dồn hết',nl:'0',note:'Dùng bổng pháp cấp thấp gõ AoE để gom dọn bãi'},{level:'90-150',sm:'Mốc 260',tp:'0',sk:'Dồn hết',nl:'0',note:'Lên 9x Bổng choáng rất bá đạo'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Hoành Tảo Thiên Quân',type:'AoE',priority:1,desc:'Choáng quét diện rộng 9x',level:'9x'},{name:'La Hán Trận',type:'Counter',priority:2,desc:'Phản đòn cực gắt',level:'3x'},{name:'Sư Tử Hống',type:'Choáng',priority:3,desc:'Gầm choáng',level:'1x'}],equipment:[{stat:'Phản đòn %',importance:'⭐⭐⭐⭐⭐',note:'Phối hợp La Hán Trận'},{stat:'Thời gian phục hồi',importance:'⭐⭐⭐⭐',note:'Chống bị khóa'}]},
   {id:'tlquyen',name:'Thiếu Lâm',branch:'Quyền Pháp',role:'Sát Thủ Bộ Binh',element:'Kim',emoji:'👊',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Chiêu thức liên tục đơn mục tiêu, đấm bất động đối phương. Không thể cưỡi ngựa.',baseStats:{sm:30,tp:15,sk:25,nl:10},buildGuide:{summary:'Đấm nhanh, hiệu ứng choáng liên tục. Cần máu.',phases:[{level:'1-90',sm:'Mốc 200',tp:'0',sk:'Dồn hết',nl:'0',note:'Train bằng Bổng, PK bằng Quyền'},{level:'90-150',sm:'Mốc 260',tp:'0',sk:'Dồn hết',nl:'0',note:'Đạt Ma Độ Giang đấm liên hoàn'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Đạt Ma Độ Giang',type:'DPS',priority:1,desc:'Quyền 9x đấm choáng liên tục',level:'9x'},{name:'Bất Động Minh Vương',type:'Buff',priority:2,desc:'Sinh Tồn cực mạnh',level:'1x'}],equipment:[{stat:'Tốc đánh',importance:'⭐⭐⭐⭐⭐',note:'Đấm nhanh không cho đối thủ nhúc nhích'},{stat:'Tốc độ chạy',importance:'⭐⭐⭐⭐',note:'Chạy bộ cần rất nhanh'}]},
   
   {id:'tvchuy',name:'Thiên Vương',branch:'Chùy Pháp',role:'Sốc Sát Thương',element:'Kim',emoji:'🔨',color:'#d35400',colorGlow:'rgba(211,84,0,0.3)',description:'Lực tay to nhất game, khả năng xuất chiêu 1 đập chết luôn đối thủ yếu máu, chống kỵ binh.',baseStats:{sm:30,tp:10,sk:30,nl:10},buildGuide:{summary:'Sức Mạnh quyết định tất cả. Một đập bay màu.',phases:[{level:'1-90',sm:'Dồn hết',tp:'0',sk:'1đ/lv',nl:'0',note:'Gây dame cực to'},{level:'90-150',sm:'Dồn hết',tp:'Mốc 100',sk:'Vừa đủ',nl:'0',note:'Thêm TP để không bị miss'}],calc:{smTarget:500,smReachAt:150,tpRate:[{f:90,t:150,p:1}],nlFixed:0}},skills:[{name:'Truy Tinh Trục Nguyệt',type:'DPS',priority:1,desc:'Chùy 9x Sát thương siêu khủng',level:'9x'},{name:'Tĩnh Tâm Quyết',type:'Hỗ trợ',priority:2,desc:'Tăng tốc đánh',level:'3x'}],equipment:[{stat:'Sát thương vật lý',importance:'⭐⭐⭐⭐⭐',note:'Max damage'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Mốc 94%'}]},
@@ -519,9 +519,9 @@ function renderChar(id) {
       <table class="stats-table"><thead><tr><th>Mốc Level</th><th>Sức Mạnh</th><th>Thân Pháp</th><th>Sinh Khí</th><th>Nội Lực</th><th>Ghi chú</th></tr></thead>
         <tbody>${c.buildGuide.phases.map(p => `<tr><td class="highlight">${p.level}</td><td>${p.sm}</td><td>${p.tp}</td><td>${p.sk}</td><td>${p.nl}</td><td class="note-cell">${p.note}</td></tr>`).join('')}</tbody></table></div>
     <div class="tab-content" id="tab-skills"><div class="skill-list">${c.skills.map(s => `
-      <div class="skill-item"><div class="skill-priority p${s.priority}">#${s.priority}</div>
+      <div class="skill-item" data-lvl="${parseInt(s.level) * 10}"><div class="skill-priority p${s.priority}">#${s.priority}</div>
         <div class="skill-info"><div class="skill-name">${s.name}</div>
-          <div class="skill-meta"><span class="skill-tag type">${s.type}</span><span class="skill-tag level">${s.level}</span></div>
+          <div class="skill-meta"><span class="skill-tag type">${s.type}</span><span class="skill-tag level">Cấp ${s.level}</span></div>
           <div class="skill-desc">${s.desc}</div></div></div>`).join('')}</div></div>
     <div class="tab-content" id="tab-equipment"><div class="equip-list">${c.equipment.map(e => `
       <div class="equip-item"><span class="equip-stat">${e.stat}</span><span class="equip-stars">${e.importance}</span><span class="equip-note">${e.note}</span></div>`).join('')}</div></div>`;
@@ -581,6 +581,21 @@ function updateCalc(charId, level) {
       <div class="calc-bar-track"><div class="calc-bar-fill" style="width:${Math.max((s[k]/mx)*100,2)}%;background:${colors[k]}"></div></div>
       <span class="calc-bar-value" style="color:${colors[k]}">${s[k]}</span></div>`).join('');
   document.getElementById('calc-note').innerHTML = `<strong>Level ${level}</strong> — Tổng điểm: ${s.total} · ${getNote(c, level)}`;
+
+  // Dynamic Skill Fading based on actual level
+  document.querySelectorAll('.skill-item').forEach(el => {
+    const sLvl = parseInt(el.dataset.lvl);
+    if (!isNaN(sLvl)) {
+      if (level < sLvl) {
+        el.style.opacity = '0.3';
+        el.style.filter = 'grayscale(80%)';
+        el.style.transition = '0.3s';
+      } else {
+        el.style.opacity = '1';
+        el.style.filter = 'none';
+      }
+    }
+  });
 }
 
 function updateTraining() {
