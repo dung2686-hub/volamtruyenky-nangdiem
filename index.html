@@ -117,9 +117,10 @@ body {
 .char-card:hover .char-view-btn { gap: 8px; }
 .detail-back {
   display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
-  border-radius: var(--radius-sm); color: var(--text-secondary); font-size: 14px;
+  border-radius: var(--radius-sm); color: var(--text-primary); font-size: 14px; font-weight: 500;
   transition: var(--transition); margin-bottom: 24px; cursor: pointer;
-  background: none; border: 1px solid var(--border-subtle); font-family: var(--font-body);
+  background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(10px); border: 1px solid var(--border-subtle); font-family: var(--font-body);
+  position: sticky; top: 85px; z-index: 90; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
 }
 .detail-back:hover { color: var(--gold); border-color: var(--border-glow); }
 .detail-header {
