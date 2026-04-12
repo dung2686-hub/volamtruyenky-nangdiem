@@ -432,7 +432,7 @@ const trainingSpots = [
 // ═══ CALCULATOR ═══
 function calcStats(char, level) {
   const b = char.baseStats, g = char.buildGuide.calc;
-  const total = 80 + (level - 1) * 5;
+  const total = 100 + (level - 1) * 5;
   let sm = level <= g.smReachAt ? Math.min(Math.round(b.sm + ((g.smTarget - b.sm) / g.smReachAt) * level), g.smTarget) : g.smTarget;
   let tp = b.tp;
   for (const r of g.tpRate) { const s = Math.max(r.f, 1), e = Math.min(r.t, level); if (e >= s) tp += (e - s + 1) * r.p; }
