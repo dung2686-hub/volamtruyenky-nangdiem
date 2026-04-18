@@ -1,549 +1,1432 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="vi">
+
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>VLTK Planner — 4 ACC Build Guide</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg-primary: #0a0a0f;
-  --bg-secondary: #12121a;
-  --bg-card: rgba(18, 18, 26, 0.85);
-  --bg-card-hover: rgba(25, 25, 38, 0.95);
-  --bg-glass: rgba(255, 255, 255, 0.03);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --border-glow: rgba(212, 175, 55, 0.3);
-  --gold: #d4af37;
-  --gold-light: #f0d060;
-  --gold-dim: rgba(212, 175, 55, 0.15);
-  --crimson: #dc3545;
-  --crimson-dim: rgba(220, 53, 69, 0.15);
-  --text-primary: #e8e6e3;
-  --text-secondary: #8a8a9a;
-  --text-muted: #5a5a6a;
-  --green: #2ecc71;
-  --blue: #3498db;
-  --orange: #e67e22;
-  --purple: #9b59b6;
-  --font-display: 'Be Vietnam Pro', sans-serif;
-  --font-body: 'Inter', sans-serif;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-* { margin: 0; padding: 0; box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body {
-  font-family: var(--font-body);
-  background: var(--bg-primary);
-  color: var(--text-primary);
-  min-height: 100vh;
-  overflow-x: hidden;
-  background-image:
-    radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(220, 53, 69, 0.02) 0%, transparent 50%);
-}
-#main-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 0 32px; height: 64px;
-  background: rgba(10, 10, 15, 0.92); backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border-subtle);
-}
-.nav-brand { display: flex; align-items: center; gap: 10px; }
-.nav-icon { font-size: 24px; }
-.nav-title {
-  font-family: var(--font-display); font-size: 20px; font-weight: 700;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  letter-spacing: 1px;
-}
-.nav-links { display: flex; gap: 4px; }
-.nav-link {
-  display: flex; align-items: center; gap: 8px; padding: 8px 20px;
-  border-radius: var(--radius-md); text-decoration: none;
-  color: var(--text-secondary); font-size: 14px; font-weight: 500;
-  transition: var(--transition); border: 1px solid transparent; cursor: pointer;
-}
-.nav-link:hover { color: var(--text-primary); background: var(--bg-glass); }
-.nav-link.active { color: var(--gold); background: var(--gold-dim); border-color: var(--border-glow); }
-#page-content { padding: 88px 32px 48px; max-width: 1200px; margin: 0 auto; min-height: 100vh; }
-.page-header { text-align: center; margin-bottom: 48px; }
-.page-title {
-  font-family: var(--font-display); font-size: 32px; font-weight: 700;
-  background: linear-gradient(135deg, var(--gold), var(--gold-light));
-  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
-  margin-bottom: 8px;
-}
-.page-subtitle { color: var(--text-secondary); font-size: 15px; font-weight: 300; }
-.team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; }
-.char-card {
-  position: relative; background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg); padding: 28px 24px; cursor: pointer;
-  transition: var(--transition); overflow: hidden;
-}
-.char-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--card-color); opacity: 0.6; transition: var(--transition);
-}
-.char-card:hover {
-  background: var(--bg-card-hover); border-color: var(--card-color);
-  transform: translateY(-4px); box-shadow: var(--shadow-card), 0 0 30px var(--card-glow);
-}
-.char-card:hover::before { height: 4px; opacity: 1; }
-.char-card-header { display: flex; align-items: center; gap: 16px; margin-bottom: 16px; }
-.char-emoji {
-  font-size: 40px; width: 56px; height: 56px; display: flex; align-items: center; justify-content: center;
-  background: var(--bg-glass); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);
-}
-.char-info h3 { font-family: var(--font-display); font-size: 18px; font-weight: 700; margin-bottom: 2px; }
-.char-branch { font-size: 13px; color: var(--text-secondary); }
-.char-role {
-  display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px;
-  font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 12px;
-}
-.char-desc { font-size: 13px; color: var(--text-secondary); line-height: 1.6; }
-.char-card-footer {
-  margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border-subtle);
-  display: flex; justify-content: space-between; align-items: center;
-}
-.char-element { font-size: 12px; color: var(--text-muted); }
-.char-view-btn { font-size: 12px; color: var(--gold); font-weight: 500; display: flex; align-items: center; gap: 4px; transition: var(--transition); }
-.char-card:hover .char-view-btn { gap: 8px; }
-.detail-back {
-  display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px;
-  border-radius: var(--radius-sm); color: var(--text-primary); font-size: 14px; font-weight: 500;
-  transition: var(--transition); margin-bottom: 24px; cursor: pointer;
-  background: rgba(10, 10, 15, 0.85); backdrop-filter: blur(10px); border: 1px solid var(--border-subtle); font-family: var(--font-body);
-  position: sticky; top: 85px; z-index: 90; box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-}
-.detail-back:hover { color: var(--gold); border-color: var(--border-glow); }
-.detail-header {
-  display: flex; align-items: center; gap: 20px; margin-bottom: 32px; padding: 24px;
-  background: var(--bg-card); border-radius: var(--radius-lg); border: 1px solid var(--border-subtle);
-}
-.detail-emoji {
-  font-size: 48px; width: 72px; height: 72px; display: flex; align-items: center; justify-content: center;
-  background: var(--bg-glass); border-radius: var(--radius-md);
-}
-.detail-name { font-family: var(--font-display); font-size: 28px; font-weight: 700; }
-.detail-meta { font-size: 14px; color: var(--text-secondary); margin-top: 4px; }
-.detail-summary {
-  font-size: 14px; color: var(--text-secondary); margin-top: 8px; padding: 8px 14px;
-  background: var(--gold-dim); border-radius: var(--radius-sm); border-left: 3px solid var(--gold);
-}
-.tabs {
-  display: flex; gap: 4px; margin-bottom: 24px; background: var(--bg-secondary);
-  padding: 4px; border-radius: var(--radius-md); border: 1px solid var(--border-subtle);
-}
-.tab-btn {
-  flex: 1; padding: 10px 16px; border: none; background: none; color: var(--text-secondary);
-  font-family: var(--font-body); font-size: 13px; font-weight: 500; cursor: pointer;
-  border-radius: var(--radius-sm); transition: var(--transition);
-}
-.tab-btn:hover { color: var(--text-primary); background: var(--bg-glass); }
-.tab-btn.active { color: var(--gold); background: var(--gold-dim); }
-.tab-content { display: none; animation: fadeIn 0.3s ease; }
-.tab-content.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-.stats-table {
-  width: 100%; border-collapse: separate; border-spacing: 0; background: var(--bg-card);
-  border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-subtle); margin-bottom: 24px;
-}
-.stats-table th {
-  background: rgba(212, 175, 55, 0.08); padding: 12px 16px; text-align: left;
-  font-size: 12px; font-weight: 600; color: var(--gold); text-transform: uppercase;
-  letter-spacing: 0.5px; border-bottom: 1px solid var(--border-subtle);
-}
-.stats-table td { padding: 12px 16px; font-size: 13px; border-bottom: 1px solid var(--border-subtle); }
-.stats-table tr:last-child td { border-bottom: none; }
-.stats-table tr:hover td { background: var(--bg-glass); }
-.stats-table .note-cell { color: var(--text-secondary); font-size: 12px; font-style: italic; }
-.stats-table .highlight { color: var(--gold); font-weight: 600; }
-.calculator {
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg); padding: 24px; margin-bottom: 24px;
-}
-.calc-title { font-family: var(--font-display); font-size: 16px; color: var(--gold); margin-bottom: 16px; }
-.calc-level-input { display: flex; align-items: center; gap: 16px; margin-bottom: 24px; }
-.calc-level-input label { font-size: 14px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
-.calc-slider {
-  flex: 1; -webkit-appearance: none; appearance: none; height: 6px;
-  background: var(--bg-secondary); border-radius: 3px; outline: none;
-}
-.calc-slider::-webkit-slider-thumb {
-  -webkit-appearance: none; width: 20px; height: 20px; border-radius: 50%;
-  background: var(--gold); cursor: pointer; box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
-}
-.calc-slider::-webkit-slider-thumb:hover { box-shadow: 0 0 20px rgba(212, 175, 55, 0.6); }
-.calc-level-number {
-  width: 70px; padding: 6px 10px; border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm); background: var(--bg-secondary); color: var(--gold);
-  font-family: var(--font-display); font-size: 24px; font-weight: 700; text-align: center;
-  outline: none; transition: var(--transition); -moz-appearance: textfield;
-}
-.calc-level-number::-webkit-outer-spin-button,
-.calc-level-number::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.calc-level-number:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-.calc-bars { display: grid; gap: 12px; }
-.calc-bar-row { display: grid; grid-template-columns: 100px 1fr 60px 36px; align-items: center; gap: 12px; }
-.calc-bar-label { font-size: 13px; font-weight: 500; color: var(--text-secondary); }
-.calc-bar-track { height: 24px; background: var(--bg-secondary); border-radius: 12px; overflow: hidden; }
-.calc-bar-fill {
-  height: 100%; border-radius: 12px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); position: relative;
-}
-.calc-bar-fill::after {
-  content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 30%;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.15)); border-radius: 0 12px 12px 0;
-}
-.calc-bar-value { font-size: 14px; font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
-.lock-btn {
-  width: 32px; height: 32px; border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
-  background: var(--bg-secondary); cursor: pointer; font-size: 14px; display: flex; align-items: center;
-  justify-content: center; transition: var(--transition); padding: 0;
-}
-.lock-btn:hover { border-color: var(--gold); background: var(--gold-dim); }
-.lock-btn.locked { border-color: var(--gold); background: var(--gold-dim); box-shadow: 0 0 8px rgba(212,175,55,0.2); }
-.lock-input {
-  width: 60px; padding: 4px 6px; border: 1px solid var(--gold); border-radius: var(--radius-sm);
-  background: var(--bg-secondary); color: var(--gold); font-family: var(--font-display);
-  font-size: 14px; font-weight: 700; text-align: center; outline: none;
-  -moz-appearance: textfield;
-}
-.lock-input::-webkit-outer-spin-button, .lock-input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.lock-input:focus { box-shadow: 0 0 10px rgba(212,175,55,0.3); }
-.lock-warning {
-  margin-top: 12px; padding: 10px 14px; border-radius: var(--radius-sm);
-  font-size: 13px; background: var(--crimson-dim); border-left: 3px solid var(--crimson); color: var(--crimson);
-}
-.lock-reset-btn {
-  display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; margin-top: 12px;
-  border: 1px solid var(--border-subtle); border-radius: var(--radius-sm); background: var(--bg-secondary);
-  color: var(--text-secondary); font-family: var(--font-body); font-size: 12px; cursor: pointer; transition: var(--transition);
-}
-.lock-reset-btn:hover { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
-.calc-note {
-  margin-top: 16px; padding: 12px 16px; border-radius: var(--radius-sm);
-  font-size: 13px; line-height: 1.6; border-left: 3px solid var(--gold);
-  background: var(--gold-dim); color: var(--text-secondary);
-}
-.skill-list { display: grid; gap: 12px; }
-.skill-item {
-  display: flex; gap: 16px; padding: 16px; background: var(--bg-card);
-  border: 1px solid var(--border-subtle); border-radius: var(--radius-md); transition: var(--transition);
-}
-.skill-item:hover { border-color: var(--border-glow); background: var(--bg-card-hover); }
-.skill-priority {
-  width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-  border-radius: 50%; font-size: 14px; font-weight: 700; flex-shrink: 0;
-}
-.skill-priority.p1 { background: rgba(212, 175, 55, 0.2); color: var(--gold); }
-.skill-priority.p2 { background: rgba(192, 192, 192, 0.15); color: #c0c0c0; }
-.skill-priority.p3 { background: rgba(205, 127, 50, 0.15); color: #cd7f32; }
-.skill-priority.p4, .skill-priority.p5, .skill-priority.p6 { background: var(--bg-glass); color: var(--text-secondary); }
-.skill-info { flex: 1; }
-.skill-name { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
-.skill-meta { display: flex; gap: 8px; margin-bottom: 6px; }
-.skill-tag { font-size: 11px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
-.skill-tag.type { background: var(--gold-dim); color: var(--gold); }
-.skill-tag.level { background: var(--crimson-dim); color: var(--crimson); }
-.skill-desc { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
-.equip-list { display: grid; gap: 8px; }
-.equip-item {
-  display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 16px;
-  padding: 12px 16px; background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-sm);
-}
-.equip-stat { font-size: 14px; font-weight: 500; }
-.equip-stars { font-size: 12px; letter-spacing: -1px; }
-.equip-note { font-size: 12px; color: var(--text-secondary); text-align: right; }
-.base-stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 24px; }
-.base-stat {
-  text-align: center; padding: 12px; background: var(--bg-card);
-  border-radius: var(--radius-sm); border: 1px solid var(--border-subtle);
-}
-.base-stat-label { font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
-.base-stat-value { font-family: var(--font-display); font-size: 20px; font-weight: 700; }
-.training-timeline { position: relative; padding-left: 40px; }
-.training-timeline::before {
-  content: ''; position: absolute; left: 15px; top: 0; bottom: 0; width: 2px;
-  background: linear-gradient(to bottom, var(--gold), var(--crimson), var(--gold)); opacity: 0.3;
-}
-.training-spot {
-  position: relative; margin-bottom: 16px; padding: 20px 24px;
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md); transition: var(--transition);
-}
-.training-spot:hover { border-color: var(--border-glow); background: var(--bg-card-hover); }
-.training-spot.current { border-color: var(--gold); box-shadow: 0 0 20px rgba(212, 175, 55, 0.15); }
-.training-spot::before {
-  content: ''; position: absolute; left: -33px; top: 24px; width: 12px; height: 12px;
-  border-radius: 50%; background: var(--bg-secondary); border: 2px solid var(--text-muted); transition: var(--transition);
-}
-.training-spot.current::before { background: var(--gold); border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.5); }
-.training-level { font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--gold); margin-bottom: 4px; }
-.training-maps { font-size: 14px; font-weight: 500; margin-bottom: 8px; }
-.training-tactic {
-  font-size: 13px; color: var(--text-secondary); margin-bottom: 12px; padding: 8px 12px;
-  background: var(--bg-glass); border-radius: var(--radius-sm); border-left: 3px solid var(--gold);
-}
-.training-formation {
-  font-size: 13px; margin-bottom: 8px; padding: 6px 12px;
-  background: var(--crimson-dim); border-radius: var(--radius-sm); font-weight: 500;
-}
-.training-tips { list-style: none; display: grid; gap: 4px; }
-.training-tips li { font-size: 12px; color: var(--text-secondary); padding-left: 16px; position: relative; }
-.training-tips li::before { content: '→'; position: absolute; left: 0; color: var(--gold); }
-.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 24px; }
-.filter-btn { padding: 6px 16px; border-radius: 20px; border: 1px solid var(--border-subtle); background: var(--bg-secondary); color: var(--text-secondary); cursor: pointer; transition: var(--transition); font-family: var(--font-body); font-weight: 500; font-size: 13px; }
-.filter-btn:hover { background: var(--bg-glass); border-color: var(--text-muted); color: var(--text-primary); }
-.filter-btn.active { background: var(--gold-dim); border-color: var(--gold); color: var(--gold) !important; box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-.fav-btn { position: absolute; top: 16px; right: 16px; background: rgba(0,0,0,0.6); border: 1px solid var(--border-subtle); border-radius: 50%; width: 32px; height: 32px; font-size: 14px; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; z-index: 2; opacity: 0; backdrop-filter: blur(4px); }
-.char-card:hover .fav-btn { opacity: 0.5; }
-.fav-btn:hover { opacity: 1 !important; transform: scale(1.1); }
-.fav-btn.active { opacity: 1; border-color: var(--crimson); text-shadow: 0 0 10px red; background: var(--crimson-dim); }
-.training-level-input {
-  display: flex; align-items: center; gap: 16px; padding: 16px 24px;
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md); margin-bottom: 32px;
-}
-.training-level-input label { font-size: 14px; font-weight: 500; color: var(--text-secondary); white-space: nowrap; }
-.training-level-input input[type="number"] {
-  width: 80px; padding: 8px 12px; border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm); background: var(--bg-secondary); color: var(--gold);
-  font-family: var(--font-display); font-size: 20px; font-weight: 700; text-align: center; outline: none;
-}
-.training-level-input input:focus { border-color: var(--gold); box-shadow: 0 0 10px rgba(212, 175, 55, 0.2); }
-.training-level-info { font-size: 13px; color: var(--text-secondary); }
-@media (max-width: 768px) {
-  #main-nav { padding: 0 16px; }
-  #page-content { padding: 80px 16px 32px; }
-  .page-title { font-size: 24px; }
-  .team-grid { grid-template-columns: 1fr; }
-  .detail-header { flex-direction: column; text-align: center; }
-  .tabs { flex-wrap: wrap; }
-  .calc-bar-row { grid-template-columns: 80px 1fr 50px 28px; }
-  .base-stats { grid-template-columns: repeat(2, 1fr); }
-  .equip-item { grid-template-columns: 1fr; gap: 4px; }
-  .equip-note { text-align: left; }
-  .four-acc-grid { grid-template-columns: 1fr; }
-  .four-acc-card .calc-bar-row { grid-template-columns: 70px 1fr 45px; }
-}
-.four-acc-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-.four-acc-card {
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg); padding: 20px; overflow: hidden; position: relative;
-}
-.four-acc-card::before {
-  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-  background: var(--card-color); opacity: 0.8;
-}
-.four-acc-card-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
-.four-acc-emoji { font-size: 28px; width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; background: var(--bg-glass); border-radius: var(--radius-sm); }
-.four-acc-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
-.four-acc-branch { font-size: 12px; color: var(--text-secondary); }
-.four-acc-card .calc-bar-row { grid-template-columns: 80px 1fr 50px; }
-.four-acc-card .calc-bars { gap: 8px; }
-.four-acc-card .calc-note { margin-top: 12px; padding: 8px 12px; font-size: 12px; }
-.four-acc-empty {
-  grid-column: 1 / -1; text-align: center; padding: 60px 20px;
-  background: var(--bg-card); border: 2px dashed var(--border-subtle); border-radius: var(--radius-lg);
-  color: var(--text-muted); font-size: 15px;
-}
-.four-acc-empty a { color: var(--gold); cursor: pointer; text-decoration: underline; }
-.four-acc-level-control {
-  display: flex; align-items: center; gap: 16px; padding: 16px 24px;
-  background: var(--bg-card); border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md); margin-bottom: 24px;
-}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VLTK Planner — 4 ACC Build Guide</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-card: rgba(18, 18, 26, 0.85);
+      --bg-card-hover: rgba(25, 25, 38, 0.95);
+      --bg-glass: rgba(255, 255, 255, 0.03);
+      --border-subtle: rgba(255, 255, 255, 0.06);
+      --border-glow: rgba(212, 175, 55, 0.3);
+      --gold: #d4af37;
+      --gold-light: #f0d060;
+      --gold-dim: rgba(212, 175, 55, 0.15);
+      --crimson: #dc3545;
+      --crimson-dim: rgba(220, 53, 69, 0.15);
+      --text-primary: #e8e6e3;
+      --text-secondary: #8a8a9a;
+      --text-muted: #5a5a6a;
+      --green: #2ecc71;
+      --blue: #3498db;
+      --orange: #e67e22;
+      --purple: #9b59b6;
+      --font-display: 'Be Vietnam Pro', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --shadow-card: 0 4px 24px rgba(0, 0, 0, 0.4);
+      --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+      background-image:
+        radial-gradient(ellipse at 20% 50%, rgba(212, 175, 55, 0.03) 0%, transparent 50%),
+        radial-gradient(ellipse at 80% 20%, rgba(220, 53, 69, 0.02) 0%, transparent 50%);
+    }
+
+    #main-nav {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 64px;
+      background: rgba(10, 10, 15, 0.92);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-icon {
+      font-size: 24px;
+    }
+
+    .nav-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      letter-spacing: 1px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 4px;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: var(--radius-md);
+      text-decoration: none;
+      color: var(--text-secondary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition);
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      color: var(--text-primary);
+      background: var(--bg-glass);
+    }
+
+    .nav-link.active {
+      color: var(--gold);
+      background: var(--gold-dim);
+      border-color: var(--border-glow);
+    }
+
+    #page-content {
+      padding: 88px 32px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      min-height: 100vh;
+    }
+
+    .page-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      background: linear-gradient(135deg, var(--gold), var(--gold-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 8px;
+    }
+
+    .page-subtitle {
+      color: var(--text-secondary);
+      font-size: 15px;
+      font-weight: 300;
+    }
+
+    .team-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+    }
+
+    .char-card {
+      position: relative;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      cursor: pointer;
+      transition: var(--transition);
+      overflow: hidden;
+    }
+
+    .char-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--card-color);
+      opacity: 0.6;
+      transition: var(--transition);
+    }
+
+    .char-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--card-color);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-card), 0 0 30px var(--card-glow);
+    }
+
+    .char-card:hover::before {
+      height: 4px;
+      opacity: 1;
+    }
+
+    .char-card-header {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .char-emoji {
+      font-size: 40px;
+      width: 56px;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-glass);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .char-info h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 2px;
+    }
+
+    .char-branch {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .char-role {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .char-desc {
+      font-size: 13px;
+      color: var(--text-secondary);
+      line-height: 1.6;
+    }
+
+    .char-card-footer {
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border-subtle);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .char-element {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .char-view-btn {
+      font-size: 12px;
+      color: var(--gold);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      transition: var(--transition);
+    }
+
+    .char-card:hover .char-view-btn {
+      gap: 8px;
+    }
+
+    .detail-back {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      font-weight: 500;
+      transition: var(--transition);
+      margin-bottom: 24px;
+      cursor: pointer;
+      background: rgba(10, 10, 15, 0.85);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border-subtle);
+      font-family: var(--font-body);
+      position: sticky;
+      top: 85px;
+      z-index: 90;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+    }
+
+    .detail-back:hover {
+      color: var(--gold);
+      border-color: var(--border-glow);
+    }
+
+    .detail-header {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 32px;
+      padding: 24px;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .detail-emoji {
+      font-size: 48px;
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-glass);
+      border-radius: var(--radius-md);
+    }
+
+    .detail-name {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .detail-meta {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 4px;
+    }
+
+    .detail-summary {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-top: 8px;
+      padding: 8px 14px;
+      background: var(--gold-dim);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--gold);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      background: var(--bg-secondary);
+      padding: 4px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 10px 16px;
+      border: none;
+      background: none;
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+      background: var(--bg-glass);
+    }
+
+    .tab-btn.active {
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stats-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--bg-card);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-subtle);
+      margin-bottom: 24px;
+    }
+
+    .stats-table th {
+      background: rgba(212, 175, 55, 0.08);
+      padding: 12px 16px;
+      text-align: left;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gold);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .stats-table td {
+      padding: 12px 16px;
+      font-size: 13px;
+      border-bottom: 1px solid var(--border-subtle);
+    }
+
+    .stats-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .stats-table tr:hover td {
+      background: var(--bg-glass);
+    }
+
+    .stats-table .note-cell {
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-style: italic;
+    }
+
+    .stats-table .highlight {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .calculator {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .calc-title {
+      font-family: var(--font-display);
+      font-size: 16px;
+      color: var(--gold);
+      margin-bottom: 16px;
+    }
+
+    .calc-level-input {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .calc-level-input label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .calc-slider {
+      flex: 1;
+      -webkit-appearance: none;
+      appearance: none;
+      height: 6px;
+      background: var(--bg-secondary);
+      border-radius: 3px;
+      outline: none;
+    }
+
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--gold);
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.4);
+    }
+
+    .calc-slider::-webkit-slider-thumb:hover {
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+    }
+
+    .calc-level-number {
+      width: 70px;
+      padding: 6px 10px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      transition: var(--transition);
+      -moz-appearance: textfield;
+    }
+
+    .calc-level-number::-webkit-outer-spin-button,
+    .calc-level-number::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .calc-level-number:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .calc-bars {
+      display: grid;
+      gap: 12px;
+    }
+
+    .calc-bar-row {
+      display: grid;
+      grid-template-columns: 100px 1fr 60px 36px;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .calc-bar-label {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text-secondary);
+    }
+
+    .calc-bar-track {
+      height: 24px;
+      background: var(--bg-secondary);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .calc-bar-fill {
+      height: 100%;
+      border-radius: 12px;
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+    }
+
+    .calc-bar-fill::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 30%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.15));
+      border-radius: 0 12px 12px 0;
+    }
+
+    .calc-bar-value {
+      font-size: 14px;
+      font-weight: 600;
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .lock-btn {
+      width: 32px;
+      height: 32px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      cursor: pointer;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: var(--transition);
+      padding: 0;
+    }
+
+    .lock-btn:hover {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .lock-btn.locked {
+      border-color: var(--gold);
+      background: var(--gold-dim);
+      box-shadow: 0 0 8px rgba(212, 175, 55, 0.2);
+    }
+
+    .lock-input {
+      width: 60px;
+      padding: 4px 6px;
+      border: 1px solid var(--gold);
+      border-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+      -moz-appearance: textfield;
+    }
+
+    .lock-input::-webkit-outer-spin-button,
+    .lock-input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .lock-input:focus {
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.3);
+    }
+
+    .lock-warning {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      background: var(--crimson-dim);
+      border-left: 3px solid var(--crimson);
+      color: var(--crimson);
+    }
+
+    .lock-reset-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      margin-top: 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      font-family: var(--font-body);
+      font-size: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .lock-reset-btn:hover {
+      border-color: var(--gold);
+      color: var(--gold);
+      background: var(--gold-dim);
+    }
+
+    .calc-note {
+      margin-top: 16px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      line-height: 1.6;
+      border-left: 3px solid var(--gold);
+      background: var(--gold-dim);
+      color: var(--text-secondary);
+    }
+
+    .skill-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .skill-item {
+      display: flex;
+      gap: 16px;
+      padding: 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+    }
+
+    .skill-item:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+    }
+
+    .skill-priority {
+      width: 36px;
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+      font-size: 14px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+
+    .skill-priority.p1 {
+      background: rgba(212, 175, 55, 0.2);
+      color: var(--gold);
+    }
+
+    .skill-priority.p2 {
+      background: rgba(192, 192, 192, 0.15);
+      color: #c0c0c0;
+    }
+
+    .skill-priority.p3 {
+      background: rgba(205, 127, 50, 0.15);
+      color: #cd7f32;
+    }
+
+    .skill-priority.p4,
+    .skill-priority.p5,
+    .skill-priority.p6 {
+      background: var(--bg-glass);
+      color: var(--text-secondary);
+    }
+
+    .skill-info {
+      flex: 1;
+    }
+
+    .skill-name {
+      font-weight: 600;
+      font-size: 14px;
+      margin-bottom: 4px;
+    }
+
+    .skill-meta {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 6px;
+    }
+
+    .skill-tag {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+
+    .skill-tag.type {
+      background: var(--gold-dim);
+      color: var(--gold);
+    }
+
+    .skill-tag.level {
+      background: var(--crimson-dim);
+      color: var(--crimson);
+    }
+
+    .skill-desc {
+      font-size: 12px;
+      color: var(--text-secondary);
+      line-height: 1.5;
+    }
+
+    .equip-list {
+      display: grid;
+      gap: 8px;
+    }
+
+    .equip-item {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 16px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+    }
+
+    .equip-stat {
+      font-size: 14px;
+      font-weight: 500;
+    }
+
+    .equip-stars {
+      font-size: 12px;
+      letter-spacing: -1px;
+    }
+
+    .equip-note {
+      font-size: 12px;
+      color: var(--text-secondary);
+      text-align: right;
+    }
+
+    .base-stats {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .base-stat {
+      text-align: center;
+      padding: 12px;
+      background: var(--bg-card);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-subtle);
+    }
+
+    .base-stat-label {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .base-stat-value {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+    }
+
+    .training-timeline {
+      position: relative;
+      padding-left: 40px;
+    }
+
+    .training-timeline::before {
+      content: '';
+      position: absolute;
+      left: 15px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background: linear-gradient(to bottom, var(--gold), var(--crimson), var(--gold));
+      opacity: 0.3;
+    }
+
+    .training-spot {
+      position: relative;
+      margin-bottom: 16px;
+      padding: 20px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      transition: var(--transition);
+    }
+
+    .training-spot:hover {
+      border-color: var(--border-glow);
+      background: var(--bg-card-hover);
+    }
+
+    .training-spot.current {
+      border-color: var(--gold);
+      box-shadow: 0 0 20px rgba(212, 175, 55, 0.15);
+    }
+
+    .training-spot::before {
+      content: '';
+      position: absolute;
+      left: -33px;
+      top: 24px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--bg-secondary);
+      border: 2px solid var(--text-muted);
+      transition: var(--transition);
+    }
+
+    .training-spot.current::before {
+      background: var(--gold);
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.5);
+    }
+
+    .training-level {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: 4px;
+    }
+
+    .training-maps {
+      font-size: 14px;
+      font-weight: 500;
+      margin-bottom: 8px;
+    }
+
+    .training-tactic {
+      font-size: 13px;
+      color: var(--text-secondary);
+      margin-bottom: 12px;
+      padding: 8px 12px;
+      background: var(--bg-glass);
+      border-radius: var(--radius-sm);
+      border-left: 3px solid var(--gold);
+    }
+
+    .training-formation {
+      font-size: 13px;
+      margin-bottom: 8px;
+      padding: 6px 12px;
+      background: var(--crimson-dim);
+      border-radius: var(--radius-sm);
+      font-weight: 500;
+    }
+
+    .training-tips {
+      list-style: none;
+      display: grid;
+      gap: 4px;
+    }
+
+    .training-tips li {
+      font-size: 12px;
+      color: var(--text-secondary);
+      padding-left: 16px;
+      position: relative;
+    }
+
+    .training-tips li::before {
+      content: '→';
+      position: absolute;
+      left: 0;
+      color: var(--gold);
+    }
+
+    .filters {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    .filter-btn {
+      padding: 6px 16px;
+      border-radius: 20px;
+      border: 1px solid var(--border-subtle);
+      background: var(--bg-secondary);
+      color: var(--text-secondary);
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: var(--font-body);
+      font-weight: 500;
+      font-size: 13px;
+    }
+
+    .filter-btn:hover {
+      background: var(--bg-glass);
+      border-color: var(--text-muted);
+      color: var(--text-primary);
+    }
+
+    .filter-btn.active {
+      background: var(--gold-dim);
+      border-color: var(--gold);
+      color: var(--gold) !important;
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .fav-btn {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      background: rgba(0, 0, 0, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 50%;
+      width: 32px;
+      height: 32px;
+      font-size: 14px;
+      cursor: pointer;
+      transition: 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      opacity: 0;
+      backdrop-filter: blur(4px);
+    }
+
+    .char-card:hover .fav-btn {
+      opacity: 0.5;
+    }
+
+    .fav-btn:hover {
+      opacity: 1 !important;
+      transform: scale(1.1);
+    }
+
+    .fav-btn.active {
+      opacity: 1;
+      border-color: var(--crimson);
+      text-shadow: 0 0 10px red;
+      background: var(--crimson-dim);
+    }
+
+    .training-level-input {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 32px;
+    }
+
+    .training-level-input label {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+
+    .training-level-input input[type="number"] {
+      width: 80px;
+      padding: 8px 12px;
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-sm);
+      background: var(--bg-secondary);
+      color: var(--gold);
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      text-align: center;
+      outline: none;
+    }
+
+    .training-level-input input:focus {
+      border-color: var(--gold);
+      box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+    }
+
+    .training-level-info {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    @media (max-width: 768px) {
+      #main-nav {
+        padding: 0 16px;
+      }
+
+      #page-content {
+        padding: 80px 16px 32px;
+      }
+
+      .page-title {
+        font-size: 24px;
+      }
+
+      .team-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .detail-header {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .tabs {
+        flex-wrap: wrap;
+      }
+
+      .calc-bar-row {
+        grid-template-columns: 80px 1fr 50px 28px;
+      }
+
+      .base-stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .equip-item {
+        grid-template-columns: 1fr;
+        gap: 4px;
+      }
+
+      .equip-note {
+        text-align: left;
+      }
+
+      .four-acc-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .four-acc-card .calc-bar-row {
+        grid-template-columns: 70px 1fr 45px;
+      }
+    }
+
+    .four-acc-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+    }
+
+    .four-acc-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .four-acc-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: var(--card-color);
+      opacity: 0.8;
+    }
+
+    .four-acc-card-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .four-acc-emoji {
+      font-size: 28px;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg-glass);
+      border-radius: var(--radius-sm);
+    }
+
+    .four-acc-name {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 700;
+    }
+
+    .four-acc-branch {
+      font-size: 12px;
+      color: var(--text-secondary);
+    }
+
+    .four-acc-card .calc-bar-row {
+      grid-template-columns: 80px 1fr 50px;
+    }
+
+    .four-acc-card .calc-bars {
+      gap: 8px;
+    }
+
+    .four-acc-card .calc-note {
+      margin-top: 12px;
+      padding: 8px 12px;
+      font-size: 12px;
+    }
+
+    .four-acc-empty {
+      grid-column: 1 / -1;
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--bg-card);
+      border: 2px dashed var(--border-subtle);
+      border-radius: var(--radius-lg);
+      color: var(--text-muted);
+      font-size: 15px;
+    }
+
+    .four-acc-empty a {
+      color: var(--gold);
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    .four-acc-level-control {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px 24px;
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius-md);
+      margin-bottom: 24px;
+    }
+  </style>
 </head>
+
 <body>
-<div id="app">
-  <nav id="main-nav">
-    <div class="nav-brand"><span class="nav-icon">⚔️</span><span class="nav-title">VLTK Planner</span></div>
-    <div class="nav-links">
-      <a class="nav-link active" data-page="team" onclick="go('team', 'all')"><span>📚</span><span>Các Phái</span></a>
-      <a class="nav-link" data-page="fourAcc" onclick="go('fourAcc')"><span>🎮</span><span>4 ACC</span></a>
-      <a class="nav-link" data-page="training" onclick="go('training')"><span>🗺️</span><span>Bãi Train</span></a>
-    </div>
-  </nav>
-  <main id="page-content"></main>
-</div>
-<script>
-// ═══ DATA ═══
-const characters = [
-  // HỆ KIM
-  {id:'tldao',name:'Thiếu Lâm',branch:'Đao Pháp',role:'Kỵ Binh Khống Chế',element:'Kim',emoji:'🗡️',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Ngoại Công kỵ binh. SM 80% SK 20%, TP&NL=0. Cưỡi ngựa chém tầm xa, tốc độ di chuyển cao, săn phái máu giấy.',baseStats:{sm:35,tp:25,sk:25,nl:15},buildGuide:{summary:'Vua cày cấp, đánh xa diện rộng. Sức mạnh là sát thương chính.',phases:[{level:'10-50',sm:'70-80%',tp:'0',sk:'20-30%',nl:'0',note:'Max TL Đao Pháp. 1đ Ma Ha Vô Lượng'},{level:'60',sm:'70-80%',tp:'0',sk:'20-30%',nl:'0',note:'Max Trấn Phái Như Lai Thiên Diệp ngay lập tức'},{level:'90+',sm:'70-80%',tp:'0',sk:'Máu > 4000',nl:'0',note:'Max Vô Tướng Trảm, sau đó tăng Dịch Cân Kinh'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:60,t:150,p:0}],nlFixed:0}},skills:[{name:'Vô Tướng Trảm',type:'Đao Pháp',priority:1,desc:'Đao chém sát thương khủng 90',level:'9x'},{name:'Như Lai Thiên Diệp',type:'Trấn Phái',priority:2,desc:'Tăng máu và sát thương',level:'6x'},{name:'Dịch Cân Kinh',type:'Hỗ trợ',priority:3,desc:'Vừa hồi máu vừa kháng',level:'6x'},{name:'Bất Động Minh Vương',type:'Aura',priority:4,desc:'Vòng sáng kháng tính',level:'3x'},{name:'La Hán Trận',type:'Phản đòn',priority:5,desc:'Phản đòn cận chiến',level:'3x'},{name:'Sư Tử Hống',type:'Khống chế',priority:6,desc:'Gây choáng 60',level:'6x'}],equipment:[{stat:'Sinh Lực',importance:'⭐⭐⭐⭐⭐',note:'Càng nhìu máu càng tốt'},{stat:'Băng Sát',importance:'⭐⭐⭐⭐',note:'Làm chậm mục tiêu'}]},
-  {id:'tlbong',name:'Thiếu Lâm',branch:'Bổng Pháp',role:'Tank / AoE',element:'Kim',emoji:'🛡️',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Ngoại Công Tank/AoE. SM 60% SK 40%, không cần TP. Gom quái tốt, phản đòn La Hán Trận, đi đầu chịu đòn cho team.',baseStats:{sm:35,tp:25,sk:25,nl:15},buildGuide:{summary:'Cỗ xe tăng càn quét, gây hiệu ứng choáng trong Tống Kim.',phases:[{level:'10-50',sm:'60%',tp:'0',sk:'40%',nl:'0',note:'Max TL Côn Pháp. 1đ Hoành Tảo Thiên Quân lấy sát thương lan'},{level:'60',sm:'60%',tp:'0',sk:'40%',nl:'0',note:'Max Trấn Phái lấy tốc đánh và sát thương'},{level:'90+',sm:'60%',tp:'0',sk:'Máu 5k-6k+',nl:'0',note:'Max Hoành Tảo Thiên Quân (9x). Hỗ trợ La Hán Trận, Dịch Cân Kinh'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Hoành Tảo Thiên Quân',type:'Bổng Pháp',priority:1,desc:'Quật bổng diện rộng 90',level:'9x'},{name:'Như Lai Thiên Diệp',type:'Trấn Phái',priority:2,desc:'Tăng máu lớn',level:'6x'},{name:'Dịch Cân Kinh',type:'Hỗ trợ',priority:3,desc:'Hồi sinh lực và kháng tính',level:'6x'},{name:'Bất Động Minh Vương',type:'Aura',priority:4,desc:'Vòng sáng kháng tính',level:'3x'},{name:'La Hán Trận',type:'Phản đòn',priority:5,desc:'Phản sát thương cận chiến',level:'3x'},{name:'Vi Đà Bổng Pháp',type:'Bổng Pháp',priority:6,desc:'Chiêu 60 buff sát thương bổng',level:'6x'}],equipment:[{stat:'Phản đòn %',importance:'⭐⭐⭐⭐⭐',note:'Phối hợp La Hán Trận'},{stat:'Độ chính xác',importance:'⭐⭐⭐⭐',note:'Bù đắp sát thương hụt'}]},
-  {id:'tlquyen',name:'Thiếu Lâm',branch:'Quyền Pháp',role:'Sát Thủ Bộ Binh',element:'Kim',emoji:'👊',color:'#e67e22',colorGlow:'rgba(230,126,34,0.3)',description:'Ngoại Công bộ binh. Dồn SM lấy đam, SK giữ máu 4k2. TP=0, NL=0. Đấm liên hoàn khóa mục tiêu, không cưỡi ngựa.',baseStats:{sm:35,tp:25,sk:25,nl:15},buildGuide:{summary:'Tăng Sức mạnh để dọn quái nhanh. Cấp 60+ ưu tiên máu 4k2, còn lại dồn SM.',phases:[{level:'10-20',sm:'Dồn hết',tp:'0',sk:'0',nl:'0',note:'Max Quyền Pháp, Hàng Long Bất Vũ 2 điểm (ít tốn mana)'},{level:'30-50',sm:'70%',tp:'0',sk:'30%',nl:'0',note:'Max La Hán. Bớt 50đ SK nếu không có đồ Kim Phong'},{level:'60-90+',sm:'Dồn hết',tp:'0',sk:'Máu 4k2',nl:'0',note:'Max Như Lai Thiên Diệp (60), rồi tăng Dịch Cân Kinh'}],calc:{smTarget:110,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Đạt Ma Độ Giang',type:'Quyền Pháp',priority:1,desc:'Quyền đấm liên hoàn 90',level:'9x'},{name:'Như Lai Thiên Diệp',type:'Trấn Phái',priority:2,desc:'Tăng máu và sát thương',level:'6x'},{name:'Dịch Cân Kinh',type:'Hỗ trợ',priority:3,desc:'Vừa hồi máu vừa kháng',level:'6x'},{name:'Bất Động Minh Vương',type:'Aura',priority:4,desc:'Vòng sáng kháng tính',level:'3x'},{name:'La Hán Trận',type:'Phản đòn',priority:5,desc:'Phản đòn cận chiến',level:'3x'},{name:'Thiếu Lâm Quyền Pháp',type:'Cơ bản',priority:6,desc:'Tăng sức đánh cơ bản',level:'1x'}],equipment:[{stat:'Tốc đánh',importance:'⭐⭐⭐⭐⭐',note:'Đấm nhanh không cho đối thủ nhúc nhích'},{stat:'Độ chính xác',importance:'⭐⭐⭐⭐',note:'Đấm trượt là thua'}]},
-  
-  {id:'tvchuy',name:'Thiên Vương',branch:'Chùy Pháp',role:'Sốc Sát Thương',element:'Kim',emoji:'🔨',color:'#d35400',colorGlow:'rgba(211,84,0,0.3)',description:'Lực tay to nhất game. Lv1-60 dồn SM dọn quái nhanh, lv61+ thêm TP và SK chuẩn bị PK. Đoạn Hồn Thích rush gây choáng rồi dùng chùy gõ.',baseStats:{sm:35,tp:25,sk:25,nl:15},buildGuide:{summary:'Lv1-60 dồn SM + 1SK/lv. Lv61-90 thêm TP (~80) và SK (~150). Sau 90 tỷ lệ 8SM/2SK mỗi cấp. NL không tăng.',phases:[{level:'1-60',sm:'Dồn phần lớn',tp:'0',sk:'1đ/lv',nl:'0',note:'Ưu tiên SM dọn quái nhanh, SK tăng đều 1đ để không quá giấy.'},{level:'61-90',sm:'Mốc 300',tp:'Mốc 80',sk:'Mốc 150 (~4400 HP)',nl:'0',note:'TP cho chính xác khi đánh người/quái cấp cao, SK cho trụ vững Tống Kim/săn Boss.'},{level:'90+',sm:'8đ/cấp',tp:'Giữ 80+',sk:'2đ/cấp',nl:'0',note:'Tẩy tủy max Thừa Long Quyết. Tỷ lệ 8SM/2SK. Kim Chung Tráo max khi 12x-13x.'}],calc:{smTarget:380,smReachAt:120,tpRate:[{f:61,t:90,p:2}],nlFixed:0}},skills:[{name:'Thừa Long Quyết',type:'Chùy Pháp',priority:1,desc:'Chiêu chính đánh diện rộng và săn Boss hiệu quả',level:'9x'},{name:'Thiên Vương Chiến Ý',type:'Trấn Phái',priority:2,desc:'Max ngay lv60, bùng nổ sát thương và máu toàn diện',level:'6x'},{name:'Thiên Vương Chùy Pháp',type:'Cơ bản',priority:3,desc:'Max trước lấy sát thương cơ bản và tốc độ đánh',level:'1x'},{name:'Kim Chung Tráo',type:'Màng chắn',priority:4,desc:'~10đ giai đoạn đầu lấy độ lỳ, max sau 12x-13x để trâu tối đa',level:'2x'},{name:'Đoạn Hồn Thích',type:'Áp sát',priority:5,desc:'BK quan trọng nhất, rush tới mục tiêu gây choáng rồi dùng chùy gõ',level:'3x'},{name:'Hành Văn Quyết',type:'Hỗ trợ',priority:6,desc:'Hỗ trợ lực tay, dồn điểm dư sau khi max các chiêu chính',level:'6x'}],equipment:[{stat:'Băng sát',importance:'⭐⭐⭐⭐⭐',note:'Giữ chân đối thủ khi gõ chùy'},{stat:'Tốc đánh + Chính xác',importance:'⭐⭐⭐⭐',note:'Tối ưu khả năng khống chế'}]},
-  {id:'tvthuong',name:'Thiên Vương',branch:'Thương Pháp',role:'Đâm Liên Hoàn',element:'Kim',emoji:'🔱',color:'#d35400',colorGlow:'rgba(211,84,0,0.3)',description:'Tốc độ đánh nhanh, đâm liên tục gây giật lag đối phương không thể đánh trả.',baseStats:{sm:35,tp:25,sk:25,nl:15},buildGuide:{summary:'Cân bằng SM và SK, thương cần sống dai đâm lâu.',phases:[{level:'1-90',sm:'Mốc 260',tp:'0',sk:'Còn lại',nl:'0',note:'Dame thương nhỏ, cần đâm nhìu'},{level:'90-150',sm:'Mốc 350',tp:'0',sk:'Dồn hết',nl:'0',note:'SK dồi dào để đứng tank đánh nát giáp địch'}],calc:{smTarget:350,smReachAt:100,tpRate:[{f:1,t:150,p:1}],nlFixed:0}},skills:[{name:'Truy Tinh Trục Nguyệt',type:'Thương Pháp',priority:1,desc:'Thương chọc liên hoàn 90',level:'9x'},{name:'Thiên Vương Chiến Ý',type:'Trấn Phái',priority:2,desc:'Sức mạnh chí tôn',level:'6x'},{name:'Huyết Chiến Bát Phương',type:'Aura',priority:3,desc:'Hút máu và sát thương',level:'3x'},{name:'Dương Giác Mâu Pháp',type:'Cơ bản',priority:4,desc:'Cơ bản thương',level:'1x'},{name:'Đảo Hư Thiên',type:'Áp sát',priority:5,desc:'Phi thân tiếp cận',level:'3x'},{name:'Kinh Mang Phá Giáp',type:'Thương Pháp',priority:6,desc:'Chiêu 60 xuyên thấu',level:'6x'}],equipment:[{stat:'Tốc đánh',importance:'⭐⭐⭐⭐⭐',note:'Mốc tốc đánh tối đa'},{stat:'Băng sát ngoại',importance:'⭐⭐⭐⭐',note:'Làm chậm kết hợp đâm liên tục'}]},
-  {id:'tvdao',name:'Thiên Vương',branch:'Đao Pháp',role:'DPS Cưỡi Ngựa',element:'Kim',emoji:'🐎',color:'#d35400',colorGlow:'rgba(211,84,0,0.3)',description:'Cơ động vô cùng tận. Lướt qua lướt lại chém đối thủ trên yên ngựa.',baseStats:{sm:35,tp:25,sk:25,nl:15},buildGuide:{summary:'SM nhiều, TP cực cao để tăng chính xác ngựa.',phases:[{level:'1-90',sm:'Mốc 260',tp:'Mốc 150',sk:'Còn lại',nl:'0',note:'Cưỡi ngựa chém rất dính'},{level:'90-150',sm:'Mốc 320',tp:'Mốc 200',sk:'Còn lại',nl:'0',note:'Tối ưu damage và độ chính xác'}],calc:{smTarget:320,smReachAt:100,tpRate:[{f:1,t:90,p:1},{f:90,t:150,p:2}],nlFixed:0}},skills:[{name:'Phá Thiên Trảm',type:'Đao Pháp',priority:1,desc:'Chém đao cực xa 90',level:'9x'},{name:'Thiên Vương Chiến Ý',type:'Trấn Phái',priority:2,desc:'Tăng sát thương ngoại',level:'6x'},{name:'Huyết Chiến Bát Phương',type:'Aura',priority:3,desc:'Vòng sáng áp đảo',level:'3x'},{name:'Vô Tâm Trảm',type:'Đao Pháp',priority:4,desc:'Chiêu 60 chém hội đồng',level:'6x'},{name:'Thiên Vương Đao Pháp',type:'Cơ bản',priority:5,desc:'Nền tảng đao pháp',level:'1x'},{name:'Đảo Hư Thiên',type:'Áp sát',priority:6,desc:'Rượt đuổi mục tiêu',level:'3x'}],equipment:[{stat:'Hút Sinh Lực',importance:'⭐⭐⭐⭐⭐',note:'Train bãi cực sống dai'},{stat:'Tốc độ di chuyển',importance:'⭐⭐⭐⭐',note:'Chạy và chém'}]},
+  <div id="app">
+    <nav id="main-nav">
+      <div class="nav-brand"><span class="nav-icon">⚔️</span><span class="nav-title">VLTK Planner</span></div>
+      <div class="nav-links">
+        <a class="nav-link active" data-page="team" onclick="go('team', 'all')"><span>📚</span><span>Các Phái</span></a>
+        <a class="nav-link" data-page="fourAcc" onclick="go('fourAcc')"><span>🎮</span><span>4 ACC</span></a>
+        <a class="nav-link" data-page="training" onclick="go('training')"><span>🗺️</span><span>Bãi Train</span></a>
+      </div>
+    </nav>
+    <main id="page-content"></main>
+  </div>
+  <script>
+    // ═══ DATA ═══
+    const characters = [
+      // HỆ KIM
+      { id: 'tldao', name: 'Thiếu Lâm', branch: 'Đao Pháp', role: 'Kỵ Binh Khống Chế', element: 'Kim', emoji: '🗡️', color: '#e67e22', colorGlow: 'rgba(230,126,34,0.3)', description: 'Ngoại Công kỵ binh. SM 80% SK 20%, TP&NL=0. Cưỡi ngựa chém tầm xa, tốc độ di chuyển cao, săn phái máu giấy.', baseStats: { sm: 35, tp: 25, sk: 25, nl: 15 }, buildGuide: { summary: 'Vua cày cấp, đánh xa diện rộng. Sức mạnh là sát thương chính.', phases: [{ level: '10-50', sm: '70-80%', tp: '0', sk: '20-30%', nl: '0', note: 'Max TL Đao Pháp. 1đ Ma Ha Vô Lượng' }, { level: '60', sm: '70-80%', tp: '0', sk: '20-30%', nl: '0', note: 'Max Trấn Phái Như Lai Thiên Diệp ngay lập tức' }, { level: '90+', sm: '70-80%', tp: '0', sk: 'Máu > 4000', nl: '0', note: 'Max Vô Tướng Trảm, sau đó tăng Dịch Cân Kinh' }], calc: { smRatio: [{ f: 1, t: 150, p: 75 }], tpRate: [{ f: 60, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Vô Tướng Trảm', type: 'Đao Pháp', priority: 1, desc: 'Đao chém sát thương khủng 90', level: '9x' }, { name: 'Như Lai Thiên Diệp', type: 'Trấn Phái', priority: 2, desc: 'Tăng máu và sát thương', level: '6x' }, { name: 'Dịch Cân Kinh', type: 'Hỗ trợ', priority: 3, desc: 'Vừa hồi máu vừa kháng', level: '6x' }, { name: 'Bất Động Minh Vương', type: 'Aura', priority: 4, desc: 'Vòng sáng kháng tính', level: '3x' }, { name: 'La Hán Trận', type: 'Phản đòn', priority: 5, desc: 'Phản đòn cận chiến', level: '3x' }, { name: 'Sư Tử Hống', type: 'Khống chế', priority: 6, desc: 'Gây choáng 60', level: '6x' }], equipment: [{ stat: 'Sinh Lực', importance: '⭐⭐⭐⭐⭐', note: 'Càng nhìu máu càng tốt' }, { stat: 'Băng Sát', importance: '⭐⭐⭐⭐', note: 'Làm chậm mục tiêu' }] },
+      { id: 'tlbong', name: 'Thiếu Lâm', branch: 'Bổng Pháp', role: 'Tank / AoE', element: 'Kim', emoji: '🛡️', color: '#e67e22', colorGlow: 'rgba(230,126,34,0.3)', description: 'Ngoại Công Tank/AoE. SM 60% SK 40%, không cần TP. Gom quái tốt, phản đòn La Hán Trận, đi đầu chịu đòn cho team.', baseStats: { sm: 35, tp: 25, sk: 25, nl: 15 }, buildGuide: { summary: 'Cỗ xe tăng càn quét, gây hiệu ứng choáng trong Tống Kim.', phases: [{ level: '10-50', sm: '60%', tp: '0', sk: '40%', nl: '0', note: 'Max TL Côn Pháp. 1đ Hoành Tảo Thiên Quân lấy sát thương lan' }, { level: '60', sm: '60%', tp: '0', sk: '40%', nl: '0', note: 'Max Trấn Phái lấy tốc đánh và sát thương' }, { level: '90+', sm: '60%', tp: '0', sk: 'Máu 5k-6k+', nl: '0', note: 'Max Hoành Tảo Thiên Quân (9x). Hỗ trợ La Hán Trận, Dịch Cân Kinh' }], calc: { smRatio: [{ f: 1, t: 150, p: 60 }], tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Hoành Tảo Thiên Quân', type: 'Bổng Pháp', priority: 1, desc: 'Quật bổng diện rộng 90', level: '9x' }, { name: 'Như Lai Thiên Diệp', type: 'Trấn Phái', priority: 2, desc: 'Tăng máu lớn', level: '6x' }, { name: 'Dịch Cân Kinh', type: 'Hỗ trợ', priority: 3, desc: 'Hồi sinh lực và kháng tính', level: '6x' }, { name: 'Bất Động Minh Vương', type: 'Aura', priority: 4, desc: 'Vòng sáng kháng tính', level: '3x' }, { name: 'La Hán Trận', type: 'Phản đòn', priority: 5, desc: 'Phản sát thương cận chiến', level: '3x' }, { name: 'Vi Đà Bổng Pháp', type: 'Bổng Pháp', priority: 6, desc: 'Chiêu 60 buff sát thương bổng', level: '6x' }], equipment: [{ stat: 'Phản đòn %', importance: '⭐⭐⭐⭐⭐', note: 'Phối hợp La Hán Trận' }, { stat: 'Độ chính xác', importance: '⭐⭐⭐⭐', note: 'Bù đắp sát thương hụt' }] },
+      { id: 'tlquyen', name: 'Thiếu Lâm', branch: 'Quyền Pháp', role: 'Sát Thủ Bộ Binh', element: 'Kim', emoji: '👊', color: '#e67e22', colorGlow: 'rgba(230,126,34,0.3)', description: 'Ngoại Công bộ binh. Sức mạnh là "linh hồn" — đấm phát chết luôn. Dồn SM tối đa, SK giữ máu 4.200. TP=0, NL=0. Đấm liên hoàn khóa mục tiêu.', baseStats: { sm: 35, tp: 25, sk: 25, nl: 15 }, buildGuide: { summary: 'Sức mạnh là "linh hồn" — dọn quái nhanh, đấm phát chết luôn. Giai đoạn đầu full SM, sau bổ sung SK giữ máu 4.200.', phases: [{ level: '10-20', sm: 'Full (Dồn hết)', tp: '0', sk: '0 hoặc rất ít', nl: '0', note: 'Ưu tiên sát thương tối đa, cày cấp nhanh nhất. Max Quyền Pháp.' }, { level: '30-50', sm: '70%', tp: '0', sk: '30%', nl: '0', note: 'Chia bớt sang máu để trụ vững bãi quái cao cấp. Max La Hán.' }, { level: '60-80', sm: '80%', tp: '0', sk: '20%', nl: '0', note: 'Tăng lực tay tối ưu Băng sát từ Trấn phái Như Lai Thiên Diệp.' }, { level: '90+', sm: 'Dồn hết (còn lại)', tp: '0', sk: 'Mốc 4.200 máu', nl: '0', note: 'Đảm bảo đủ trâu đi PK/săn boss, mọi điểm dư dồn SM lấy đam to.' }], calc: { smRatio: [{ f: 1, t: 20, p: 95 }, { f: 21, t: 50, p: 70 }, { f: 51, t: 80, p: 80 }, { f: 81, t: 150, p: 80 }], tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Đạt Ma Độ Giang', type: 'Quyền Pháp', priority: 1, desc: 'Quyền đấm liên hoàn 90', level: '9x' }, { name: 'Như Lai Thiên Diệp', type: 'Trấn Phái', priority: 2, desc: 'Tăng máu và sát thương', level: '6x' }, { name: 'Dịch Cân Kinh', type: 'Hỗ trợ', priority: 3, desc: 'Vừa hồi máu vừa kháng', level: '6x' }, { name: 'Bất Động Minh Vương', type: 'Aura', priority: 4, desc: 'Vòng sáng kháng tính', level: '3x' }, { name: 'La Hán Trận', type: 'Phản đòn', priority: 5, desc: 'Phản đòn cận chiến', level: '3x' }, { name: 'Thiếu Lâm Quyền Pháp', type: 'Cơ bản', priority: 6, desc: 'Tăng sức đánh cơ bản', level: '1x' }], equipment: [{ stat: 'Tốc đánh', importance: '⭐⭐⭐⭐⭐', note: 'Đấm nhanh không cho đối thủ nhúc nhích' }, { stat: 'Độ chính xác', importance: '⭐⭐⭐⭐', note: 'Đấm trượt là thua' }] },
 
-  // HỆ MỘC
-  {id:'dmno',name:'Đường Môn',branch:'Tụ Tiễn/Nỏ',role:'Xạ Thủ Tầm Xa',element:'Mộc',emoji:'🏹',color:'#2ecc71',colorGlow:'rgba(46,204,113,0.3)',description:'Sử dụng nỏ bắn liên hoàn tầm xa. Nỏ yêu cầu Tốc đánh. SM 110, TP max, SK 150.',baseStats:{sm:25,tp:35,sk:25,nl:15},buildGuide:{summary:'Xạ thủ bắn xa liên tục, Nỏ buộc có Tốc đánh. Thân pháp nhồi kịch liệt, máu tròn mốc 150.',phases:[{level:'10-60',sm:'Mốc 70',tp:'Tăng mạnh',sk:'Vừa đủ',nl:'0',note:'Max Tụ Tiễn Pháp lấy dam cơ bản'},{level:'60-90',sm:'Mốc 110',tp:'Kéo max',sk:'Mốc 150',nl:'0',note:'Giữ SM tròn mốc 110 mặc đồ. Bơm SK dừng ở 150 lấy máu vừa đủ'},{level:'90+',sm:'110',tp:'Max (Dồn tất)',sk:'150',nl:'0',note:'Max Trấn Phái và Bạo Vũ Lê Hoa. Kéo TP kịch trần lấy tốc độ và hit rate.'}],calc:{smTarget:110,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}},skills:[{name:'Bạo Vũ Lê Hoa',type:'Tụ Tiễn',priority:1,desc:'Sát thương dồn nỏ tiễn',level:'9x'},{name:'Tâm Nhãn',type:'Trấn Phái',priority:2,desc:'Tăng chí mạng bạo kích',level:'6x'},{name:'Ám khí Đường Môn',type:'Hỗ trợ',priority:3,desc:'Buff hỏa lực ám khí',level:'1x'},{name:'Phích lịch đơn',type:'Nhập môn',priority:4,desc:'Cơ bản nhập môn',level:'1x'},{name:'Thiên La Địa Võng',type:'Tụ Tiễn',priority:5,desc:'Chiêu 60 Nỏ tiễn',level:'6x'},{name:'Mạn Thiên Hoa Vũ',type:'Tụ Tiễn',priority:6,desc:'Chiêu 30 Nỏ tiễn',level:'3x'}],equipment:[{stat:'Hút Nội Lực',importance:'⭐⭐⭐⭐⭐',note:'NL bằng 0 nên bắt buộc hút'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Bắn nhanh = sát thương'}]},
-  {id:'dmtieu',name:'Đường Môn',branch:'Phi Tiêu',role:'Ám Khí Bạo Kích',element:'Mộc',emoji:'🎯',color:'#2ecc71',colorGlow:'rgba(46,204,113,0.3)',description:'Phóng tiêu ám khí, cấu rỉa liên tục từ xa. Máu giấy đam to, cần micro.',baseStats:{sm:25,tp:35,sk:25,nl:15},buildGuide:{summary:'Ám Khí (Phi Tiêu). Dồn Thân Pháp lấy lực tay & cực kỳ dồn SK để khỏi nằm sấp.',phases:[{level:'10-60',sm:'Mốc 70',tp:'Tăng mạnh',sk:'Vừa đủ',nl:'0',note:'Max Ám Khí Pháp thuật'},{level:'60-90',sm:'Mốc 110',tp:'Mốc 220',sk:'150-170',nl:'0',note:'Max Trấn Phái. Ưu tiên SK đạt ngưỡng 1k5 máu'},{level:'90+',sm:'110',tp:'Kéo max',sk:'Vừa đủ',nl:'0',note:'Max Cửu Cung Phi Tinh (9x). Kéo max TP lấy hit rate an toàn'}],calc:{smTarget:110,smReachAt:60,tpRate:[{f:1,t:150,p:3}],nlFixed:0}},skills:[{name:'Cửu Cung Phi Tinh',type:'Phi Tiêu',priority:1,desc:'Tuyệt kỹ phi tiêu 90',level:'9x'},{name:'Tâm Nhãn',type:'Trấn Phái',priority:2,desc:'Trấn phái tăng sát thương',level:'6x'},{name:'Ám khí Đường Môn',type:'Hỗ trợ',priority:3,desc:'Buff hỏa lực ám khí',level:'1x'},{name:'Phích lịch đơn',type:'Nhập môn',priority:4,desc:'Cơ bản nhập môn',level:'1x'},{name:'Tán Hoa Tiêu',type:'Phi Tiêu',priority:5,desc:'Chiêu 60 Phi tiêu',level:'6x'},{name:'Đoạt Hồn Tiêu',type:'Phi Tiêu',priority:6,desc:'Chiêu 30 phi tiêu',level:'3x'}],equipment:[{stat:'Băng Sát Ngoại',importance:'⭐⭐⭐⭐⭐',note:'Thả diều đỉnh cao'},{stat:'Thời gian phục hồi',importance:'⭐⭐⭐⭐',note:'Ngựa bị đánh không lag'}]},
-  {id:'dmdao',name:'Đường Môn',branch:'Phi Đao',role:'Sát Thủ Cận Chiến',element:'Mộc',emoji:'🗡️',color:'#2ecc71',colorGlow:'rgba(46,204,113,0.3)',description:'Sát thủ áp sát tốc độ cao. Vũ khí cần Tốc Đánh. SM 110-165, TP max, SK 120-150.',baseStats:{sm:25,tp:35,sk:25,nl:15},buildGuide:{summary:'Áp sát ném dao nhanh, bắt buộc vũ khí Tốc đánh cao. Nhồi Thân pháp kịch kim, máu chỉ đủ 120-150.',phases:[{level:'10-60',sm:'Mốc 70',tp:'Tăng mạnh',sk:'Mốc 120',nl:'0',note:'Max Phi Đao Pháp. Sắm đao Tốc đánh cao xả chiêu.'},{level:'60-90',sm:'110-165',tp:'Kéo max',sk:'120-150',nl:'0',note:'Tăng SM 110-165 lấy thêm vật lý. Máu giấy 120-150 để dồn đam, lách né'},{level:'90+',sm:'165',tp:'Max (Dồn tất)',sk:'Max 150',nl:'0',note:'Max Trấn Phái và Tiểu Lý Phi Đao (9x). TP kịch kim nổ chí mạng'}],calc:{smTarget:165,smReachAt:90,tpRate:[{f:1,t:150,p:3}],nlFixed:0}},skills:[{name:'Nhiếp Hồn Nguyệt Ảnh',type:'Phi Đao',priority:1,desc:'Tuyệt kỹ phi đao 90',level:'9x'},{name:'Tâm Nhãn',type:'Trấn Phái',priority:2,desc:'Trấn phái tăng sát thương',level:'6x'},{name:'Ám khí Đường Môn',type:'Hỗ trợ',priority:3,desc:'Buff hỏa lực ám khí',level:'1x'},{name:'Phích lịch đơn',type:'Nhập môn',priority:4,desc:'Cơ bản nhập môn',level:'1x'},{name:'Tiểu Lý Phi Đao',type:'Phi Đao',priority:5,desc:'Chiêu 60 Phi đao',level:'6x'},{name:'Truy Tâm Tiễn',type:'Phi Đao',priority:6,desc:'Chiêu 30 Phi đao',level:'3x'}],equipment:[{stat:'Độc Sát Ngoại',importance:'⭐⭐⭐⭐⭐',note:'Gây choáng lâu'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Đao bay liên hoàn'}]},
-  {id:'dmbay',name:'Đường Môn',branch:'Bẫy',role:'Bom Nổ Tức Thời',element:'Mộc',emoji:'💣',color:'#2ecc71',colorGlow:'rgba(46,204,113,0.3)',description:'Trường phái gài mìn nổ đa dạng. SM 70-110, TP 220, SK 150-170, Không cần vũ khí xịn. Dọn quái cực nhanh.',baseStats:{sm:25,tp:35,sk:25,nl:15},buildGuide:{summary:'Dọn quái bãi siêu nhanh, săn Boss an toàn. Phụ thuộc bẫy nên rải máu cao, không màng vũ khí tốc đánh.',phases:[{level:'10-60',sm:'Mốc 70',tp:'Mốc 100',sk:'Còn lại',nl:'0',note:'Tăng 1 điểm Bẫy Hỏa (Độc Cô Cửu Kiếm). Max ĐM Thân Pháp lấy tốc chạy'},{level:'60-90',sm:'Mốc 110',tp:'Mốc 220',sk:'150-170',nl:'0',note:'Max Trấn Phái (ĐM Toàn Thư). Max Bẫy 9x Loạn Hoàn Kích lấy giật'},{level:'90+',sm:'110',tp:'Mốc 220',sk:'Mốc 150-170',nl:'0',note:'Đạt 220 TP mang Thần Tê Linh. Nhồi 150-170 Sinh Khí vững trụ rải bẫy.'}],calc:{smTarget:70,smReachAt:60,tpRate:[{f:1,t:40,p:3}],nlFixed:0}},skills:[{name:'Loạn Hoàn Kích',type:'Cạm Bẫy',priority:1,desc:'Bẫy 90 đẩy lùi kẻ địch',level:'9x'},{name:'Tâm Nhãn',type:'Trấn Phái',priority:2,desc:'Tăng bạo kích',level:'6x'},{name:'Độc Thử Cốt',type:'Cạm Bẫy',priority:3,desc:'Bẫy độc rút máu',level:'2x'},{name:'Địa Diệm Hỏa',type:'Cạm Bẫy',priority:4,desc:'Bẫy lửa',level:'1x'},{name:'Xuyên Tâm Thích',type:'Cạm Bẫy',priority:5,desc:'Bẫy phóng kim',level:'3x'},{name:'Lôi Kích Thuật',type:'Cạm Bẫy',priority:6,desc:'Bẫy sấm sét',level:'5x'}],equipment:[{stat:'Kỹ năng môn phái',importance:'⭐⭐⭐⭐⭐',note:'Kỹ năng làm bẫy sát thương cực đại'},{stat:'Tốc độ chạy',importance:'⭐⭐⭐⭐',note:'Chạy đặt bẫy lả lướt'}]},
-  
-  {id:'ndchuong',name:'Ngũ Độc',branch:'Chưởng Độc',role:'Sát Thương Độc',element:'Mộc',emoji:'☠️',color:'#1abc9c',colorGlow:'rgba(26,188,156,0.3)',description:'Nội Công độc sát mạnh mẽ, không cần vũ khí xịn. SM 110-165 đủ đồ, SK dồn max. TP và NL không tăng. Rất mạnh solo.',baseStats:{sm:20,tp:35,sk:20,nl:25},buildGuide:{summary:'SM mốc 110-165 vừa đủ mặc đồ (giai đoạn 8x-9x). SK dồn toàn bộ còn lại để đứng vững áp sát. TP và NL không tăng.',phases:[{level:'1-60',sm:'Đủ đồ',tp:'0',sk:'Dồn hết',nl:'0',note:'Tăng Ngũ Độc Chưởng Pháp + Vô Hình Cổ. Skill tốn ít mana, hồi tự nhiên.'},{level:'60-90',sm:'Mốc 110',tp:'0',sk:'Dồn hết',nl:'0',note:'Max Bách Độc Xuyên Tâm (Trấn Phái) ngay lập tức. Bùng nổ sát thương.'},{level:'90+',sm:'110-165',tp:'0',sk:'Dồn max',nl:'0',note:'Tẩy tủy: NĐ Chưởng → Vạn Cổ → Trấn Phái → Vô Hình Cổ → Xuyên Tâm Đột Kích → Âm Phong.'}],calc:{smTarget:110,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Vạn Cổ Thích Thiên',type:'Chưởng Pháp',priority:1,desc:'Kỹ năng gây sát thương chính khi đạt cấp 90',level:'9x'},{name:'Bách Độc Xuyên Tâm',type:'Trấn Phái',priority:2,desc:'Max ngay lv60, tối ưu sát thương và phòng thủ',level:'6x'},{name:'Ngũ Độc Chưởng Pháp',type:'Cơ bản',priority:3,desc:'Max 20 điểm lấy sát thương nền',level:'1x'},{name:'Vô Hình Cổ',type:'Aura',priority:4,desc:'Giảm kháng độc đối phương, sát thương độc bá đạo hơn',level:'3x'},{name:'Xuyên Tâm Đột Kích',type:'Hỗ trợ',priority:5,desc:'Hỗ trợ sát thương chưởng pháp',level:'6x'},{name:'Âm Phong Thực Cốt',type:'Hỗ trợ',priority:6,desc:'Kỹ năng giật đối thủ, rất quan trọng trong solo',level:'12x'}],equipment:[{stat:'Kỹ năng môn phái +1/2',importance:'⭐⭐⭐⭐⭐',note:'Tăng cấp độ kỹ năng độc sát'},{stat:'Sinh lực',importance:'⭐⭐⭐⭐',note:'Càng trâu càng tốt'}]},
-  {id:'nddao',name:'Ngũ Độc',branch:'Đao Độc',role:'Kỵ Binh Độc Sát',element:'Mộc',emoji:'🔪',color:'#1abc9c',colorGlow:'rgba(26,188,156,0.3)',description:'Ngoại Công+Độc cơ động trên ngựa. Cần cân bằng 3 chỉ số: TP mặc vũ khí + SM lực tay + SK trụ vững. NL không tăng.',baseStats:{sm:20,tp:35,sk:20,nl:25},buildGuide:{summary:'TP ưu tiên mặc vũ khí (mốc 48→111→140). SM ~130-150 lấy sát thương. SK mốc 130+ còn lại tăng máu. NL không tăng.',phases:[{level:'1-18',sm:'Tăng nhanh',tp:'Mốc 48',sk:'Ít',nl:'0',note:'TP đủ mặc vũ khí cấp 18. SM dọn quái nhanh.'},{level:'19-63',sm:'Tăng đều',tp:'Mốc 111',sk:'Tăng dần',nl:'0',note:'TP mốc 111 mặc đao/kích cấp 63. SM + SK cân bằng.'},{level:'64-90',sm:'130-150',tp:'Mốc 140',sk:'Mốc 130+',nl:'0',note:'TP 140 chính xác cao. SM 130-150 lấy dam. SK 130+ để trụ Tống Kim.'},{level:'90+',sm:'150+',tp:'140+',sk:'Còn lại',nl:'0',note:'Tẩy tủy: Chu Cáp → Trấn Phái → NĐ Đao → Huyền Âm → Huyết Bạt. Điều chỉnh theo đồ đang có.'}],calc:{smTarget:150,smReachAt:90,tpRate:[{f:1,t:18,p:2},{f:19,t:63,p:2},{f:64,t:150,p:1}],nlFixed:0}},skills:[{name:'Chu Cáp Não Thiên',type:'Đao Pháp',priority:1,desc:'Tuyệt kỹ đao pháp sát thương diện rộng trên ngựa',level:'9x'},{name:'Bách Độc Xuyên Tâm',type:'Trấn Phái',priority:2,desc:'Max 20 điểm ở cấp 60, tăng toàn diện',level:'6x'},{name:'Ngũ Độc Đao Pháp',type:'Cơ bản',priority:3,desc:'Max 20 điểm lấy sát thương vật lý và độc sát cơ bản',level:'1x'},{name:'Huyền Âm Trảm',type:'Đao Pháp',priority:4,desc:'Kỹ năng hỗ trợ sát thương đao pháp giai đoạn 6x',level:'6x'},{name:'Huyết Bạt Tiên',type:'Buff',priority:5,desc:'Tăng tốc độ hồi phục sinh lực',level:'4x'},{name:'Vô Hình Cổ',type:'Aura',priority:6,desc:'Giảm kháng độc đối phương',level:'3x'}],equipment:[{stat:'Sinh lực',importance:'⭐⭐⭐⭐⭐',note:'Ưu tiên đồ có sinh lực cao'},{stat:'Kỹ năng môn phái +1/2',importance:'⭐⭐⭐⭐',note:'Tăng cấp kỹ năng độc sát'}]},
+      { id: 'tvchuy', name: 'Thiên Vương', branch: 'Chùy Pháp', role: 'Sốc Sát Thương', element: 'Kim', emoji: '🔨', color: '#d35400', colorGlow: 'rgba(211,84,0,0.3)', description: 'Lực tay to nhất game. Lv1-60 dồn SM dọn quái nhanh, lv61+ thêm TP và SK chuẩn bị PK. Đoạn Hồn Thích rush gây choáng rồi dùng chùy gõ.', baseStats: { sm: 35, tp: 25, sk: 25, nl: 15 }, buildGuide: { summary: 'Lv1-60 dồn SM + 1SK/lv. Lv61-90 thêm TP (~80) và SK (~150). Sau 90 tỷ lệ 8SM/2SK mỗi cấp. NL không tăng.', phases: [{ level: '1-60', sm: 'Dồn phần lớn', tp: '0', sk: '1đ/lv', nl: '0', note: 'Ưu tiên SM dọn quái nhanh, SK tăng đều 1đ để không quá giấy.' }, { level: '61-90', sm: 'Mốc 300', tp: 'Mốc 80', sk: 'Mốc 150 (~4400 HP)', nl: '0', note: 'TP cho chính xác khi đánh người/quái cấp cao, SK cho trụ vững Tống Kim/săn Boss.' }, { level: '90+', sm: '8đ/cấp', tp: 'Giữ 80+', sk: '2đ/cấp', nl: '0', note: 'Tẩy tủy max Thừa Long Quyết. Tỷ lệ 8SM/2SK. Kim Chung Tráo max khi 12x-13x.' }], calc: { smRatio: [{ f: 1, t: 60, p: 85 }, { f: 61, t: 90, p: 75 }, { f: 91, t: 150, p: 80 }], tpRate: [{ f: 61, t: 90, p: 2 }], nlFixed: 0 } }, skills: [{ name: 'Thừa Long Quyết', type: 'Chùy Pháp', priority: 1, desc: 'Chiêu chính đánh diện rộng và săn Boss hiệu quả', level: '9x' }, { name: 'Thiên Vương Chiến Ý', type: 'Trấn Phái', priority: 2, desc: 'Max ngay lv60, bùng nổ sát thương và máu toàn diện', level: '6x' }, { name: 'Thiên Vương Chùy Pháp', type: 'Cơ bản', priority: 3, desc: 'Max trước lấy sát thương cơ bản và tốc độ đánh', level: '1x' }, { name: 'Kim Chung Tráo', type: 'Màng chắn', priority: 4, desc: '~10đ giai đoạn đầu lấy độ lỳ, max sau 12x-13x để trâu tối đa', level: '2x' }, { name: 'Đoạn Hồn Thích', type: 'Áp sát', priority: 5, desc: 'BK quan trọng nhất, rush tới mục tiêu gây choáng rồi dùng chùy gõ', level: '3x' }, { name: 'Hành Văn Quyết', type: 'Hỗ trợ', priority: 6, desc: 'Hỗ trợ lực tay, dồn điểm dư sau khi max các chiêu chính', level: '6x' }], equipment: [{ stat: 'Băng sát', importance: '⭐⭐⭐⭐⭐', note: 'Giữ chân đối thủ khi gõ chùy' }, { stat: 'Tốc đánh + Chính xác', importance: '⭐⭐⭐⭐', note: 'Tối ưu khả năng khống chế' }] },
+      { id: 'tvthuong', name: 'Thiên Vương', branch: 'Thương Pháp', role: 'Đâm Liên Hoàn', element: 'Kim', emoji: '🔱', color: '#d35400', colorGlow: 'rgba(211,84,0,0.3)', description: 'Tốc độ đánh nhanh, đâm liên tục gây giật lag đối phương không thể đánh trả.', baseStats: { sm: 35, tp: 25, sk: 25, nl: 15 }, buildGuide: { summary: 'Cân bằng SM và SK, thương cần sống dai đâm lâu.', phases: [{ level: '1-90', sm: 'Mốc 260', tp: '0', sk: 'Còn lại', nl: '0', note: 'Dame thương nhỏ, cần đâm nhìu' }, { level: '90-150', sm: 'Mốc 350', tp: '0', sk: 'Dồn hết', nl: '0', note: 'SK dồi dào để đứng tank đánh nát giáp địch' }], calc: { smTarget: 350, smReachAt: 100, tpRate: [{ f: 1, t: 150, p: 1 }], nlFixed: 0 } }, skills: [{ name: 'Truy Tinh Trục Nguyệt', type: 'Thương Pháp', priority: 1, desc: 'Thương chọc liên hoàn 90', level: '9x' }, { name: 'Thiên Vương Chiến Ý', type: 'Trấn Phái', priority: 2, desc: 'Sức mạnh chí tôn', level: '6x' }, { name: 'Huyết Chiến Bát Phương', type: 'Aura', priority: 3, desc: 'Hút máu và sát thương', level: '3x' }, { name: 'Dương Giác Mâu Pháp', type: 'Cơ bản', priority: 4, desc: 'Cơ bản thương', level: '1x' }, { name: 'Đảo Hư Thiên', type: 'Áp sát', priority: 5, desc: 'Phi thân tiếp cận', level: '3x' }, { name: 'Kinh Mang Phá Giáp', type: 'Thương Pháp', priority: 6, desc: 'Chiêu 60 xuyên thấu', level: '6x' }], equipment: [{ stat: 'Tốc đánh', importance: '⭐⭐⭐⭐⭐', note: 'Mốc tốc đánh tối đa' }, { stat: 'Băng sát ngoại', importance: '⭐⭐⭐⭐', note: 'Làm chậm kết hợp đâm liên tục' }] },
+      { id: 'tvdao', name: 'Thiên Vương', branch: 'Đao Pháp', role: 'DPS Cưỡi Ngựa', element: 'Kim', emoji: '🐎', color: '#d35400', colorGlow: 'rgba(211,84,0,0.3)', description: 'Cơ động vô cùng tận. Lướt qua lướt lại chém đối thủ trên yên ngựa.', baseStats: { sm: 35, tp: 25, sk: 25, nl: 15 }, buildGuide: { summary: 'SM nhiều, TP cực cao để tăng chính xác ngựa.', phases: [{ level: '1-90', sm: 'Mốc 260', tp: 'Mốc 150', sk: 'Còn lại', nl: '0', note: 'Cưỡi ngựa chém rất dính' }, { level: '90-150', sm: 'Mốc 320', tp: 'Mốc 200', sk: 'Còn lại', nl: '0', note: 'Tối ưu damage và độ chính xác' }], calc: { smTarget: 320, smReachAt: 100, tpRate: [{ f: 1, t: 90, p: 1 }, { f: 90, t: 150, p: 2 }], nlFixed: 0 } }, skills: [{ name: 'Phá Thiên Trảm', type: 'Đao Pháp', priority: 1, desc: 'Chém đao cực xa 90', level: '9x' }, { name: 'Thiên Vương Chiến Ý', type: 'Trấn Phái', priority: 2, desc: 'Tăng sát thương ngoại', level: '6x' }, { name: 'Huyết Chiến Bát Phương', type: 'Aura', priority: 3, desc: 'Vòng sáng áp đảo', level: '3x' }, { name: 'Vô Tâm Trảm', type: 'Đao Pháp', priority: 4, desc: 'Chiêu 60 chém hội đồng', level: '6x' }, { name: 'Thiên Vương Đao Pháp', type: 'Cơ bản', priority: 5, desc: 'Nền tảng đao pháp', level: '1x' }, { name: 'Đảo Hư Thiên', type: 'Áp sát', priority: 6, desc: 'Rượt đuổi mục tiêu', level: '3x' }], equipment: [{ stat: 'Hút Sinh Lực', importance: '⭐⭐⭐⭐⭐', note: 'Train bãi cực sống dai' }, { stat: 'Tốc độ di chuyển', importance: '⭐⭐⭐⭐', note: 'Chạy và chém' }] },
 
-  // HỆ THỦY
-  {id:'nmbuff',name:'Nga My',branch:'Support',role:'Healer Tối Thượng',element:'Thủy',emoji:'💚',color:'#3498db',colorGlow:'rgba(52,152,219,0.3)',description:'Trụ cột của mọi Party. SK tăng max, NL vừa đủ. Hồi máu, buff kháng tất cả, hồi sinh đồng đội.',baseStats:{sm:25,tp:25,sk:25,nl:25},buildGuide:{summary:'Thuần đi theo để hỗ trợ team. Chú trọng lớn nhất vào Sinh khí để sống dai.',phases:[{level:'10-30',sm:'35-70',tp:'0',sk:'Dồn hết',nl:'Vừa đủ',note:'Tăng 1đ Mộng Điệp và chiêu hồi máu cơ bản'},{level:'40-60',sm:'35-70',tp:'0',sk:'Dồn hết',nl:'Vừa đủ',note:'Ưu tiên Max Mộng Điệp, sau đó Phật Tâm Từ Hữu'},{level:'80-90+',sm:'Mốc 110',tp:'0',sk:'Dồn hết',nl:'Vừa đủ',note:'Nâng SM lên 110 mặc đồ cấp cao, Sinh khí vẫn là chủ đạo'}],calc:{smTarget:70,smReachAt:80,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Phổ Độ Chúng Sinh',type:'Hồi Máu',priority:1,desc:'Bơm máu cực đại 90',level:'9x'},{name:'Phật Tâm Từ Bi',type:'Trấn Phái',priority:2,desc:'Kháng tất cả cho pt',level:'6x'},{name:'Lưu Thủy',type:'Vòng sáng',priority:3,desc:'Tăng tốc chạy toàn team',level:'3x'},{name:'Mộng Điệp',type:'Vòng sáng',priority:4,desc:'Hồi sinh lực nội lực mạn thiên',level:'5x'},{name:'Từ Hàng Phổ Độ',type:'Phục sinh',priority:5,desc:'Cứu người chết',level:'4x'},{name:'Thanh Âm Phạn Xướng',type:'Aura',priority:6,desc:'Tăng kháng tính',level:'6x'}],equipment:[{stat:'Sinh Lực',importance:'⭐⭐⭐⭐⭐',note:'Phải trâu'},{stat:'Tốc độ hồi SL',importance:'⭐⭐⭐⭐',note:'Hồi máu max nhanh'}]},
-  {id:'nmkiem',name:'Nga My',branch:'Kiếm Pháp',role:'Kiếm Sĩ Băng Sát',element:'Thủy',emoji:'⚔️',color:'#3498db',colorGlow:'rgba(52,152,219,0.3)',description:'Kiếm pháp Ngoại Công hệ Thủy, sát thương băng sát cực lớn, chém đóng băng đối thủ đứng im.',baseStats:{sm:25,tp:25,sk:25,nl:25},buildGuide:{summary:'Ngoại Công cận chiến. SM & TP là quan trọng nhất (đam và chính xác), SK vừa đủ sống sót.',phases:[{level:'10-30',sm:'35-70',tp:'Cần thiết',sk:'Vừa đủ',nl:'0',note:'Dùng Phi Hành, 1đ Mộng Điệp để hồi phục'},{level:'60',sm:'Theo đồ',tp:'Trọng tâm',sk:'Vừa đủ',nl:'0',note:'Bắt buộc Max Trấn Phái Cửu Dương Công ngay lập tức'},{level:'90+',sm:'110+',tp:'Kéo max',sk:'Vừa đủ',nl:'0',note:'Dùng Tam Nga. SM mốc 110 mặc đồ cấp cao, kéo max TP'}],calc:{smTarget:110,smReachAt:90,tpRate:[{f:1,t:150,p:1}],nlFixed:0}},skills:[{name:'Tam Nga Tế Tuyết',type:'Kiếm Pháp',priority:1,desc:'Kiếm khí phóng 5 tia 90',level:'9x'},{name:'Phật Tâm Từ Bi',type:'Trấn Phái',priority:2,desc:'Kháng tính kháng tất cả cực lớn',level:'6x'},{name:'Lưu Thủy',type:'Vòng sáng',priority:3,desc:'Buff tốc độ chạy',level:'3x'},{name:'Băng Tâm Ngọc Quyết',type:'Hỗ trợ',priority:4,desc:'Buff hồi nội lực khủng',level:'6x'},{name:'Nga My Kiếm Pháp',type:'Cơ bản',priority:5,desc:'Tăng sát thương kiếm',level:'1x'},{name:'Thôi Song Vọng Nguyệt',type:'Kiếm Pháp',priority:6,desc:'Kiếm 30 lan truyền',level:'3x'}],equipment:[{stat:'Tốc độ xuất chiêu',importance:'⭐⭐⭐⭐⭐',note:'Ra kiếm k độ trễ'},{stat:'Thời gian làm chậm',importance:'⭐⭐⭐⭐',note:'Giữ mục tiêu đứng im'}]},
-  {id:'nmchuong',name:'Nga My',branch:'Chưởng Pháp',role:'Khống Chế Băng',element:'Thủy',emoji:'❄️',color:'#3498db',colorGlow:'rgba(52,152,219,0.3)',description:'Pháp sư Nội Công hệ Thủy áp sát. SK nhiều. Phong Sương Toái Ảnh ném băng đóng băng.',baseStats:{sm:25,tp:25,sk:25,nl:25},buildGuide:{summary:'Nội Công áp sát. Dồn toàn bộ vào Sinh Khí để sinh tồn cận chiến.',phases:[{level:'10-30',sm:'35-70',tp:'0',sk:'Dồn hết',nl:'0',note:'Max Nga My Chưởng Pháp để lấy đam. 1đ Mộng Điệp'},{level:'60',sm:'Theo đồ',tp:'0',sk:'Dồn hết',nl:'0',note:'Bắt buộc Max Trấn Phái Cửu Dương Công ngay lập tức'},{level:'90+',sm:'Mốc 110',tp:'0',sk:'Dồn hết',nl:'0',note:'SM mốc 110 mặc đồ. Nâng ngập skill chiến (Phong Sương, Tứ Tượng)'}],calc:{smTarget:70,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Phong Sương Toái Ảnh',type:'Chưởng Pháp',priority:1,desc:'Chưởng băng nội công 90',level:'9x'},{name:'Phật Tâm Từ Bi',type:'Trấn Phái',priority:2,desc:'Kháng cực lớn',level:'6x'},{name:'Lưu Thủy',type:'Vòng sáng',priority:3,desc:'Buff tốc chạy',level:'3x'},{name:'Băng Tâm Ngọc Quyết',type:'Hỗ trợ',priority:4,desc:'Buff hồi nội lực KHỦNG',level:'6x'},{name:'Nga My Chưởng Pháp',type:'Cơ bản',priority:5,desc:'Tăng sát thương chưởng',level:'1x'},{name:'Tứ Tượng Đồng Quy',type:'Chưởng',priority:6,desc:'Chiêu 60',level:'6x'}],equipment:[{stat:'Tốc độ xuất chiêu',importance:'⭐⭐⭐⭐⭐',note:'Ra chưởng liên tục nhồi dam'},{stat:'Băng sát Nội công',importance:'⭐⭐⭐⭐',note:'Đóng băng sâu'}]},
+      // HỆ MỘC
+      { id: 'dmno', name: 'Đường Môn', branch: 'Tụ Tiễn/Nỏ', role: 'Xạ Thủ Tầm Xa', element: 'Mộc', emoji: '🏹', color: '#2ecc71', colorGlow: 'rgba(46,204,113,0.3)', description: 'Sử dụng nỏ bắn liên hoàn tầm xa. Nỏ yêu cầu Tốc đánh. SM 110, TP max, SK 150.', baseStats: { sm: 25, tp: 35, sk: 25, nl: 15 }, buildGuide: { summary: 'Xạ thủ bắn xa liên tục, Nỏ buộc có Tốc đánh. Thân pháp nhồi kịch liệt, máu tròn mốc 150.', phases: [{ level: '10-60', sm: 'Mốc 70', tp: 'Tăng mạnh', sk: 'Vừa đủ', nl: '0', note: 'Max Tụ Tiễn Pháp lấy dam cơ bản' }, { level: '60-90', sm: 'Mốc 110', tp: 'Kéo max', sk: 'Mốc 150', nl: '0', note: 'Giữ SM tròn mốc 110 mặc đồ. Bơm SK dừng ở 150 lấy máu vừa đủ' }, { level: '90+', sm: '110', tp: 'Max (Dồn tất)', sk: '150', nl: '0', note: 'Max Trấn Phái và Bạo Vũ Lê Hoa. Kéo TP kịch trần lấy tốc độ và hit rate.' }], calc: { smTarget: 110, smReachAt: 60, tpRate: [{ f: 1, t: 150, p: 3 }], nlFixed: 0 } }, skills: [{ name: 'Bạo Vũ Lê Hoa', type: 'Tụ Tiễn', priority: 1, desc: 'Sát thương dồn nỏ tiễn', level: '9x' }, { name: 'Tâm Nhãn', type: 'Trấn Phái', priority: 2, desc: 'Tăng chí mạng bạo kích', level: '6x' }, { name: 'Ám khí Đường Môn', type: 'Hỗ trợ', priority: 3, desc: 'Buff hỏa lực ám khí', level: '1x' }, { name: 'Phích lịch đơn', type: 'Nhập môn', priority: 4, desc: 'Cơ bản nhập môn', level: '1x' }, { name: 'Thiên La Địa Võng', type: 'Tụ Tiễn', priority: 5, desc: 'Chiêu 60 Nỏ tiễn', level: '6x' }, { name: 'Mạn Thiên Hoa Vũ', type: 'Tụ Tiễn', priority: 6, desc: 'Chiêu 30 Nỏ tiễn', level: '3x' }], equipment: [{ stat: 'Hút Nội Lực', importance: '⭐⭐⭐⭐⭐', note: 'NL bằng 0 nên bắt buộc hút' }, { stat: 'Tốc đánh', importance: '⭐⭐⭐⭐', note: 'Bắn nhanh = sát thương' }] },
+      { id: 'dmtieu', name: 'Đường Môn', branch: 'Phi Tiêu', role: 'Ám Khí Bạo Kích', element: 'Mộc', emoji: '🎯', color: '#2ecc71', colorGlow: 'rgba(46,204,113,0.3)', description: 'Phóng tiêu ám khí, cấu rỉa liên tục từ xa. Máu giấy đam to, cần micro.', baseStats: { sm: 25, tp: 35, sk: 25, nl: 15 }, buildGuide: { summary: 'Ám Khí (Phi Tiêu). Dồn Thân Pháp lấy lực tay & cực kỳ dồn SK để khỏi nằm sấp.', phases: [{ level: '10-60', sm: 'Mốc 70', tp: 'Tăng mạnh', sk: 'Vừa đủ', nl: '0', note: 'Max Ám Khí Pháp thuật' }, { level: '60-90', sm: 'Mốc 110', tp: 'Mốc 220', sk: '150-170', nl: '0', note: 'Max Trấn Phái. Ưu tiên SK đạt ngưỡng 1k5 máu' }, { level: '90+', sm: '110', tp: 'Kéo max', sk: 'Vừa đủ', nl: '0', note: 'Max Cửu Cung Phi Tinh (9x). Kéo max TP lấy hit rate an toàn' }], calc: { smTarget: 110, smReachAt: 60, tpRate: [{ f: 1, t: 150, p: 3 }], nlFixed: 0 } }, skills: [{ name: 'Cửu Cung Phi Tinh', type: 'Phi Tiêu', priority: 1, desc: 'Tuyệt kỹ phi tiêu 90', level: '9x' }, { name: 'Tâm Nhãn', type: 'Trấn Phái', priority: 2, desc: 'Trấn phái tăng sát thương', level: '6x' }, { name: 'Ám khí Đường Môn', type: 'Hỗ trợ', priority: 3, desc: 'Buff hỏa lực ám khí', level: '1x' }, { name: 'Phích lịch đơn', type: 'Nhập môn', priority: 4, desc: 'Cơ bản nhập môn', level: '1x' }, { name: 'Tán Hoa Tiêu', type: 'Phi Tiêu', priority: 5, desc: 'Chiêu 60 Phi tiêu', level: '6x' }, { name: 'Đoạt Hồn Tiêu', type: 'Phi Tiêu', priority: 6, desc: 'Chiêu 30 phi tiêu', level: '3x' }], equipment: [{ stat: 'Băng Sát Ngoại', importance: '⭐⭐⭐⭐⭐', note: 'Thả diều đỉnh cao' }, { stat: 'Thời gian phục hồi', importance: '⭐⭐⭐⭐', note: 'Ngựa bị đánh không lag' }] },
+      { id: 'dmdao', name: 'Đường Môn', branch: 'Phi Đao', role: 'Sát Thủ Cận Chiến', element: 'Mộc', emoji: '🗡️', color: '#2ecc71', colorGlow: 'rgba(46,204,113,0.3)', description: 'Sát thủ áp sát tốc độ cao. Vũ khí cần Tốc Đánh. SM 110-165, TP max, SK 120-150.', baseStats: { sm: 25, tp: 35, sk: 25, nl: 15 }, buildGuide: { summary: 'Áp sát ném dao nhanh, bắt buộc vũ khí Tốc đánh cao. Nhồi Thân pháp kịch kim, máu chỉ đủ 120-150.', phases: [{ level: '10-60', sm: 'Mốc 70', tp: 'Tăng mạnh', sk: 'Mốc 120', nl: '0', note: 'Max Phi Đao Pháp. Sắm đao Tốc đánh cao xả chiêu.' }, { level: '60-90', sm: '110-165', tp: 'Kéo max', sk: '120-150', nl: '0', note: 'Tăng SM 110-165 lấy thêm vật lý. Máu giấy 120-150 để dồn đam, lách né' }, { level: '90+', sm: '165', tp: 'Max (Dồn tất)', sk: 'Max 150', nl: '0', note: 'Max Trấn Phái và Tiểu Lý Phi Đao (9x). TP kịch kim nổ chí mạng' }], calc: { smTarget: 165, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 3 }], nlFixed: 0 } }, skills: [{ name: 'Nhiếp Hồn Nguyệt Ảnh', type: 'Phi Đao', priority: 1, desc: 'Tuyệt kỹ phi đao 90', level: '9x' }, { name: 'Tâm Nhãn', type: 'Trấn Phái', priority: 2, desc: 'Trấn phái tăng sát thương', level: '6x' }, { name: 'Ám khí Đường Môn', type: 'Hỗ trợ', priority: 3, desc: 'Buff hỏa lực ám khí', level: '1x' }, { name: 'Phích lịch đơn', type: 'Nhập môn', priority: 4, desc: 'Cơ bản nhập môn', level: '1x' }, { name: 'Tiểu Lý Phi Đao', type: 'Phi Đao', priority: 5, desc: 'Chiêu 60 Phi đao', level: '6x' }, { name: 'Truy Tâm Tiễn', type: 'Phi Đao', priority: 6, desc: 'Chiêu 30 Phi đao', level: '3x' }], equipment: [{ stat: 'Độc Sát Ngoại', importance: '⭐⭐⭐⭐⭐', note: 'Gây choáng lâu' }, { stat: 'Tốc đánh', importance: '⭐⭐⭐⭐', note: 'Đao bay liên hoàn' }] },
+      { id: 'dmbay', name: 'Đường Môn', branch: 'Bẫy', role: 'Bom Nổ Tức Thời', element: 'Mộc', emoji: '💣', color: '#2ecc71', colorGlow: 'rgba(46,204,113,0.3)', description: 'Trường phái gài mìn nổ đa dạng. SM 70-110, TP 220, SK 150-170, Không cần vũ khí xịn. Dọn quái cực nhanh.', baseStats: { sm: 25, tp: 35, sk: 25, nl: 15 }, buildGuide: { summary: 'Dọn quái bãi siêu nhanh, săn Boss an toàn. Phụ thuộc bẫy nên rải máu cao, không màng vũ khí tốc đánh.', phases: [{ level: '10-60', sm: 'Mốc 70', tp: 'Mốc 100', sk: 'Còn lại', nl: '0', note: 'Tăng 1 điểm Bẫy Hỏa (Độc Cô Cửu Kiếm). Max ĐM Thân Pháp lấy tốc chạy' }, { level: '60-90', sm: 'Mốc 110', tp: 'Mốc 220', sk: '150-170', nl: '0', note: 'Max Trấn Phái (ĐM Toàn Thư). Max Bẫy 9x Loạn Hoàn Kích lấy giật' }, { level: '90+', sm: '110', tp: 'Mốc 220', sk: 'Mốc 150-170', nl: '0', note: 'Đạt 220 TP mang Thần Tê Linh. Nhồi 150-170 Sinh Khí vững trụ rải bẫy.' }], calc: { smTarget: 110, smReachAt: 90, tpRate: [{ f: 1, t: 40, p: 3 }], nlFixed: 0 } }, skills: [{ name: 'Loạn Hoàn Kích', type: 'Cạm Bẫy', priority: 1, desc: 'Bẫy 90 đẩy lùi kẻ địch', level: '9x' }, { name: 'Tâm Nhãn', type: 'Trấn Phái', priority: 2, desc: 'Tăng bạo kích', level: '6x' }, { name: 'Độc Thử Cốt', type: 'Cạm Bẫy', priority: 3, desc: 'Bẫy độc rút máu', level: '2x' }, { name: 'Địa Diệm Hỏa', type: 'Cạm Bẫy', priority: 4, desc: 'Bẫy lửa', level: '1x' }, { name: 'Xuyên Tâm Thích', type: 'Cạm Bẫy', priority: 5, desc: 'Bẫy phóng kim', level: '3x' }, { name: 'Lôi Kích Thuật', type: 'Cạm Bẫy', priority: 6, desc: 'Bẫy sấm sét', level: '5x' }], equipment: [{ stat: 'Kỹ năng môn phái', importance: '⭐⭐⭐⭐⭐', note: 'Kỹ năng làm bẫy sát thương cực đại' }, { stat: 'Tốc độ chạy', importance: '⭐⭐⭐⭐', note: 'Chạy đặt bẫy lả lướt' }] },
 
-  {id:'tydao',name:'Thúy Yên',branch:'Đao Pháp',role:'Sát Thủ Tàng Hình',element:'Thủy',emoji:'🥷',color:'#2980b9',colorGlow:'rgba(41,128,185,0.3)',description:'Ngoại Công sát thủ. SM~260, TP cần. Tàng hình vô song, bất chợt xuất hiện đoạt mạng phái máu giấy.',baseStats:{sm:25,tp:25,sk:25,nl:25},buildGuide:{summary:'Tốc độ + Sát Thương Ngoại. Rất khát SM.',phases:[{level:'1-90',sm:'Dồn hết',tp:'Mốc 150',sk:'Tối thiểu',nl:'0',note:'Dành cho ai thích phong cách sát thủ'},{level:'90-150',sm:'300+',tp:'Mốc 200',sk:'Vừa đủ',nl:'0',note:'Băng Tung Vô Ảnh nhảy dame'}],calc:{smTarget:350,smReachAt:150,tpRate:[{f:1,t:150,p:1}],nlFixed:0}},skills:[{name:'Băng Tung Vô Ảnh',type:'Đao Pháp',priority:1,desc:'Đao 90 giật dam cực mạnh',level:'9x'},{name:'Băng Cốt Tuyết Tâm',type:'Trấn Phái',priority:2,desc:'Băng sát nội ngoại',level:'6x'},{name:'Phong Tuyết Thần Kỹ',type:'Hỗ trợ',priority:3,desc:'Tăng né tránh thân pháp',level:'6x'},{name:'Tuyết Ảnh',type:'Tàng Hình',priority:4,desc:'Tàng hình áp sát',level:'3x'},{name:'Hộ Thể Thần Công',type:'Màng chắn',priority:5,desc:'Shield cản sát thương',level:'4x'},{name:'Thúy Yên Đao Pháp',type:'Cơ bản',priority:6,desc:'Sát thương đao cơ bản',level:'1x'}],equipment:[{stat:'Băng Sát',importance:'⭐⭐⭐⭐⭐',note:'Phối hợp chiêu phái'},{stat:'Tốc độ chạy',importance:'⭐⭐⭐⭐',note:'Chạy trốn thật nhanh'}]},
-  {id:'tysongdao',name:'Thúy Yên',branch:'Song Đao',role:'DPS Nội Công',element:'Thủy',emoji:'🤺',color:'#2980b9',colorGlow:'rgba(41,128,185,0.3)',description:'Nội Công hệ Thủy tầm xa. SM đủ đồ, NL 57 (đủ mana TK), SK dồn max. Trấn Phái max đầu tiên (-49 CD). TP không tăng.',baseStats:{sm:25,tp:25,sk:25,nl:25},buildGuide:{summary:'NL chính xác 57 điểm (đủ Mana Tống Kim). SK dồn hết còn lại. SM đủ mặc đồ. TP không tăng. Ưu tiên Trấn Phái (-49 CD) → Tuyết Ảnh → 4x+6x → Phi Vân (tầng 2). Chiêu 1x chỉ +200 lực tay, không đáng đầu tư sớm.',phases:[{level:'1-60',sm:'Đủ đồ',tp:'0',sk:'Dồn hết',nl:'57',note:'1đ Tuyết Ảnh lấy tốc chạy. Không cần đầu tư Song Đao 1x sớm (chỉ +200 lực tay).'},{level:'60-90',sm:'Đủ đồ',tp:'0',sk:'Dồn hết',nl:'57',note:'Max Trấn Phái NGAY lập tức (-49 CD, chiến đấu tốt không cần đồ Phục Hồi). Max Tuyết Ảnh sau.'},{level:'90+',sm:'Mốc 110',tp:'0',sk:'Dồn max',nl:'57',note:'Luyện Băng Tâm Tiên Tử (9x). Max chiêu 4x+6x trước, sau đó Phi Vân Bàn Tiếp (tầng 2). Lực tay 8000-9000.'}],calc:{smTarget:110,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:57}},skills:[{name:'Băng Tâm Tiên Tử',type:'Song Đao',priority:1,desc:'Ném băng tầm xa, sát thương tầng 1 (500%) + tầng 2 (400%)',level:'9x'},{name:'Băng Cốt Tuyết Tâm',type:'Trấn Phái',priority:2,desc:'MAX ĐẦU TIÊN! -49 Thời gian phục hồi, không cần đồ dòng Phục Hồi',level:'6x'},{name:'Tuyết Ảnh',type:'Tàng Hình',priority:3,desc:'Max thứ hai, tàng hình áp sát/rút lui, mốc tốc chạy 55 + tốc đánh 65',level:'3x'},{name:'Phong Tuyết Thần Kỹ',type:'Hỗ trợ',priority:4,desc:'Max sau Trấn Phái + Tuyết Ảnh, hỗ trợ tốc di chuyển',level:'4x'},{name:'Tuyết Phong Văn Quyết',type:'Hỗ trợ',priority:5,desc:'Max cùng lúc với chiêu 4x, hỗ trợ sát thương',level:'6x'},{name:'Phi Vân Bàn Tiếp',type:'Hỗ trợ',priority:6,desc:'Max cuối cùng, hỗ trợ sát thương tầng 2 cho kỹ năng 9x',level:'3x'}],equipment:[{stat:'Làm Chậm 80 + Choáng 80',importance:'⭐⭐⭐⭐⭐',note:'Nhẫn+Đai hệ Hỏa → LC 80. Vũ khí Chém 40 + Mũ Choáng 40'},{stat:'Kháng Lôi 75+1',importance:'⭐⭐⭐⭐',note:'Ưu tiên kháng lôi để sinh tồn giao tranh'}]},
+      { id: 'ndchuong', name: 'Ngũ Độc', branch: 'Chưởng Độc', role: 'Sát Thương Độc', element: 'Mộc', emoji: '☠️', color: '#1abc9c', colorGlow: 'rgba(26,188,156,0.3)', description: 'Nội Công độc sát mạnh mẽ, không cần vũ khí xịn. SM 110-165 đủ đồ, SK dồn max. TP và NL không tăng. Rất mạnh solo.', baseStats: { sm: 20, tp: 35, sk: 20, nl: 25 }, buildGuide: { summary: 'SM mốc 110-165 vừa đủ mặc đồ (giai đoạn 8x-9x). SK dồn toàn bộ còn lại để đứng vững áp sát. TP và NL không tăng.', phases: [{ level: '1-60', sm: 'Đủ đồ', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Tăng Ngũ Độc Chưởng Pháp + Vô Hình Cổ. Skill tốn ít mana, hồi tự nhiên.' }, { level: '60-90', sm: 'Mốc 110', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Max Bách Độc Xuyên Tâm (Trấn Phái) ngay lập tức. Bùng nổ sát thương.' }, { level: '90+', sm: '110-165', tp: '0', sk: 'Dồn max', nl: '0', note: 'Tẩy tủy: NĐ Chưởng → Vạn Cổ → Trấn Phái → Vô Hình Cổ → Xuyên Tâm Đột Kích → Âm Phong.' }], calc: { smTarget: 110, smReachAt: 60, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Vạn Cổ Thích Thiên', type: 'Chưởng Pháp', priority: 1, desc: 'Kỹ năng gây sát thương chính khi đạt cấp 90', level: '9x' }, { name: 'Bách Độc Xuyên Tâm', type: 'Trấn Phái', priority: 2, desc: 'Max ngay lv60, tối ưu sát thương và phòng thủ', level: '6x' }, { name: 'Ngũ Độc Chưởng Pháp', type: 'Cơ bản', priority: 3, desc: 'Max 20 điểm lấy sát thương nền', level: '1x' }, { name: 'Vô Hình Cổ', type: 'Aura', priority: 4, desc: 'Giảm kháng độc đối phương, sát thương độc bá đạo hơn', level: '3x' }, { name: 'Xuyên Tâm Đột Kích', type: 'Hỗ trợ', priority: 5, desc: 'Hỗ trợ sát thương chưởng pháp', level: '6x' }, { name: 'Âm Phong Thực Cốt', type: 'Hỗ trợ', priority: 6, desc: 'Kỹ năng giật đối thủ, rất quan trọng trong solo', level: '12x' }], equipment: [{ stat: 'Kỹ năng môn phái +1/2', importance: '⭐⭐⭐⭐⭐', note: 'Tăng cấp độ kỹ năng độc sát' }, { stat: 'Sinh lực', importance: '⭐⭐⭐⭐', note: 'Càng trâu càng tốt' }] },
+      { id: 'nddao', name: 'Ngũ Độc', branch: 'Đao Độc', role: 'Kỵ Binh Độc Sát', element: 'Mộc', emoji: '🔪', color: '#1abc9c', colorGlow: 'rgba(26,188,156,0.3)', description: 'Ngoại Công+Độc cơ động trên ngựa. Cần cân bằng 3 chỉ số: TP mặc vũ khí + SM lực tay + SK trụ vững. NL không tăng.', baseStats: { sm: 20, tp: 35, sk: 20, nl: 25 }, buildGuide: { summary: 'TP ưu tiên mặc vũ khí (mốc 48→111→140). SM ~130-150 lấy sát thương. SK mốc 130+ còn lại tăng máu. NL không tăng.', phases: [{ level: '1-18', sm: 'Tăng nhanh', tp: 'Mốc 48', sk: 'Ít', nl: '0', note: 'TP đủ mặc vũ khí cấp 18. SM dọn quái nhanh.' }, { level: '19-63', sm: 'Tăng đều', tp: 'Mốc 111', sk: 'Tăng dần', nl: '0', note: 'TP mốc 111 mặc đao/kích cấp 63. SM + SK cân bằng.' }, { level: '64-90', sm: '130-150', tp: 'Mốc 140', sk: 'Mốc 130+', nl: '0', note: 'TP 140 chính xác cao. SM 130-150 lấy dam. SK 130+ để trụ Tống Kim.' }, { level: '90+', sm: '150+', tp: '140+', sk: 'Còn lại', nl: '0', note: 'Tẩy tủy: Chu Cáp → Trấn Phái → NĐ Đao → Huyền Âm → Huyết Bạt. Điều chỉnh theo đồ đang có.' }], calc: { smTarget: 150, smReachAt: 90, tpRate: [{ f: 1, t: 18, p: 2 }, { f: 19, t: 63, p: 2 }, { f: 64, t: 150, p: 1 }], nlFixed: 0 } }, skills: [{ name: 'Chu Cáp Não Thiên', type: 'Đao Pháp', priority: 1, desc: 'Tuyệt kỹ đao pháp sát thương diện rộng trên ngựa', level: '9x' }, { name: 'Bách Độc Xuyên Tâm', type: 'Trấn Phái', priority: 2, desc: 'Max 20 điểm ở cấp 60, tăng toàn diện', level: '6x' }, { name: 'Ngũ Độc Đao Pháp', type: 'Cơ bản', priority: 3, desc: 'Max 20 điểm lấy sát thương vật lý và độc sát cơ bản', level: '1x' }, { name: 'Huyền Âm Trảm', type: 'Đao Pháp', priority: 4, desc: 'Kỹ năng hỗ trợ sát thương đao pháp giai đoạn 6x', level: '6x' }, { name: 'Huyết Bạt Tiên', type: 'Buff', priority: 5, desc: 'Tăng tốc độ hồi phục sinh lực', level: '4x' }, { name: 'Vô Hình Cổ', type: 'Aura', priority: 6, desc: 'Giảm kháng độc đối phương', level: '3x' }], equipment: [{ stat: 'Sinh lực', importance: '⭐⭐⭐⭐⭐', note: 'Ưu tiên đồ có sinh lực cao' }, { stat: 'Kỹ năng môn phái +1/2', importance: '⭐⭐⭐⭐', note: 'Tăng cấp kỹ năng độc sát' }] },
 
-  // HỆ HỎA
-  {id:'cbchuong',name:'Cái Bang',branch:'Chưởng Pháp',role:'Nội Công Trâu Bò',element:'Hỏa',emoji:'🐉',color:'#e74c3c',colorGlow:'rgba(231,76,60,0.3)',description:'Bền bỉ giao tranh, liên tục tung chưởng diện rộng. SM 60-70 (110 với nhẫn Hiệp Cốt), SK dồn max HP ≥5000. NL không tăng, bù bằng trang bị.',baseStats:{sm:30,tp:20,sk:30,nl:20},buildGuide:{summary:'Full Sinh Khí để trâu bò giao tranh. SM 60-70 (tổng 110 với nhẫn), TP và NL không tăng. NL thiếu bù bằng trang bị có dòng Nội Lực và Phục Hồi NL, máu thấp thì không gì bù được.',phases:[{level:'1-20',sm:'Đủ đồ',tp:'0',sk:'Dồn max',nl:'0',note:'Cái Bang Chưởng Pháp cơ bản và Kiến Nhân Thần Thủ để train quái.'},{level:'21-60',sm:'60-70',tp:'0',sk:'Dồn max',nl:'0',note:'Lv30 nâng Giáng Long Chưởng, lv50 Kháng Long Hữu Hối và Túy Điệp Cuồng Vũ.'},{level:'95+',sm:'110 (với nhẫn)',tp:'0',sk:'Dồn max',nl:'0',note:'Tẩy tủy max Túy Điệp, Tiêu Diêu, CB Chưởng, Giáng Long, Kháng Long, Phi Long. HP ≥5000. NL bù bằng đồ.'}],calc:{smTarget:110,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Phi Long Tại Thiên',type:'Chưởng Pháp',priority:1,desc:'Rồng lượn rượt đuổi mục tiêu tầm xa, sát thương hỏa nội khủng',level:'9x'},{name:'Tuý Điệp Cuồng Vũ',type:'Hỗ trợ',priority:2,desc:'Kỹ năng cơ bản cần max đầu tiên, tăng kháng tính và bạo kích',level:'6x'},{name:'Cái Bang Chưởng Pháp',type:'Trấn Phái',priority:3,desc:'Trấn phái tăng chỉ số hỗ trợ chiến đấu quan trọng nhất',level:'6x'},{name:'Tiêu Diêu Công',type:'Khinh Công',priority:4,desc:'Tối ưu tốc độ di chuyển và tốc độ đánh, max 20 điểm',level:'3x'},{name:'Giáng Long Chưởng',type:'Chưởng Pháp',priority:5,desc:'Cộng 750 sát thương hỏa nội công, vượt trội hoàn toàn các skill hỗ trợ khác',level:'3x'},{name:'Kháng Long Hữu Hối',type:'Chưởng Pháp',priority:6,desc:'Tăng lực tay và sát thương dứt điểm mục tiêu',level:'5x'}],equipment:[{stat:'Kháng Thủy',importance:'⭐⭐⭐⭐⭐',note:'Do kị hệ Thuỷ'},{stat:'Hỏa sát Nội',importance:'⭐⭐⭐⭐',note:'Tăng thuần damage'}]},
-  {id:'cbbong',name:'Cái Bang',branch:'Bổng Pháp',role:'Sát Thương Áp Sát',element:'Hỏa',emoji:'🦯',color:'#e74c3c',colorGlow:'rgba(231,76,60,0.3)',description:'Ngoại Công cận chiến áp sát. Lv1-30 full SM, lv31+ thêm TP cho chính xác + né, lv61+ thêm SK để trụ. Thiên Hạ Vô Cẩu tung hoành giang hồ.',baseStats:{sm:30,tp:20,sk:30,nl:20},buildGuide:{summary:'Lv1-30 dồn full SM (~150). Lv31-60: 3SM+2TP/lv. Lv61-90: 2SM+1TP+2SK/lv. Sau tẩy tủy 90: SM 250-350, TP 150-250, SK còn lại, NL không tăng.',phases:[{level:'1-30',sm:'Dồn hết',tp:'0',sk:'0',nl:'0',note:'Quái yếu, cần SM lớn thăng cấp nhanh. Mục tiêu ~150 SM ở lv30.'},{level:'31-60',sm:'3đ/lv',tp:'2đ/lv',sk:'Bù nếu máu giấy',nl:'0',note:'TP để đánh không miss và tăng tốc chạy. Bớt 1 SM bù SK nếu cần.'},{level:'61-90',sm:'2đ/lv',tp:'1đ/lv',sk:'2đ/lv',nl:'0',note:'Bắt đầu Tống Kim / săn Boss, HP cực kỳ quan trọng để không bị sốc sát thương.'},{level:'90+',sm:'250-350',tp:'150-250',sk:'Còn lại',nl:'0',note:'Tẩy tủy tối ưu. Max Thiên Hạ Vô Cẩu → Trấn Phái → Thanh Long → Bổng Pháp → Tiêu Diêu → Sát Thủ Giản.'}],calc:{smTarget:300,smReachAt:90,tpRate:[{f:31,t:60,p:2},{f:61,t:150,p:1}],nlFixed:0}},skills:[{name:'Thiên Hạ Vô Cẩu',type:'Bổng Pháp',priority:1,desc:'Chiêu chính tung hoành giang hồ, quật bổng diện rộng',level:'9x'},{name:'Cái Bang Chưởng Pháp',type:'Trấn Phái',priority:2,desc:'Tăng toàn diện sát thương, tốc đánh và kháng tính',level:'6x'},{name:'Thanh Long Xuất Hải',type:'Hỗ trợ',priority:3,desc:'Passive tăng % sát thương vật lý và chính xác cho Bổng, hỗ trợ trực tiếp Thiên Hạ Vô Cẩu',level:'2x'},{name:'Cái Bang Bổng Pháp',type:'Cơ bản',priority:4,desc:'Kỹ năng cơ bản đường Bổng, hỗ trợ sát thương căn bản',level:'1x'},{name:'Tiêu Diêu Công',type:'Khinh Công',priority:5,desc:'Tăng tốc độ chạy và né tránh, rất quan trọng để áp sát đối thủ',level:'5x'},{name:'Sát Thủ Giản',type:'Hỗ trợ',priority:6,desc:'Hỗ trợ lực tay vật lý, dồn điểm dư sau khi max các chiêu trên',level:'8x'}],equipment:[{stat:'Sát thương vật lý',importance:'⭐⭐⭐⭐⭐',note:'Ngoại công tay'},{stat:'Tốc đánh',importance:'⭐⭐⭐⭐',note:'Đánh chùm'}]},
-  {id:'tnthuong',name:'Thiên Nhẫn',branch:'Thương Pháp',role:'Sát Thủ Cận Chiến',element:'Hỏa',emoji:'🔥',color:'#c0392b',colorGlow:'rgba(192,57,43,0.3)',description:'Ngoại Công cận chiến giật liên tục. SM 160, SK dồn max, TP cộng ít nếu cần. NL không tăng, bù bằng đồ. Kỵ hệ Thủy.',baseStats:{sm:30,tp:20,sk:30,nl:20},buildGuide:{summary:'SM mốc 160 lấy lực tay + mặc đồ. SK dồn hết còn lại để sinh tồn áp sát. TP cộng ít nếu chính xác/tốc đánh chưa đủ. NL không tăng.',phases:[{level:'1-20',sm:'Tăng nhiều',tp:'0',sk:'Ít',nl:'0',note:'Thiên Nhẫn Mâu Pháp + Tàn Dương Như Tuyết 6-8 điểm.'},{level:'21-60',sm:'Tăng nhiều',tp:'Ít nếu cần',sk:'Tăng dần',nl:'0',note:'Lv30 Liệt Hỏa Tình Thiên. Lv60 Thâu Thiên Hoán Nhật và max Thiên Ma Giải Thế.'},{level:'95+',sm:'160',tp:'Ít nếu cần',sk:'Dồn max',nl:'0',note:'Tẩy tủy: Vân Long Kích → Thiên Ma Giải Thế → Mâu Pháp → Thâu Thiên → Liệt Hỏa → Phi Hồng.'}],calc:{smTarget:160,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Vân Long Kích',type:'Giáo Pháp',priority:1,desc:'Kỹ năng gây sát thương chính, giật liên tục sốc sát thương',level:'9x'},{name:'Thiên Ma Giải Thế',type:'Trấn Phái',priority:2,desc:'Tăng cực mạnh sát thương ngoại công',level:'6x'},{name:'Thiên Nhẫn Mâu Pháp',type:'Cơ bản',priority:3,desc:'Tăng sát thương cơ bản cho giáo/thương',level:'1x'},{name:'Thâu Thiên Hoán Nhật',type:'Hỗ trợ',priority:4,desc:'Hút sinh lực và nội lực, hồi phục khi chiến đấu',level:'6x'},{name:'Liệt Hỏa Tình Thiên',type:'Hỏa sát',priority:5,desc:'Hỗ trợ sát thương hỏa, nâng từ lv30',level:'3x'},{name:'Phi Hồng Vô Tích',type:'Hỗ trợ',priority:6,desc:'Tăng tốc độ chạy trên ngựa',level:'4x'}],equipment:[{stat:'Kháng Thủy',importance:'⭐⭐⭐⭐⭐',note:'Kỵ hệ Thủy (Nga My, Thúy Yên)'},{stat:'Kỹ năng môn phái +1/2',importance:'⭐⭐⭐⭐',note:'Tối ưu sát thương chiêu 9x'}]},
-  {id:'tndao',name:'Thiên Nhẫn',branch:'Đao Pháp',role:'Pháp Sư Hỏa Nội',element:'Hỏa',emoji:'🔪',color:'#c0392b',colorGlow:'rgba(192,57,43,0.3)',description:'Pháp sư Nội Công hệ Hỏa diện rộng. SM 165 đủ đồ, SK dồn max. TP và NL không tăng, NL bù bằng trang bị. Kỵ hệ Thủy.',baseStats:{sm:30,tp:20,sk:30,nl:20},buildGuide:{summary:'SM mốc 165 mặc đồ. SK dồn hết tăng máu. TP không tăng (chiêu nội không miss). NL không tăng, bù bằng đồ có Nội lực tối đa hoặc Hút NL.',phases:[{level:'1-90',sm:'Đủ đồ',tp:'0',sk:'Dồn max',nl:'0',note:'Ưu tiên SK + nâng kỹ năng hỏa sát nội công cơ bản để cày cấp.'},{level:'90+',sm:'165',tp:'0',sk:'Dồn max',nl:'0',note:'Tẩy tủy: Thiên Vũ Hỏa Lưu Tinh → Thiên Ma Giải Thế → Bi Ma → Xuyên Tâm → Lệ Xà → Đao Pháp.'}],calc:{smTarget:165,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Thiên Vũ Hỏa Lưu Tinh',type:'Chưởng Pháp',priority:1,desc:'Mưa lửa diện rộng, dọn quái và giao tranh chính',level:'9x'},{name:'Thiên Ma Giải Thế',type:'Trấn Phái',priority:2,desc:'Hỗ trợ tăng sát thương nội công',level:'6x'},{name:'Bi Ma Huyết Đao',type:'Bùa',priority:3,desc:'Bùa giảm hỏa kháng của đối phương',level:'1x'},{name:'Xuyên Tâm Độc Thương',type:'Bùa',priority:4,desc:'Bùa khóa mục tiêu',level:'3x'},{name:'Lệ Xà Xuyên Tâm',type:'Hỏa sát',priority:5,desc:'Chiêu hỗ trợ hỏa sát nội công',level:'6x'},{name:'Thiên Nhẫn Đao Pháp',type:'Cơ bản',priority:6,desc:'Tăng nền tảng hỏa sát cho đao',level:'1x'}],equipment:[{stat:'Kháng Thủy',importance:'⭐⭐⭐⭐⭐',note:'Kỵ hệ Thủy (Nga My, Thúy Yên)'},{stat:'Kỹ năng môn phái +1/2',importance:'⭐⭐⭐⭐',note:'Tối ưu sát thương chiêu 9x'}]},
+      // HỆ THỦY
+      { id: 'nmbuff', name: 'Nga My', branch: 'Support', role: 'Healer Tối Thượng', element: 'Thủy', emoji: '💚', color: '#3498db', colorGlow: 'rgba(52,152,219,0.3)', description: 'Trụ cột của mọi Party. SK tăng max, NL vừa đủ. Hồi máu, buff kháng tất cả, hồi sinh đồng đội.', baseStats: { sm: 25, tp: 25, sk: 25, nl: 25 }, buildGuide: { summary: 'Thuần đi theo để hỗ trợ team. Chú trọng lớn nhất vào Sinh khí để sống dai.', phases: [{ level: '10-30', sm: '35-70', tp: '0', sk: 'Dồn hết', nl: 'Vừa đủ', note: 'Tăng 1đ Mộng Điệp và chiêu hồi máu cơ bản' }, { level: '40-60', sm: '35-70', tp: '0', sk: 'Dồn hết', nl: 'Vừa đủ', note: 'Ưu tiên Max Mộng Điệp, sau đó Phật Tâm Từ Hữu' }, { level: '80-90+', sm: 'Mốc 110', tp: '0', sk: 'Dồn hết', nl: 'Vừa đủ', note: 'Nâng SM lên 110 mặc đồ cấp cao, Sinh khí vẫn là chủ đạo' }], calc: { smTarget: 110, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Phổ Độ Chúng Sinh', type: 'Hồi Máu', priority: 1, desc: 'Bơm máu cực đại 90', level: '9x' }, { name: 'Phật Tâm Từ Bi', type: 'Trấn Phái', priority: 2, desc: 'Kháng tất cả cho pt', level: '6x' }, { name: 'Lưu Thủy', type: 'Vòng sáng', priority: 3, desc: 'Tăng tốc chạy toàn team', level: '3x' }, { name: 'Mộng Điệp', type: 'Vòng sáng', priority: 4, desc: 'Hồi sinh lực nội lực mạn thiên', level: '5x' }, { name: 'Từ Hàng Phổ Độ', type: 'Phục sinh', priority: 5, desc: 'Cứu người chết', level: '4x' }, { name: 'Thanh Âm Phạn Xướng', type: 'Aura', priority: 6, desc: 'Tăng kháng tính', level: '6x' }], equipment: [{ stat: 'Sinh Lực', importance: '⭐⭐⭐⭐⭐', note: 'Phải trâu' }, { stat: 'Tốc độ hồi SL', importance: '⭐⭐⭐⭐', note: 'Hồi máu max nhanh' }] },
+      { id: 'nmkiem', name: 'Nga My', branch: 'Kiếm Pháp', role: 'Kiếm Sĩ Băng Sát', element: 'Thủy', emoji: '⚔️', color: '#3498db', colorGlow: 'rgba(52,152,219,0.3)', description: 'Kiếm pháp Ngoại Công hệ Thủy, sát thương băng sát cực lớn, chém đóng băng đối thủ đứng im.', baseStats: { sm: 25, tp: 25, sk: 25, nl: 25 }, buildGuide: { summary: 'Ngoại Công cận chiến. SM & TP là quan trọng nhất (đam và chính xác), SK vừa đủ sống sót.', phases: [{ level: '10-30', sm: '35-70', tp: 'Cần thiết', sk: 'Vừa đủ', nl: '0', note: 'Dùng Phi Hành, 1đ Mộng Điệp để hồi phục' }, { level: '60', sm: 'Theo đồ', tp: 'Trọng tâm', sk: 'Vừa đủ', nl: '0', note: 'Bắt buộc Max Trấn Phái Cửu Dương Công ngay lập tức' }, { level: '90+', sm: '110+', tp: 'Kéo max', sk: 'Vừa đủ', nl: '0', note: 'Dùng Tam Nga. SM mốc 110 mặc đồ cấp cao, kéo max TP' }], calc: { smTarget: 110, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 1 }], nlFixed: 0 } }, skills: [{ name: 'Tam Nga Tế Tuyết', type: 'Kiếm Pháp', priority: 1, desc: 'Kiếm khí phóng 5 tia 90', level: '9x' }, { name: 'Phật Tâm Từ Bi', type: 'Trấn Phái', priority: 2, desc: 'Kháng tính kháng tất cả cực lớn', level: '6x' }, { name: 'Lưu Thủy', type: 'Vòng sáng', priority: 3, desc: 'Buff tốc độ chạy', level: '3x' }, { name: 'Băng Tâm Ngọc Quyết', type: 'Hỗ trợ', priority: 4, desc: 'Buff hồi nội lực khủng', level: '6x' }, { name: 'Nga My Kiếm Pháp', type: 'Cơ bản', priority: 5, desc: 'Tăng sát thương kiếm', level: '1x' }, { name: 'Thôi Song Vọng Nguyệt', type: 'Kiếm Pháp', priority: 6, desc: 'Kiếm 30 lan truyền', level: '3x' }], equipment: [{ stat: 'Tốc độ xuất chiêu', importance: '⭐⭐⭐⭐⭐', note: 'Ra kiếm k độ trễ' }, { stat: 'Thời gian làm chậm', importance: '⭐⭐⭐⭐', note: 'Giữ mục tiêu đứng im' }] },
+      { id: 'nmchuong', name: 'Nga My', branch: 'Chưởng Pháp', role: 'Khống Chế Băng', element: 'Thủy', emoji: '❄️', color: '#3498db', colorGlow: 'rgba(52,152,219,0.3)', description: 'Pháp sư Nội Công hệ Thủy áp sát. SK nhiều. Phong Sương Toái Ảnh ném băng đóng băng.', baseStats: { sm: 25, tp: 25, sk: 25, nl: 25 }, buildGuide: { summary: 'Nội Công áp sát. Dồn toàn bộ vào Sinh Khí để sinh tồn cận chiến.', phases: [{ level: '10-30', sm: '35-70', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Max Nga My Chưởng Pháp để lấy đam. 1đ Mộng Điệp' }, { level: '60', sm: 'Theo đồ', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Bắt buộc Max Trấn Phái Cửu Dương Công ngay lập tức' }, { level: '90+', sm: 'Mốc 110', tp: '0', sk: 'Dồn hết', nl: '0', note: 'SM mốc 110 mặc đồ. Nâng ngập skill chiến (Phong Sương, Tứ Tượng)' }], calc: { smTarget: 110, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Phong Sương Toái Ảnh', type: 'Chưởng Pháp', priority: 1, desc: 'Chưởng băng nội công 90', level: '9x' }, { name: 'Phật Tâm Từ Bi', type: 'Trấn Phái', priority: 2, desc: 'Kháng cực lớn', level: '6x' }, { name: 'Lưu Thủy', type: 'Vòng sáng', priority: 3, desc: 'Buff tốc chạy', level: '3x' }, { name: 'Băng Tâm Ngọc Quyết', type: 'Hỗ trợ', priority: 4, desc: 'Buff hồi nội lực KHỦNG', level: '6x' }, { name: 'Nga My Chưởng Pháp', type: 'Cơ bản', priority: 5, desc: 'Tăng sát thương chưởng', level: '1x' }, { name: 'Tứ Tượng Đồng Quy', type: 'Chưởng', priority: 6, desc: 'Chiêu 60', level: '6x' }], equipment: [{ stat: 'Tốc độ xuất chiêu', importance: '⭐⭐⭐⭐⭐', note: 'Ra chưởng liên tục nhồi dam' }, { stat: 'Băng sát Nội công', importance: '⭐⭐⭐⭐', note: 'Đóng băng sâu' }] },
 
-  // HỆ THỔ
-  {id:'vdkhik',name:'Võ Đang',branch:'Khí (Quyền)',role:'Sấm Sét Nội',element:'Thổ',emoji:'🌀',color:'#9b59b6',colorGlow:'rgba(155,89,182,0.3)',description:'Vua choáng diện rộng, săn boss siêu đỉnh. Thiên Địa Vô Cực. Dùng Tọa Vọng Vô Ngã (khiên mana). SM 70-110, TP 0, Máu 1k5-2k, Dồn full Nội công.',baseStats:{sm:20,tp:15,sk:25,nl:40},buildGuide:{summary:'Quyền Võ Đang cực mạnh Tống Kim và săn Boss. Lấy Tọa Vọng bù máu, bơm căng Nội Công.',phases:[{level:'10-50',sm:'Mốc 70',tp:'0',sk:'Mốc 1k5',nl:'Tăng mạnh',note:'Max VĐ Quyền Pháp. 1đ Thái Cực Quyền tiết kiệm mana.'},{level:'38-60',sm:'Mốc 110',tp:'0',sk:'1k5-2k',nl:'Tăng mạnh',note:'5-15đ Tọa Vọng Vô Ngã. Cấp 60 Max Trấn Phái lập tức.'},{level:'90+',sm:'110 (Mặc đồ)',tp:'0',sk:'Cố định 1k5-2k',nl:'Dồn tất (Gánh sát thương)',note:'Max Thiên Địa Vô Cực (9x). Nội công sinh dam và Shield.'}],calc:{smTarget:70,smReachAt:60,tpRate:[{f:1,t:150,p:0}],nlFixed:-1}},skills:[{name:'Thiên Địa Vô Cực',type:'Khí Kiếm',priority:1,desc:'Gươm rơi trên trời giật lag 90',level:'9x'},{name:'Thái Cực Thần Công',type:'Trấn Phái',priority:2,desc:'Tốc độ và tấn công lôi',level:'6x'},{name:'Tọa Vọng Vô Ngã',type:'Manashield',priority:3,desc:'Mana đỡ sát thương',level:'5x'},{name:'Thất Tinh Trận',type:'Aura',priority:4,desc:'Aura sát thương Lôi',level:'3x'},{name:'Bát Quái Kiếm Khí',type:'Khí',priority:5,desc:'Khí kiếm 60',level:'6x'},{name:'Võ Đang Quyền Pháp',type:'Cơ bản',priority:6,desc:'Tăng dam cơ sở',level:'1x'}],equipment:[{stat:'Chuyển sát thương thành Nội lực',importance:'⭐⭐⭐⭐⭐',note:'Đồ xịn nhất của VĐ'},{stat:'Tốc độ đánh',importance:'⭐⭐⭐⭐',note:'Ra sét mượt'}]},
-  {id:'vdkiem',name:'Võ Đang',branch:'Kiếm Pháp',role:'Sát Thủ Nhanh',element:'Thổ',emoji:'🗡️',color:'#9b59b6',colorGlow:'rgba(155,89,182,0.3)',description:'Áp sát chém nhanh. Mana là Máu nhờ Tọa Vọng vô ngã. SM 165-260, TP 100-150, NL 100-150. SK ném 0.',baseStats:{sm:20,tp:15,sk:25,nl:40},buildGuide:{summary:'KHÔNG tăng Sinh Khí. Nội Công quan trọng hơn SK vì nuôi Khiên (Mana là máu). SM lấy đam, TP lấy Hit Rate.',phases:[{level:'10-50',sm:'Tăng mạnh',tp:'Mốc 100',sk:'0 / Mốc 1k bảo hiểm',nl:'Dồn điểm (Ưu tiên)',note:'Max Võ Đang Kiếm Pháp. Bơm Nội lực nuôi Khiên.'},{level:'60-90',sm:'165-260',tp:'100-150',sk:'Tối đa 1k-1k2',nl:'100-150',note:'Max Trấn Phái. TP rất cần để đánh không miss.'},{level:'90+',sm:'Mốc 165-260',tp:'100-150',sk:'Còn lại hoặc 0',nl:'100-150',note:'Max Tam Hoàn Thao Nguyệt. Tọa Vọng Vô Ngã max sau cùng lấy rate hấp thụ sát thương cao nhất.'}],calc:{smTarget:260,smReachAt:90,tpRate:[{f:1,t:150,p:1}],nlFixed:100}},skills:[{name:'Nhân Kiếm Hợp Nhất',type:'Kiếm Pháp',priority:1,desc:'Phóng kiếm giật 90',level:'9x'},{name:'Thái Cực Thần Công',type:'Trấn Phái',priority:2,desc:'Chí tôn lôi sát nội',level:'6x'},{name:'Tọa Vọng Vô Ngã',type:'Manashield',priority:3,desc:'Đỡ đòn bằng mana (Shield)',level:'5x'},{name:'Thất Tinh Trận',type:'Aura',priority:4,desc:'Aura kiếm tông',level:'3x'},{name:'Võ Đang Kiếm Pháp',type:'Cơ bản',priority:5,desc:'Tốc đánh kiếm',level:'1x'},{name:'Tam Hoàn Sáo Nguyệt',type:'Kiếm',priority:6,desc:'Chiêu 60 kiếm',level:'6x'}],equipment:[{stat:'Lôi Sát Ngoại',importance:'⭐⭐⭐⭐⭐',note:'Gây choáng vật lý'},{stat:'Hút HP',importance:'⭐⭐⭐⭐',note:'Đứng tank bắn kiếm'}]},
-  {id:'cldao',name:'Côn Lôn',branch:'Đao Pháp',role:'Gió Cắt Nát',element:'Thổ',emoji:'🌪️',color:'#8e44ad',colorGlow:'rgba(142,68,173,0.3)',description:'Ngoại Công gió lốc diện rộng. Lv1-90 ưu tiên SM đủ đồ + SK dồn max sinh tồn. Cần đi theo xe PT. Tẩy tủy 9x chọn đường Đao.',baseStats:{sm:20,tp:15,sk:25,nl:40},buildGuide:{summary:'SM dần tới 110 đủ đồ (cấp 30 thêm ~10đ, cấp 80-90 mốc 110). SK dồn hết còn lại. TP và NL không tăng. Cần tổ đội để cày cấp hiệu quả.',phases:[{level:'1-30',sm:'Tăng dần (+10đ)',tp:'0',sk:'Dồn hết',nl:'0',note:'Dùng Quyền Pháp (1x) train tiết kiệm sửa vũ khí. Max 20đ Quyền.'},{level:'30-60',sm:'Tăng dần',tp:'0',sk:'Dồn hết',nl:'0',note:'Thanh Phong Phù max 20 nếu kéo xe, 1đ nếu đánh chiến. 1đ Thiên Thanh Địa Trác.'},{level:'60-80',sm:'Tăng dần',tp:'0',sk:'Dồn hết',nl:'0',note:'Max Sương Ngạo Côn Lôn (Trấn Phái) ngay lập tức. Bùng nổ sát thương.'},{level:'80-90+',sm:'Mốc 110',tp:'0',sk:'Dồn max',nl:'0',note:'Nội Lực Khổ Thân ~10đ (bị đánh chỉ tốn 1 máu). Tẩy tủy 9x chuyên đường Đao.'}],calc:{smTarget:110,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Ngạo Tuyết Tiêu Phong',type:'Đao Pháp',priority:1,desc:'Gió xoáy diện rộng phá buff đối thủ',level:'9x'},{name:'Sương Ngạo Côn Lôn',type:'Trấn Phái',priority:2,desc:'Max ngay lv60, tối ưu sát thương và kháng tính',level:'6x'},{name:'Côn Lôn Quyền Pháp',type:'Cơ bản',priority:3,desc:'Max 20 lấy sát thương nền, train tiết kiệm sửa vũ khí',level:'1x'},{name:'Thanh Phong Phù',type:'Vòng sáng',priority:4,desc:'Tốc chạy cho tổ đội kéo xe. Max 20 hoặc 1đ tùy vai trò',level:'3x'},{name:'Nội Lực Khổ Thân',type:'Hỗ trợ',priority:5,desc:'Bị đánh chỉ tốn 1 máu, ~10đ lv80 tăng chống chịu',level:'8x'},{name:'Thiên Thanh Địa Trác',type:'Aura',priority:6,desc:'1đ lấy hiệu ứng lôi sát',level:'3x'}],equipment:[{stat:'Sinh lực',importance:'⭐⭐⭐⭐⭐',note:'Máu trâu đứng vững trong PT'},{stat:'Kỹ năng môn phái +1/2',importance:'⭐⭐⭐⭐',note:'Tăng cấp kỹ năng lốc gió'}]},
-  {id:'clkiem',name:'Côn Lôn',branch:'Kiếm Pháp',role:'Lôi Sát Khủng',element:'Thổ',emoji:'⚡',color:'#8e44ad',colorGlow:'rgba(142,68,173,0.3)',description:'Nội Công lôi sát. Lv1-90 ưu tiên SM đủ đồ + SK dồn max sinh tồn. Cần đi theo xe PT. Tẩy tủy 9x chọn đường Kiếm.',baseStats:{sm:20,tp:15,sk:25,nl:40},buildGuide:{summary:'SM dần tới 110 đủ đồ (cấp 30 thêm ~10đ, cấp 80-90 mốc 110). SK dồn hết còn lại. TP và NL không tăng. Cần tổ đội để cày cấp hiệu quả.',phases:[{level:'1-30',sm:'Tăng dần (+10đ)',tp:'0',sk:'Dồn hết',nl:'0',note:'Dùng Quyền Pháp (1x) train tiết kiệm sửa vũ khí. Max 20đ Quyền. 1đ Kiếm Pháp hỗ trợ.'},{level:'30-60',sm:'Tăng dần',tp:'0',sk:'Dồn hết',nl:'0',note:'Thanh Phong Phù max 20 nếu kéo xe, 1đ nếu đánh chiến. 1đ Thiên Thanh Địa Trác.'},{level:'60-80',sm:'Tăng dần',tp:'0',sk:'Dồn hết',nl:'0',note:'Max Sương Ngạo Côn Lôn (Trấn Phái) ngay lập tức. Bùng nổ sát thương.'},{level:'80-90+',sm:'Mốc 110',tp:'0',sk:'Dồn max',nl:'0',note:'Nội Lực Khổ Thân ~10đ (bị đánh chỉ tốn 1 máu). Tẩy tủy 9x chuyên đường Kiếm Nội Công.'}],calc:{smTarget:110,smReachAt:90,tpRate:[{f:1,t:150,p:0}],nlFixed:0}},skills:[{name:'Lôi Động Cửu Thiên',type:'Kiếm Pháp',priority:1,desc:'Chiêu 90 giáng sét trúng là đứng yên',level:'9x'},{name:'Sương Ngạo Côn Lôn',type:'Trấn Phái',priority:2,desc:'Max ngay lv60, tối ưu sát thương và kháng tính',level:'6x'},{name:'Côn Lôn Quyền Pháp',type:'Cơ bản',priority:3,desc:'Max 20 lấy sát thương nền, train tiết kiệm sửa vũ khí',level:'1x'},{name:'Thanh Phong Phù',type:'Vòng sáng',priority:4,desc:'Tốc chạy cho tổ đội kéo xe. Max 20 hoặc 1đ tùy vai trò',level:'3x'},{name:'Nội Lực Khổ Thân',type:'Hỗ trợ',priority:5,desc:'Bị đánh chỉ tốn 1 máu, ~10đ lv80 tăng chống chịu',level:'8x'},{name:'Thiên Thanh Địa Trác',type:'Aura',priority:6,desc:'1đ lấy hiệu ứng lôi sát',level:'3x'}],equipment:[{stat:'Sinh lực',importance:'⭐⭐⭐⭐⭐',note:'Máu trâu đứng vững trong PT'},{stat:'Nội lực tối đa',importance:'⭐⭐⭐⭐',note:'Đường Kiếm hao NL cực nhiều'}]}
-];
+      { id: 'tydao', name: 'Thúy Yên', branch: 'Đao Pháp', role: 'Sát Thủ Tàng Hình', element: 'Thủy', emoji: '🥷', color: '#2980b9', colorGlow: 'rgba(41,128,185,0.3)', description: 'Ngoại Công sát thủ. SM~260, TP cần. Tàng hình vô song, bất chợt xuất hiện đoạt mạng phái máu giấy.', baseStats: { sm: 25, tp: 25, sk: 25, nl: 25 }, buildGuide: { summary: 'Tốc độ + Sát Thương Ngoại. Rất khát SM.', phases: [{ level: '1-90', sm: 'Dồn hết', tp: 'Mốc 150', sk: 'Tối thiểu', nl: '0', note: 'Dành cho ai thích phong cách sát thủ' }, { level: '90-150', sm: '300+', tp: 'Mốc 200', sk: 'Vừa đủ', nl: '0', note: 'Băng Tung Vô Ảnh nhảy dame' }], calc: { smRatio: [{ f: 1, t: 150, p: 80 }], tpRate: [{ f: 1, t: 150, p: 1 }], nlFixed: 0 } }, skills: [{ name: 'Băng Tung Vô Ảnh', type: 'Đao Pháp', priority: 1, desc: 'Đao 90 giật dam cực mạnh', level: '9x' }, { name: 'Băng Cốt Tuyết Tâm', type: 'Trấn Phái', priority: 2, desc: 'Băng sát nội ngoại', level: '6x' }, { name: 'Phong Tuyết Thần Kỹ', type: 'Hỗ trợ', priority: 3, desc: 'Tăng né tránh thân pháp', level: '6x' }, { name: 'Tuyết Ảnh', type: 'Tàng Hình', priority: 4, desc: 'Tàng hình áp sát', level: '3x' }, { name: 'Hộ Thể Thần Công', type: 'Màng chắn', priority: 5, desc: 'Shield cản sát thương', level: '4x' }, { name: 'Thúy Yên Đao Pháp', type: 'Cơ bản', priority: 6, desc: 'Sát thương đao cơ bản', level: '1x' }], equipment: [{ stat: 'Băng Sát', importance: '⭐⭐⭐⭐⭐', note: 'Phối hợp chiêu phái' }, { stat: 'Tốc độ chạy', importance: '⭐⭐⭐⭐', note: 'Chạy trốn thật nhanh' }] },
+      { id: 'tysongdao', name: 'Thúy Yên', branch: 'Song Đao', role: 'DPS Nội Công', element: 'Thủy', emoji: '🤺', color: '#2980b9', colorGlow: 'rgba(41,128,185,0.3)', description: 'Nội Công hệ Thủy tầm xa. SM đủ đồ, NL 57 (đủ mana TK), SK dồn max. Trấn Phái max đầu tiên (-49 CD). TP không tăng.', baseStats: { sm: 25, tp: 25, sk: 25, nl: 25 }, buildGuide: { summary: 'NL chính xác 57 điểm (đủ Mana Tống Kim). SK dồn hết còn lại. SM đủ mặc đồ. TP không tăng. Ưu tiên Trấn Phái (-49 CD) → Tuyết Ảnh → 4x+6x → Phi Vân (tầng 2). Chiêu 1x chỉ +200 lực tay, không đáng đầu tư sớm.', phases: [{ level: '1-60', sm: 'Đủ đồ', tp: '0', sk: 'Dồn hết', nl: '57', note: '1đ Tuyết Ảnh lấy tốc chạy. Không cần đầu tư Song Đao 1x sớm (chỉ +200 lực tay).' }, { level: '60-90', sm: 'Đủ đồ', tp: '0', sk: 'Dồn hết', nl: '57', note: 'Max Trấn Phái NGAY lập tức (-49 CD, chiến đấu tốt không cần đồ Phục Hồi). Max Tuyết Ảnh sau.' }, { level: '90+', sm: 'Mốc 110', tp: '0', sk: 'Dồn max', nl: '57', note: 'Luyện Băng Tâm Tiên Tử (9x). Max chiêu 4x+6x trước, sau đó Phi Vân Bàn Tiếp (tầng 2). Lực tay 8000-9000.' }], calc: { smTarget: 110, smReachAt: 60, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 57 } }, skills: [{ name: 'Băng Tâm Tiên Tử', type: 'Song Đao', priority: 1, desc: 'Ném băng tầm xa, sát thương tầng 1 (500%) + tầng 2 (400%)', level: '9x' }, { name: 'Băng Cốt Tuyết Tâm', type: 'Trấn Phái', priority: 2, desc: 'MAX ĐẦU TIÊN! -49 Thời gian phục hồi, không cần đồ dòng Phục Hồi', level: '6x' }, { name: 'Tuyết Ảnh', type: 'Tàng Hình', priority: 3, desc: 'Max thứ hai, tàng hình áp sát/rút lui, mốc tốc chạy 55 + tốc đánh 65', level: '3x' }, { name: 'Phong Tuyết Thần Kỹ', type: 'Hỗ trợ', priority: 4, desc: 'Max sau Trấn Phái + Tuyết Ảnh, hỗ trợ tốc di chuyển', level: '4x' }, { name: 'Tuyết Phong Văn Quyết', type: 'Hỗ trợ', priority: 5, desc: 'Max cùng lúc với chiêu 4x, hỗ trợ sát thương', level: '6x' }, { name: 'Phi Vân Bàn Tiếp', type: 'Hỗ trợ', priority: 6, desc: 'Max cuối cùng, hỗ trợ sát thương tầng 2 cho kỹ năng 9x', level: '3x' }], equipment: [{ stat: 'Làm Chậm 80 + Choáng 80', importance: '⭐⭐⭐⭐⭐', note: 'Nhẫn+Đai hệ Hỏa → LC 80. Vũ khí Chém 40 + Mũ Choáng 40' }, { stat: 'Kháng Lôi 75+1', importance: '⭐⭐⭐⭐', note: 'Ưu tiên kháng lôi để sinh tồn giao tranh' }] },
 
-const trainingSpots = [
-  {levelRange:'1-10',levelMin:1,levelMax:10,maps:['Ba Lăng Huyện','Giang Tân Thôn','Vĩnh Lạc Trấn','Chu Tiên Trấn','Đạo Hương Thôn','Long Môn Trấn','Thạch Cổ Trấn','Long Tuyền Thôn'],
-    partyTactic:'Solo làm NV tân thủ → Tập hợp party cấp 10',
-    details:'Mỗi acc solo riêng, đánh heo/nai/nhím/kim miêu quanh 8 thôn trấn tân thủ. Tập hợp party khi cả 4 acc đạt cấp 10.',
-    tips:['Dùng TTL tăng tốc lên cấp','Nhận hết quà tân thủ mỗi acc','Trang bị Set Kim Phong ngay','Vòng sáng vĩnh viễn hồi SL+NL'],
-    formation:'Solo → tập hợp khi cấp 10'},
-  {levelRange:'10-20',levelMin:10,levelMax:20,maps:['Ngoại thành Thành Đô','Tương Dương','Phượng Tường','Đại Lý','Biện Kinh','Dương Châu','Lâm An','Hoa Sơn','Diệu Vương Cốc','Nhạn Đản Sơn','Nam Nhạc Trấn'],
-    partyTactic:'TL gom quái → ĐM bắn AoE → NM heal → VĐ debuff',
-    details:'Train tại ngoại thành thất đại thành thị hoặc tại các Môn phái (TL, TV, ĐM, NĐ, NM, TY, VĐ, CL, TN tầng 1&2).',
-    tips:['Dùng TTL tăng tốc lên cấp','Quái ra nhanh — đứng 1 chỗ','TL bật Bất Động Minh Vương','ĐM bật auto Bạo Vũ Lê Hoa'],
-    formation:'🛡️TL(giữa) ← 🎯ĐM(xa) + 💚NM(sau TL) + 🌀VĐ(cạnh TL)'},
-  {levelRange:'20-30',levelMin:20,levelMax:30,maps:['Cái Bang','Kiếm Cát (TN/TB/TY)','Tần Lăng (ngoại vi)','La Tiêu Sơn','Vũ Lăng Sơn','Bạch Thủy Động','Phục Lưu Động','Hỏa Lang Động','Mãnh Hổ Động'],
-    partyTactic:'TL đứng giữa chịu đòn → ĐM đứng xa AoE → NM heal liên tục',
-    details:'Quái mạnh hơn. TL cần Dịch Cân Kinh. Bắt đầu dùng TTL tăng exp. Cái Bang có map riêng cho cấp 20.',
-    tips:['Dùng TTL (được tặng 5 cái)','TL bật Dịch Cân Kinh','VĐ bắt đầu có Nộ Lôi Chỉ'],
-    formation:'🛡️TL(gom) ← 🎯ĐM(AoE xa) + 💚NM(heal) + 🌀VĐ(debuff)'},
-  {levelRange:'30-40',levelMin:30,levelMax:40,maps:['Phục Ngưu Sơn Đông','Thục Cương Sơn','Vũ Di Sơn','Miêu Lĩnh','Kim Quang Động','Khối Lỗi Lâm','Dược Vương Động (tầng 1)','Tuyết Báo Động (tầng 1-2)','Thổ Phỉ Động','Bạch Vân Động','Lăng Tần Thủy Hoàng','Yến Tử Động'],
-    partyTactic:'VĐ debuff → TL gom → ĐM Bạo Vũ Lê Hoa xóa sạch',
-    details:'Party phối hợp ăn ý. Quái dày, đứng 1 chỗ train rất hiệu quả.',
-    tips:['Quái ra cực nhanh — perfect cho AoE','VĐ Thái Cực Thần Công buff party','NM Phật Tâm Từ Hữu tăng HP%'],
-    formation:'🌀VĐ(debuff) → 🛡️TL(gom) → 🎯ĐM(Bạo Vũ Lê Hoa) + 💚NM(heal)'},
-  {levelRange:'40-50',levelMin:40,levelMax:50,maps:['Thanh Thành Sơn','Điểm Thương Sơn','Phục Ngưu Sơn Tây','Hoàng Hà Nguyên Đầu','Kiến Tính Phong','Kinh Hoàng Động','Điểm Thương Động (tầng 1-3)','Kế Quán Động','Tỏa Vân Động','Thần Tiên Động','Long Cung Động','Phùng Nhãn Động','Mật Thất Thiếu Lâm'],
-    partyTactic:'Full combo party — ĐM AoE clear cực nhanh',
-    details:'Giai đoạn vàng! ĐM AoE cực mạnh, party phối hợp hoàn hảo.',
-    tips:['ĐM Bạo Vũ Lê Hoa đạt đỉnh','Có thể train 2-3h/level','Đổi trang bị nếu có đồ tốt'],
-    formation:'🛡️TL(giữa) → 🌀VĐ(debuff) → 🎯ĐM(AoE clear) + 💚NM(buff+heal)'},
-  {levelRange:'50-60',levelMin:50,levelMax:60,maps:['Hưởng Thủy Động','Nghiệt Long Động','Phá Động','Thiên Tâm Động','Lưu Tiên Động (tầng 1)','Thiết Tháp (tầng 1-3)','Thiên Tầm Tháp (tầng 1-2)','Tường Vân Động (tầng 1)','Tuyết Báo Động (tầng 3)','Băng Huyệt Động','Động Đình Hồ (tầng 1-2)','Địa Đạo Hậu Viện','Ác Bá Địa Đạo','Sơn Động Ngự Hoa Viên'],
-    partyTactic:'NM buff liên tục — TL phản đòn — ĐM + VĐ dồn sát thương',
-    details:'Quái mạnh hơn. NM cần buff liên tục. TL La Hán Trận phản đòn.',
-    tips:['NM Phổ Độ Chúng Sinh max','TL La Hán Trận — quái đánh = tự chết','Chuẩn bị đồ mới cho 60+'],
-    formation:'💚NM(buff) → 🛡️TL(phản đòn) + 🎯ĐM(AoE) + 🌀VĐ(damage)'},
-  {levelRange:'60-70',levelMin:60,levelMax:70,maps:['Hoành Sơn Phái','Bậc Đạo Gia Môn (Tương Dương)','Thanh Loa Đảo','108 La Hán Trận','Dương Giác Động','Thiên Tầm Tháp (tầng 3)','Tường Vân Động (tầng 2-4)','Tuyết Báo Động (tầng 4)','Trúc Động (tầng 1)','Lưu Tiên Động (tầng 2-4)','Mê Cung Cấm Địa','Thánh Động (tầng 1-2)'],
-    partyTactic:'TL Dịch Cân Kinh max kháng — VĐ choáng quái liên tục',
-    details:'⚠️ TẨY TỦY LẦN 1 cho cả 4 acc! Chuyển build cuối game.',
-    tips:['⚠️ Tẩy tủy cấp 60-65 cho cả 4 acc!','Reset điểm tiềm năng tối ưu','VĐ Nộ Lôi Chỉ choáng liên hoàn'],
-    formation:'🛡️TL(kháng max) + 🌀VĐ(choáng) → 🎯ĐM(AoE) + 💚NM(heal+buff)'},
-  {levelRange:'70-80',levelMin:70,levelMax:80,maps:['Lâm Du Quan (VIP)','Linh Cốc Độ','Trường Giang Nguyên Đầu','Đào Hoa Nguyên','Thanh Loa Đảo Sơn Động','Đại Tụ Động','Sơn Bảo Động','Long Nhãn Động','Đảo Hổ Động','Tần Lăng (tầng 2)','Dược Vương Động (tầng 2)','Tuyết Báo Động (tầng 5)','Tường Vân Động (tầng 5)','Trúc Cơ Động (tầng 2)','Lưu Tiên Động (tầng 5-6)'],
-    partyTactic:'Quái mạnh — NM heal liên tục, TL + VĐ giữ quái, ĐM focus DPS',
-    details:'Quái rất mạnh, NM heal liên tục. Lâm Du Quan quái cực đông, bãi train ngon nhất nhưng hay bị PK đồ sát. Chuẩn bị skill 9x.',
-    tips:['⚠️ Lâm Du Quan ngon nhất nhưng hay bị PK!','NM không được disconnect!','VĐ Tọa Vọng bật 24/7','Chuẩn bị unlock skill 9x'],
-    formation:'💚NM(heal 24/7) → 🛡️TL + 🌀VĐ(giữ quái) → 🎯ĐM(max DPS)'},
-  {levelRange:'80-90',levelMin:80,levelMax:90,maps:['Sa Mạc Địa Biểu','Chân núi Trường Bạch','Lưỡng Thủy Động','Nhạn Thạch (Ba Lăng)','Thanh Kê (Long Tuyền)','Vũ Lăng (Ba Lăng)','Cổ Dương (Long Môn)','Băng Hà (Vĩnh Lạc)','Phù Dung (Giang Tân)','Vô Danh (Thạch Cổ)','Phi Thiên (Chu Tiên)','Chương Động (Đạo Hương)','Đường Khí Động (Tần Lăng 3)','Dược Vương Động (tầng 3)','Tuyết Báo Động (tầng 6-7)'],
-    partyTactic:'Skill 9x (cấp 90) — DPS tăng vọt, push nhanh',
-    details:'🎁 Nhận SKILL 9x MIỄN PHÍ tại cấp 90! 8 Động Tân thủ mở cửa trở lại cho giai đoạn này. Party power spike cực lớn.',
-    tips:['🎁 Cấp 90 = nhận skill 9x miễn phí!','8 Động Tân thủ quái đông, exp ngon','Dùng TTL đặc biệt push nhanh','ĐM: Thiên La Vạn Tiễn — AoE ultimate'],
-    formation:'🎯ĐM(9x AoE) + 🛡️TL(9x choáng) + 🌀VĐ(9x control) + 💚NM(9x heal)'},
-  {levelRange:'90-100',levelMin:90,levelMax:100,maps:['Mạc Câu Quật','Trường Bạch Sơn Nam','Trường Bạch Sơn Bắc','Sa Mạc 1','Sa Mạc 2','Sa Mạc 3','Hỏa Sa Động','Hỏa Lang Động','Tiên Cốc Động'],
-    partyTactic:'Full power party — AoE clear cực nhanh, sprint cuối',
-    details:'Sprint cuối giai đoạn 1! Cả 4 acc đã có skill 9x. Mạc Câu Quật siêu rộng. Xài hết TTL.',
-    tips:['Xài hết TTL + TTL đặc biệt','Mạc Câu Quật siêu rộng, quái dày','Full power — tốc độ clear max','ĐM dồn hết TP tối đa sát thương'],
-    formation:'💥 Full power → 🛡️TL(gom+choáng) + 🎯ĐM(9x nuke) + 🌀VĐ(control) + 💚NM(sustain)'},
-  {levelRange:'100-110',levelMin:100,levelMax:110,maps:['Cán Viên Động','Dược Vương Động (tầng 4)','Tuyết Báo Động (tầng 8)','Phong Lăng Độ','Mạc Bắc Thảo Nguyên'],
-    partyTactic:'Mở nội dung endgame — quái cực mạnh, cần phối hợp chặt chẽ',
-    details:'Bước vào giai đoạn endgame. Cán Viên Động (map Voi — ác mộng Giả Tẩu). Quái rất mạnh, sát thương cao. Party cần phối hợp hoàn hảo.',
-    tips:['⚠️ Cán Viên Động cực kỳ khó!','Farm đồ xanh/HKMP — nâng cấp trang bị đáng kể','NM heal 24/7 không được chậm','VĐ choáng liên tục giữ quái an toàn'],
-    formation:'💚NM(heal max) + 🛡️TL(tank endgame) + 🌀VĐ(control) + 🎯ĐM(DPS)'},
-  {levelRange:'110-130',levelMin:110,levelMax:130,maps:['Vi Sơn Đảo','Mạc Câu Quật','Trường Bạch Sơn','Sa Mạc','Mật Cốc (VIP 90+)'],
-    partyTactic:'Farm đồ xanh + lên level — balance DPS và sống sót',
-    details:'Giai đoạn cày cuốc nặng. Vi Sơn Đảo chủ yếu farm huyền tinh và đồ tím. Mật Cốc quái cực đông, không đồ sát được. Farm đồ xanh + exp song song.',
-    tips:['⚠️ Tẩy tủy lần 2 cho cả 4 acc!','Mật Cốc yêu cầu 90+, an toàn không bị PK','Vi Sơn Đảo farm huyền tinh + đồ tím','Tối ưu lại điểm tiềm năng cho endgame'],
-    formation:'🛡️TL(tank+gom) + 🎯ĐM(AoE max) + 🌀VĐ(debuff+control) + 💚NM(sustain)'},
-  {levelRange:'130-150',levelMin:130,levelMax:150,maps:['Mật Cốc (VIP)','Mạc Câu Quật','Trường Bạch Sơn','Sa Mạc','Vi Sơn Đảo'],
-    partyTactic:'Endgame cuối — full build, full skill, farm boss',
-    details:'Đỉnh cao! Party đạt sức mạnh tối đa. Farm boss, PK chiến trường. Build hoàn thiện.',
-    tips:['Full trang bị endgame','Tối ưu từng điểm tiềm năng cuối cùng','Party phối hợp hoàn hảo — mỗi acc đều quan trọng'],
-    formation:'💥 ENDGAME → 🛡️TL(bất tử) + 🎯ĐM(max crit) + 🌀VĐ(control god) + 💚NM(heal god)'}
-];
+      // HỆ HỎA
+      { id: 'cbchuong', name: 'Cái Bang', branch: 'Chưởng Pháp', role: 'Nội Công Trâu Bò', element: 'Hỏa', emoji: '🐉', color: '#e74c3c', colorGlow: 'rgba(231,76,60,0.3)', description: 'Bền bỉ giao tranh, liên tục tung chưởng diện rộng. SM 60-70 (110 với nhẫn Hiệp Cốt), SK dồn max HP ≥5000. NL không tăng, bù bằng trang bị.', baseStats: { sm: 30, tp: 20, sk: 30, nl: 20 }, buildGuide: { summary: 'Full Sinh Khí để trâu bò giao tranh. SM 60-70 (tổng 110 với nhẫn), TP và NL không tăng. NL thiếu bù bằng trang bị có dòng Nội Lực và Phục Hồi NL, máu thấp thì không gì bù được.', phases: [{ level: '1-20', sm: 'Đủ đồ', tp: '0', sk: 'Dồn max', nl: '0', note: 'Cái Bang Chưởng Pháp cơ bản và Kiến Nhân Thần Thủ để train quái.' }, { level: '21-60', sm: '60-70', tp: '0', sk: 'Dồn max', nl: '0', note: 'Lv30 nâng Giáng Long Chưởng, lv50 Kháng Long Hữu Hối và Túy Điệp Cuồng Vũ.' }, { level: '95+', sm: '110 (với nhẫn)', tp: '0', sk: 'Dồn max', nl: '0', note: 'Tẩy tủy max Túy Điệp, Tiêu Diêu, CB Chưởng, Giáng Long, Kháng Long, Phi Long. HP ≥5000. NL bù bằng đồ.' }], calc: { smTarget: 110, smReachAt: 60, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Phi Long Tại Thiên', type: 'Chưởng Pháp', priority: 1, desc: 'Rồng lượn rượt đuổi mục tiêu tầm xa, sát thương hỏa nội khủng', level: '9x' }, { name: 'Tuý Điệp Cuồng Vũ', type: 'Hỗ trợ', priority: 2, desc: 'Kỹ năng cơ bản cần max đầu tiên, tăng kháng tính và bạo kích', level: '6x' }, { name: 'Cái Bang Chưởng Pháp', type: 'Trấn Phái', priority: 3, desc: 'Trấn phái tăng chỉ số hỗ trợ chiến đấu quan trọng nhất', level: '6x' }, { name: 'Tiêu Diêu Công', type: 'Khinh Công', priority: 4, desc: 'Tối ưu tốc độ di chuyển và tốc độ đánh, max 20 điểm', level: '3x' }, { name: 'Giáng Long Chưởng', type: 'Chưởng Pháp', priority: 5, desc: 'Cộng 750 sát thương hỏa nội công, vượt trội hoàn toàn các skill hỗ trợ khác', level: '3x' }, { name: 'Kháng Long Hữu Hối', type: 'Chưởng Pháp', priority: 6, desc: 'Tăng lực tay và sát thương dứt điểm mục tiêu', level: '5x' }], equipment: [{ stat: 'Kháng Thủy', importance: '⭐⭐⭐⭐⭐', note: 'Do kị hệ Thuỷ' }, { stat: 'Hỏa sát Nội', importance: '⭐⭐⭐⭐', note: 'Tăng thuần damage' }] },
+      { id: 'cbbong', name: 'Cái Bang', branch: 'Bổng Pháp', role: 'Sát Thương Áp Sát', element: 'Hỏa', emoji: '🦯', color: '#e74c3c', colorGlow: 'rgba(231,76,60,0.3)', description: 'Ngoại Công cận chiến áp sát. Lv1-30 full SM, lv31+ thêm TP cho chính xác + né, lv61+ thêm SK để trụ. Thiên Hạ Vô Cẩu tung hoành giang hồ.', baseStats: { sm: 30, tp: 20, sk: 30, nl: 20 }, buildGuide: { summary: 'Lv1-30 dồn full SM (~150). Lv31-60: 3SM+2TP/lv. Lv61-90: 2SM+1TP+2SK/lv. Sau tẩy tủy 90: SM 250-350, TP 150-250, SK còn lại, NL không tăng.', phases: [{ level: '1-30', sm: 'Dồn hết', tp: '0', sk: '0', nl: '0', note: 'Quái yếu, cần SM lớn thăng cấp nhanh. Mục tiêu ~150 SM ở lv30.' }, { level: '31-60', sm: '3đ/lv', tp: '2đ/lv', sk: 'Bù nếu máu giấy', nl: '0', note: 'TP để đánh không miss và tăng tốc chạy. Bớt 1 SM bù SK nếu cần.' }, { level: '61-90', sm: '2đ/lv', tp: '1đ/lv', sk: '2đ/lv', nl: '0', note: 'Bắt đầu Tống Kim / săn Boss, HP cực kỳ quan trọng để không bị sốc sát thương.' }, { level: '90+', sm: '250-350', tp: '150-250', sk: 'Còn lại', nl: '0', note: 'Tẩy tủy tối ưu. Max Thiên Hạ Vô Cẩu → Trấn Phái → Thanh Long → Bổng Pháp → Tiêu Diêu → Sát Thủ Giản.' }], calc: { smTarget: 300, smReachAt: 90, tpRate: [{ f: 31, t: 60, p: 2 }, { f: 61, t: 150, p: 1 }], nlFixed: 0 } }, skills: [{ name: 'Thiên Hạ Vô Cẩu', type: 'Bổng Pháp', priority: 1, desc: 'Chiêu chính tung hoành giang hồ, quật bổng diện rộng', level: '9x' }, { name: 'Cái Bang Chưởng Pháp', type: 'Trấn Phái', priority: 2, desc: 'Tăng toàn diện sát thương, tốc đánh và kháng tính', level: '6x' }, { name: 'Thanh Long Xuất Hải', type: 'Hỗ trợ', priority: 3, desc: 'Passive tăng % sát thương vật lý và chính xác cho Bổng, hỗ trợ trực tiếp Thiên Hạ Vô Cẩu', level: '2x' }, { name: 'Cái Bang Bổng Pháp', type: 'Cơ bản', priority: 4, desc: 'Kỹ năng cơ bản đường Bổng, hỗ trợ sát thương căn bản', level: '1x' }, { name: 'Tiêu Diêu Công', type: 'Khinh Công', priority: 5, desc: 'Tăng tốc độ chạy và né tránh, rất quan trọng để áp sát đối thủ', level: '5x' }, { name: 'Sát Thủ Giản', type: 'Hỗ trợ', priority: 6, desc: 'Hỗ trợ lực tay vật lý, dồn điểm dư sau khi max các chiêu trên', level: '8x' }], equipment: [{ stat: 'Sát thương vật lý', importance: '⭐⭐⭐⭐⭐', note: 'Ngoại công tay' }, { stat: 'Tốc đánh', importance: '⭐⭐⭐⭐', note: 'Đánh chùm' }] },
+      { id: 'tnthuong', name: 'Thiên Nhẫn', branch: 'Thương Pháp', role: 'Sát Thủ Cận Chiến', element: 'Hỏa', emoji: '🔥', color: '#c0392b', colorGlow: 'rgba(192,57,43,0.3)', description: 'Ngoại Công cận chiến giật liên tục. SM 160, SK dồn max, TP cộng ít nếu cần. NL không tăng, bù bằng đồ. Kỵ hệ Thủy.', baseStats: { sm: 30, tp: 20, sk: 30, nl: 20 }, buildGuide: { summary: 'SM mốc 160 lấy lực tay + mặc đồ. SK dồn hết còn lại để sinh tồn áp sát. TP cộng ít nếu chính xác/tốc đánh chưa đủ. NL không tăng.', phases: [{ level: '1-20', sm: 'Tăng nhiều', tp: '0', sk: 'Ít', nl: '0', note: 'Thiên Nhẫn Mâu Pháp + Tàn Dương Như Tuyết 6-8 điểm.' }, { level: '21-60', sm: 'Tăng nhiều', tp: 'Ít nếu cần', sk: 'Tăng dần', nl: '0', note: 'Lv30 Liệt Hỏa Tình Thiên. Lv60 Thâu Thiên Hoán Nhật và max Thiên Ma Giải Thế.' }, { level: '95+', sm: '160', tp: 'Ít nếu cần', sk: 'Dồn max', nl: '0', note: 'Tẩy tủy: Vân Long Kích → Thiên Ma Giải Thế → Mâu Pháp → Thâu Thiên → Liệt Hỏa → Phi Hồng.' }], calc: { smTarget: 160, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Vân Long Kích', type: 'Giáo Pháp', priority: 1, desc: 'Kỹ năng gây sát thương chính, giật liên tục sốc sát thương', level: '9x' }, { name: 'Thiên Ma Giải Thế', type: 'Trấn Phái', priority: 2, desc: 'Tăng cực mạnh sát thương ngoại công', level: '6x' }, { name: 'Thiên Nhẫn Mâu Pháp', type: 'Cơ bản', priority: 3, desc: 'Tăng sát thương cơ bản cho giáo/thương', level: '1x' }, { name: 'Thâu Thiên Hoán Nhật', type: 'Hỗ trợ', priority: 4, desc: 'Hút sinh lực và nội lực, hồi phục khi chiến đấu', level: '6x' }, { name: 'Liệt Hỏa Tình Thiên', type: 'Hỏa sát', priority: 5, desc: 'Hỗ trợ sát thương hỏa, nâng từ lv30', level: '3x' }, { name: 'Phi Hồng Vô Tích', type: 'Hỗ trợ', priority: 6, desc: 'Tăng tốc độ chạy trên ngựa', level: '4x' }], equipment: [{ stat: 'Kháng Thủy', importance: '⭐⭐⭐⭐⭐', note: 'Kỵ hệ Thủy (Nga My, Thúy Yên)' }, { stat: 'Kỹ năng môn phái +1/2', importance: '⭐⭐⭐⭐', note: 'Tối ưu sát thương chiêu 9x' }] },
+      { id: 'tndao', name: 'Thiên Nhẫn', branch: 'Đao Pháp', role: 'Pháp Sư Hỏa Nội', element: 'Hỏa', emoji: '🔪', color: '#c0392b', colorGlow: 'rgba(192,57,43,0.3)', description: 'Pháp sư Nội Công hệ Hỏa diện rộng. SM 165 đủ đồ, SK dồn max. TP và NL không tăng, NL bù bằng trang bị. Kỵ hệ Thủy.', baseStats: { sm: 30, tp: 20, sk: 30, nl: 20 }, buildGuide: { summary: 'SM mốc 165 mặc đồ. SK dồn hết tăng máu. TP không tăng (chiêu nội không miss). NL không tăng, bù bằng đồ có Nội lực tối đa hoặc Hút NL.', phases: [{ level: '1-90', sm: 'Đủ đồ', tp: '0', sk: 'Dồn max', nl: '0', note: 'Ưu tiên SK + nâng kỹ năng hỏa sát nội công cơ bản để cày cấp.' }, { level: '90+', sm: '165', tp: '0', sk: 'Dồn max', nl: '0', note: 'Tẩy tủy: Thiên Vũ Hỏa Lưu Tinh → Thiên Ma Giải Thế → Bi Ma → Xuyên Tâm → Lệ Xà → Đao Pháp.' }], calc: { smTarget: 165, smReachAt: 60, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Thiên Vũ Hỏa Lưu Tinh', type: 'Chưởng Pháp', priority: 1, desc: 'Mưa lửa diện rộng, dọn quái và giao tranh chính', level: '9x' }, { name: 'Thiên Ma Giải Thế', type: 'Trấn Phái', priority: 2, desc: 'Hỗ trợ tăng sát thương nội công', level: '6x' }, { name: 'Bi Ma Huyết Đao', type: 'Bùa', priority: 3, desc: 'Bùa giảm hỏa kháng của đối phương', level: '1x' }, { name: 'Xuyên Tâm Độc Thương', type: 'Bùa', priority: 4, desc: 'Bùa khóa mục tiêu', level: '3x' }, { name: 'Lệ Xà Xuyên Tâm', type: 'Hỏa sát', priority: 5, desc: 'Chiêu hỗ trợ hỏa sát nội công', level: '6x' }, { name: 'Thiên Nhẫn Đao Pháp', type: 'Cơ bản', priority: 6, desc: 'Tăng nền tảng hỏa sát cho đao', level: '1x' }], equipment: [{ stat: 'Kháng Thủy', importance: '⭐⭐⭐⭐⭐', note: 'Kỵ hệ Thủy (Nga My, Thúy Yên)' }, { stat: 'Kỹ năng môn phái +1/2', importance: '⭐⭐⭐⭐', note: 'Tối ưu sát thương chiêu 9x' }] },
 
-// ═══ CALCULATOR ═══
-function calcStats(char, level, overrides) {
-  overrides = overrides || {};
-  const b = char.baseStats, g = char.buildGuide.calc;
-  const total = 100 + (level - 1) * 5;
-  let sm = overrides.sm != null ? overrides.sm : (level <= g.smReachAt ? Math.min(Math.round(b.sm + ((g.smTarget - b.sm) / g.smReachAt) * level), g.smTarget) : g.smTarget);
-  let tp = overrides.tp != null ? overrides.tp : b.tp;
-  if (overrides.tp == null) { for (const r of g.tpRate) { const s = Math.max(r.f, 1), e = Math.min(r.t, level); if (e >= s) tp += (e - s + 1) * r.p; } }
-  let nl, sk;
-  if (g.nlFixed === -1) {
-    const skr = level <= 60 ? 1 : 0.5;
-    sk = Math.round(b.sk + skr * (level - 1));
-    nl = Math.max(total - sm - tp - sk, b.nl);
-  } else {
-    let nlDist = Math.round((Math.min(level, 90) / 90) * (g.nlFixed || 0));
-    nl = b.nl + nlDist;
-    sk = Math.max(total - sm - tp - nl, b.sk);
-  }
-  return { sm, tp, sk, nl, total };
-}
+      // HỆ THỔ
+      { id: 'vdkhik', name: 'Võ Đang', branch: 'Khí (Quyền)', role: 'Sấm Sét Nội', element: 'Thổ', emoji: '🌀', color: '#9b59b6', colorGlow: 'rgba(155,89,182,0.3)', description: 'Vua choáng diện rộng, săn boss siêu đỉnh. Thiên Địa Vô Cực. Dùng Tọa Vọng Vô Ngã (khiên mana). SM 70-110, TP 0, Máu 1k5-2k, Dồn full Nội công.', baseStats: { sm: 20, tp: 15, sk: 25, nl: 40 }, buildGuide: { summary: 'Quyền Võ Đang cực mạnh Tống Kim và săn Boss. Lấy Tọa Vọng bù máu, bơm căng Nội Công.', phases: [{ level: '10-50', sm: 'Mốc 70', tp: '0', sk: 'Mốc 1k5', nl: 'Tăng mạnh', note: 'Max VĐ Quyền Pháp. 1đ Thái Cực Quyền tiết kiệm mana.' }, { level: '38-60', sm: 'Mốc 110', tp: '0', sk: '1k5-2k', nl: 'Tăng mạnh', note: '5-15đ Tọa Vọng Vô Ngã. Cấp 60 Max Trấn Phái lập tức.' }, { level: '90+', sm: '110 (Mặc đồ)', tp: '0', sk: 'Cố định 1k5-2k', nl: 'Dồn tất (Gánh sát thương)', note: 'Max Thiên Địa Vô Cực (9x). Nội công sinh dam và Shield.' }], calc: { smTarget: 110, smReachAt: 60, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: -1 } }, skills: [{ name: 'Thiên Địa Vô Cực', type: 'Khí Kiếm', priority: 1, desc: 'Gươm rơi trên trời giật lag 90', level: '9x' }, { name: 'Thái Cực Thần Công', type: 'Trấn Phái', priority: 2, desc: 'Tốc độ và tấn công lôi', level: '6x' }, { name: 'Tọa Vọng Vô Ngã', type: 'Manashield', priority: 3, desc: 'Mana đỡ sát thương', level: '5x' }, { name: 'Thất Tinh Trận', type: 'Aura', priority: 4, desc: 'Aura sát thương Lôi', level: '3x' }, { name: 'Bát Quái Kiếm Khí', type: 'Khí', priority: 5, desc: 'Khí kiếm 60', level: '6x' }, { name: 'Võ Đang Quyền Pháp', type: 'Cơ bản', priority: 6, desc: 'Tăng dam cơ sở', level: '1x' }], equipment: [{ stat: 'Chuyển sát thương thành Nội lực', importance: '⭐⭐⭐⭐⭐', note: 'Đồ xịn nhất của VĐ' }, { stat: 'Tốc độ đánh', importance: '⭐⭐⭐⭐', note: 'Ra sét mượt' }] },
+      { id: 'vdkiem', name: 'Võ Đang', branch: 'Kiếm Pháp', role: 'Sát Thủ Nhanh', element: 'Thổ', emoji: '🗡️', color: '#9b59b6', colorGlow: 'rgba(155,89,182,0.3)', description: 'Áp sát chém nhanh. Mana là Máu nhờ Tọa Vọng vô ngã. SM 165-260, TP 100-150, NL 100-150. SK ném 0.', baseStats: { sm: 20, tp: 15, sk: 25, nl: 40 }, buildGuide: { summary: 'KHÔNG tăng Sinh Khí. Nội Công quan trọng hơn SK vì nuôi Khiên (Mana là máu). SM lấy đam, TP lấy Hit Rate.', phases: [{ level: '10-50', sm: 'Tăng mạnh', tp: 'Mốc 100', sk: '0 / Mốc 1k bảo hiểm', nl: 'Dồn điểm (Ưu tiên)', note: 'Max Võ Đang Kiếm Pháp. Bơm Nội lực nuôi Khiên.' }, { level: '60-90', sm: '165-260', tp: '100-150', sk: 'Tối đa 1k-1k2', nl: '100-150', note: 'Max Trấn Phái. TP rất cần để đánh không miss.' }, { level: '90+', sm: 'Mốc 165-260', tp: '100-150', sk: 'Còn lại hoặc 0', nl: '100-150', note: 'Max Tam Hoàn Thao Nguyệt. Tọa Vọng Vô Ngã max sau cùng lấy rate hấp thụ sát thương cao nhất.' }], calc: { smTarget: 260, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 1 }], nlFixed: 100 } }, skills: [{ name: 'Nhân Kiếm Hợp Nhất', type: 'Kiếm Pháp', priority: 1, desc: 'Phóng kiếm giật 90', level: '9x' }, { name: 'Thái Cực Thần Công', type: 'Trấn Phái', priority: 2, desc: 'Chí tôn lôi sát nội', level: '6x' }, { name: 'Tọa Vọng Vô Ngã', type: 'Manashield', priority: 3, desc: 'Đỡ đòn bằng mana (Shield)', level: '5x' }, { name: 'Thất Tinh Trận', type: 'Aura', priority: 4, desc: 'Aura kiếm tông', level: '3x' }, { name: 'Võ Đang Kiếm Pháp', type: 'Cơ bản', priority: 5, desc: 'Tốc đánh kiếm', level: '1x' }, { name: 'Tam Hoàn Sáo Nguyệt', type: 'Kiếm', priority: 6, desc: 'Chiêu 60 kiếm', level: '6x' }], equipment: [{ stat: 'Lôi Sát Ngoại', importance: '⭐⭐⭐⭐⭐', note: 'Gây choáng vật lý' }, { stat: 'Hút HP', importance: '⭐⭐⭐⭐', note: 'Đứng tank bắn kiếm' }] },
+      { id: 'cldao', name: 'Côn Lôn', branch: 'Đao Pháp', role: 'Gió Cắt Nát', element: 'Thổ', emoji: '🌪️', color: '#8e44ad', colorGlow: 'rgba(142,68,173,0.3)', description: 'Ngoại Công gió lốc diện rộng. Lv1-90 ưu tiên SM đủ đồ + SK dồn max sinh tồn. Cần đi theo xe PT. Tẩy tủy 9x chọn đường Đao.', baseStats: { sm: 20, tp: 15, sk: 25, nl: 40 }, buildGuide: { summary: 'SM dần tới 110 đủ đồ (cấp 30 thêm ~10đ, cấp 80-90 mốc 110). SK dồn hết còn lại. TP và NL không tăng. Cần tổ đội để cày cấp hiệu quả.', phases: [{ level: '1-30', sm: 'Tăng dần (+10đ)', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Dùng Quyền Pháp (1x) train tiết kiệm sửa vũ khí. Max 20đ Quyền.' }, { level: '30-60', sm: 'Tăng dần', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Thanh Phong Phù max 20 nếu kéo xe, 1đ nếu đánh chiến. 1đ Thiên Thanh Địa Trác.' }, { level: '60-80', sm: 'Tăng dần', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Max Sương Ngạo Côn Lôn (Trấn Phái) ngay lập tức. Bùng nổ sát thương.' }, { level: '80-90+', sm: 'Mốc 110', tp: '0', sk: 'Dồn max', nl: '0', note: 'Nội Lực Khổ Thân ~10đ (bị đánh chỉ tốn 1 máu). Tẩy tủy 9x chuyên đường Đao.' }], calc: { smTarget: 110, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Ngạo Tuyết Tiêu Phong', type: 'Đao Pháp', priority: 1, desc: 'Gió xoáy diện rộng phá buff đối thủ', level: '9x' }, { name: 'Sương Ngạo Côn Lôn', type: 'Trấn Phái', priority: 2, desc: 'Max ngay lv60, tối ưu sát thương và kháng tính', level: '6x' }, { name: 'Côn Lôn Quyền Pháp', type: 'Cơ bản', priority: 3, desc: 'Max 20 lấy sát thương nền, train tiết kiệm sửa vũ khí', level: '1x' }, { name: 'Thanh Phong Phù', type: 'Vòng sáng', priority: 4, desc: 'Tốc chạy cho tổ đội kéo xe. Max 20 hoặc 1đ tùy vai trò', level: '3x' }, { name: 'Nội Lực Khổ Thân', type: 'Hỗ trợ', priority: 5, desc: 'Bị đánh chỉ tốn 1 máu, ~10đ lv80 tăng chống chịu', level: '8x' }, { name: 'Thiên Thanh Địa Trác', type: 'Aura', priority: 6, desc: '1đ lấy hiệu ứng lôi sát', level: '3x' }], equipment: [{ stat: 'Sinh lực', importance: '⭐⭐⭐⭐⭐', note: 'Máu trâu đứng vững trong PT' }, { stat: 'Kỹ năng môn phái +1/2', importance: '⭐⭐⭐⭐', note: 'Tăng cấp kỹ năng lốc gió' }] },
+      { id: 'clkiem', name: 'Côn Lôn', branch: 'Kiếm Pháp', role: 'Lôi Sát Khủng', element: 'Thổ', emoji: '⚡', color: '#8e44ad', colorGlow: 'rgba(142,68,173,0.3)', description: 'Nội Công lôi sát. Lv1-90 ưu tiên SM đủ đồ + SK dồn max sinh tồn. Cần đi theo xe PT. Tẩy tủy 9x chọn đường Kiếm.', baseStats: { sm: 20, tp: 15, sk: 25, nl: 40 }, buildGuide: { summary: 'SM dần tới 110 đủ đồ (cấp 30 thêm ~10đ, cấp 80-90 mốc 110). SK dồn hết còn lại. TP và NL không tăng. Cần tổ đội để cày cấp hiệu quả.', phases: [{ level: '1-30', sm: 'Tăng dần (+10đ)', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Dùng Quyền Pháp (1x) train tiết kiệm sửa vũ khí. Max 20đ Quyền. 1đ Kiếm Pháp hỗ trợ.' }, { level: '30-60', sm: 'Tăng dần', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Thanh Phong Phù max 20 nếu kéo xe, 1đ nếu đánh chiến. 1đ Thiên Thanh Địa Trác.' }, { level: '60-80', sm: 'Tăng dần', tp: '0', sk: 'Dồn hết', nl: '0', note: 'Max Sương Ngạo Côn Lôn (Trấn Phái) ngay lập tức. Bùng nổ sát thương.' }, { level: '80-90+', sm: 'Mốc 110', tp: '0', sk: 'Dồn max', nl: '0', note: 'Nội Lực Khổ Thân ~10đ (bị đánh chỉ tốn 1 máu). Tẩy tủy 9x chuyên đường Kiếm Nội Công.' }], calc: { smTarget: 110, smReachAt: 90, tpRate: [{ f: 1, t: 150, p: 0 }], nlFixed: 0 } }, skills: [{ name: 'Lôi Động Cửu Thiên', type: 'Kiếm Pháp', priority: 1, desc: 'Chiêu 90 giáng sét trúng là đứng yên', level: '9x' }, { name: 'Sương Ngạo Côn Lôn', type: 'Trấn Phái', priority: 2, desc: 'Max ngay lv60, tối ưu sát thương và kháng tính', level: '6x' }, { name: 'Côn Lôn Quyền Pháp', type: 'Cơ bản', priority: 3, desc: 'Max 20 lấy sát thương nền, train tiết kiệm sửa vũ khí', level: '1x' }, { name: 'Thanh Phong Phù', type: 'Vòng sáng', priority: 4, desc: 'Tốc chạy cho tổ đội kéo xe. Max 20 hoặc 1đ tùy vai trò', level: '3x' }, { name: 'Nội Lực Khổ Thân', type: 'Hỗ trợ', priority: 5, desc: 'Bị đánh chỉ tốn 1 máu, ~10đ lv80 tăng chống chịu', level: '8x' }, { name: 'Thiên Thanh Địa Trác', type: 'Aura', priority: 6, desc: '1đ lấy hiệu ứng lôi sát', level: '3x' }], equipment: [{ stat: 'Sinh lực', importance: '⭐⭐⭐⭐⭐', note: 'Máu trâu đứng vững trong PT' }, { stat: 'Nội lực tối đa', importance: '⭐⭐⭐⭐', note: 'Đường Kiếm hao NL cực nhiều' }] }
+    ];
 
-function getNote(char, level) {
-  for (const p of char.buildGuide.phases) {
-    const [a, z] = p.level.split('-').map(Number);
-    if (level >= a && level <= z) return p.note;
-  }
-  return '';
-}
+    const trainingSpots = [
+      {
+        levelRange: '1-10', levelMin: 1, levelMax: 10, maps: ['Ba Lăng Huyện', 'Giang Tân Thôn', 'Vĩnh Lạc Trấn', 'Chu Tiên Trấn', 'Đạo Hương Thôn', 'Long Môn Trấn', 'Thạch Cổ Trấn', 'Long Tuyền Thôn'],
+        partyTactic: 'Solo làm NV tân thủ → Tập hợp party cấp 10',
+        details: 'Mỗi acc solo riêng, đánh heo/nai/nhím/kim miêu quanh 8 thôn trấn tân thủ. Tập hợp party khi cả 4 acc đạt cấp 10.',
+        tips: ['Dùng TTL tăng tốc lên cấp', 'Nhận hết quà tân thủ mỗi acc', 'Trang bị Set Kim Phong ngay', 'Vòng sáng vĩnh viễn hồi SL+NL'],
+        formation: 'Solo → tập hợp khi cấp 10'
+      },
+      {
+        levelRange: '10-20', levelMin: 10, levelMax: 20, maps: ['Ngoại thành Thành Đô', 'Tương Dương', 'Phượng Tường', 'Đại Lý', 'Biện Kinh', 'Dương Châu', 'Lâm An', 'Hoa Sơn', 'Diệu Vương Cốc', 'Nhạn Đản Sơn', 'Nam Nhạc Trấn'],
+        partyTactic: 'TL gom quái → ĐM bắn AoE → NM heal → VĐ debuff',
+        details: 'Train tại ngoại thành thất đại thành thị hoặc tại các Môn phái (TL, TV, ĐM, NĐ, NM, TY, VĐ, CL, TN tầng 1&2).',
+        tips: ['Dùng TTL tăng tốc lên cấp', 'Quái ra nhanh — đứng 1 chỗ', 'TL bật Bất Động Minh Vương', 'ĐM bật auto Bạo Vũ Lê Hoa'],
+        formation: '🛡️TL(giữa) ← 🎯ĐM(xa) + 💚NM(sau TL) + 🌀VĐ(cạnh TL)'
+      },
+      {
+        levelRange: '20-30', levelMin: 20, levelMax: 30, maps: ['Cái Bang', 'Kiếm Cát (TN/TB/TY)', 'Tần Lăng (ngoại vi)', 'La Tiêu Sơn', 'Vũ Lăng Sơn', 'Bạch Thủy Động', 'Phục Lưu Động', 'Hỏa Lang Động', 'Mãnh Hổ Động'],
+        partyTactic: 'TL đứng giữa chịu đòn → ĐM đứng xa AoE → NM heal liên tục',
+        details: 'Quái mạnh hơn. TL cần Dịch Cân Kinh. Bắt đầu dùng TTL tăng exp. Cái Bang có map riêng cho cấp 20.',
+        tips: ['Dùng TTL (được tặng 5 cái)', 'TL bật Dịch Cân Kinh', 'VĐ bắt đầu có Nộ Lôi Chỉ'],
+        formation: '🛡️TL(gom) ← 🎯ĐM(AoE xa) + 💚NM(heal) + 🌀VĐ(debuff)'
+      },
+      {
+        levelRange: '30-40', levelMin: 30, levelMax: 40, maps: ['Phục Ngưu Sơn Đông', 'Thục Cương Sơn', 'Vũ Di Sơn', 'Miêu Lĩnh', 'Kim Quang Động', 'Khối Lỗi Lâm', 'Dược Vương Động (tầng 1)', 'Tuyết Báo Động (tầng 1-2)', 'Thổ Phỉ Động', 'Bạch Vân Động', 'Lăng Tần Thủy Hoàng', 'Yến Tử Động'],
+        partyTactic: 'VĐ debuff → TL gom → ĐM Bạo Vũ Lê Hoa xóa sạch',
+        details: 'Party phối hợp ăn ý. Quái dày, đứng 1 chỗ train rất hiệu quả.',
+        tips: ['Quái ra cực nhanh — perfect cho AoE', 'VĐ Thái Cực Thần Công buff party', 'NM Phật Tâm Từ Hữu tăng HP%'],
+        formation: '🌀VĐ(debuff) → 🛡️TL(gom) → 🎯ĐM(Bạo Vũ Lê Hoa) + 💚NM(heal)'
+      },
+      {
+        levelRange: '40-50', levelMin: 40, levelMax: 50, maps: ['Thanh Thành Sơn', 'Điểm Thương Sơn', 'Phục Ngưu Sơn Tây', 'Hoàng Hà Nguyên Đầu', 'Kiến Tính Phong', 'Kinh Hoàng Động', 'Điểm Thương Động (tầng 1-3)', 'Kế Quán Động', 'Tỏa Vân Động', 'Thần Tiên Động', 'Long Cung Động', 'Phùng Nhãn Động', 'Mật Thất Thiếu Lâm'],
+        partyTactic: 'Full combo party — ĐM AoE clear cực nhanh',
+        details: 'Giai đoạn vàng! ĐM AoE cực mạnh, party phối hợp hoàn hảo.',
+        tips: ['ĐM Bạo Vũ Lê Hoa đạt đỉnh', 'Có thể train 2-3h/level', 'Đổi trang bị nếu có đồ tốt'],
+        formation: '🛡️TL(giữa) → 🌀VĐ(debuff) → 🎯ĐM(AoE clear) + 💚NM(buff+heal)'
+      },
+      {
+        levelRange: '50-60', levelMin: 50, levelMax: 60, maps: ['Hưởng Thủy Động', 'Nghiệt Long Động', 'Phá Động', 'Thiên Tâm Động', 'Lưu Tiên Động (tầng 1)', 'Thiết Tháp (tầng 1-3)', 'Thiên Tầm Tháp (tầng 1-2)', 'Tường Vân Động (tầng 1)', 'Tuyết Báo Động (tầng 3)', 'Băng Huyệt Động', 'Động Đình Hồ (tầng 1-2)', 'Địa Đạo Hậu Viện', 'Ác Bá Địa Đạo', 'Sơn Động Ngự Hoa Viên'],
+        partyTactic: 'NM buff liên tục — TL phản đòn — ĐM + VĐ dồn sát thương',
+        details: 'Quái mạnh hơn. NM cần buff liên tục. TL La Hán Trận phản đòn.',
+        tips: ['NM Phổ Độ Chúng Sinh max', 'TL La Hán Trận — quái đánh = tự chết', 'Chuẩn bị đồ mới cho 60+'],
+        formation: '💚NM(buff) → 🛡️TL(phản đòn) + 🎯ĐM(AoE) + 🌀VĐ(damage)'
+      },
+      {
+        levelRange: '60-70', levelMin: 60, levelMax: 70, maps: ['Hoành Sơn Phái', 'Bậc Đạo Gia Môn (Tương Dương)', 'Thanh Loa Đảo', '108 La Hán Trận', 'Dương Giác Động', 'Thiên Tầm Tháp (tầng 3)', 'Tường Vân Động (tầng 2-4)', 'Tuyết Báo Động (tầng 4)', 'Trúc Động (tầng 1)', 'Lưu Tiên Động (tầng 2-4)', 'Mê Cung Cấm Địa', 'Thánh Động (tầng 1-2)'],
+        partyTactic: 'TL Dịch Cân Kinh max kháng — VĐ choáng quái liên tục',
+        details: '⚠️ TẨY TỦY LẦN 1 cho cả 4 acc! Chuyển build cuối game.',
+        tips: ['⚠️ Tẩy tủy cấp 60-65 cho cả 4 acc!', 'Reset điểm tiềm năng tối ưu', 'VĐ Nộ Lôi Chỉ choáng liên hoàn'],
+        formation: '🛡️TL(kháng max) + 🌀VĐ(choáng) → 🎯ĐM(AoE) + 💚NM(heal+buff)'
+      },
+      {
+        levelRange: '70-80', levelMin: 70, levelMax: 80, maps: ['Lâm Du Quan (VIP)', 'Linh Cốc Độ', 'Trường Giang Nguyên Đầu', 'Đào Hoa Nguyên', 'Thanh Loa Đảo Sơn Động', 'Đại Tụ Động', 'Sơn Bảo Động', 'Long Nhãn Động', 'Đảo Hổ Động', 'Tần Lăng (tầng 2)', 'Dược Vương Động (tầng 2)', 'Tuyết Báo Động (tầng 5)', 'Tường Vân Động (tầng 5)', 'Trúc Cơ Động (tầng 2)', 'Lưu Tiên Động (tầng 5-6)'],
+        partyTactic: 'Quái mạnh — NM heal liên tục, TL + VĐ giữ quái, ĐM focus DPS',
+        details: 'Quái rất mạnh, NM heal liên tục. Lâm Du Quan quái cực đông, bãi train ngon nhất nhưng hay bị PK đồ sát. Chuẩn bị skill 9x.',
+        tips: ['⚠️ Lâm Du Quan ngon nhất nhưng hay bị PK!', 'NM không được disconnect!', 'VĐ Tọa Vọng bật 24/7', 'Chuẩn bị unlock skill 9x'],
+        formation: '💚NM(heal 24/7) → 🛡️TL + 🌀VĐ(giữ quái) → 🎯ĐM(max DPS)'
+      },
+      {
+        levelRange: '80-90', levelMin: 80, levelMax: 90, maps: ['Sa Mạc Địa Biểu', 'Chân núi Trường Bạch', 'Lưỡng Thủy Động', 'Nhạn Thạch (Ba Lăng)', 'Thanh Kê (Long Tuyền)', 'Vũ Lăng (Ba Lăng)', 'Cổ Dương (Long Môn)', 'Băng Hà (Vĩnh Lạc)', 'Phù Dung (Giang Tân)', 'Vô Danh (Thạch Cổ)', 'Phi Thiên (Chu Tiên)', 'Chương Động (Đạo Hương)', 'Đường Khí Động (Tần Lăng 3)', 'Dược Vương Động (tầng 3)', 'Tuyết Báo Động (tầng 6-7)'],
+        partyTactic: 'Skill 9x (cấp 90) — DPS tăng vọt, push nhanh',
+        details: '🎁 Nhận SKILL 9x MIỄN PHÍ tại cấp 90! 8 Động Tân thủ mở cửa trở lại cho giai đoạn này. Party power spike cực lớn.',
+        tips: ['🎁 Cấp 90 = nhận skill 9x miễn phí!', '8 Động Tân thủ quái đông, exp ngon', 'Dùng TTL đặc biệt push nhanh', 'ĐM: Thiên La Vạn Tiễn — AoE ultimate'],
+        formation: '🎯ĐM(9x AoE) + 🛡️TL(9x choáng) + 🌀VĐ(9x control) + 💚NM(9x heal)'
+      },
+      {
+        levelRange: '90-100', levelMin: 90, levelMax: 100, maps: ['Mạc Câu Quật', 'Trường Bạch Sơn Nam', 'Trường Bạch Sơn Bắc', 'Sa Mạc 1', 'Sa Mạc 2', 'Sa Mạc 3', 'Hỏa Sa Động', 'Hỏa Lang Động', 'Tiên Cốc Động'],
+        partyTactic: 'Full power party — AoE clear cực nhanh, sprint cuối',
+        details: 'Sprint cuối giai đoạn 1! Cả 4 acc đã có skill 9x. Mạc Câu Quật siêu rộng. Xài hết TTL.',
+        tips: ['Xài hết TTL + TTL đặc biệt', 'Mạc Câu Quật siêu rộng, quái dày', 'Full power — tốc độ clear max', 'ĐM dồn hết TP tối đa sát thương'],
+        formation: '💥 Full power → 🛡️TL(gom+choáng) + 🎯ĐM(9x nuke) + 🌀VĐ(control) + 💚NM(sustain)'
+      },
+      {
+        levelRange: '100-110', levelMin: 100, levelMax: 110, maps: ['Cán Viên Động', 'Dược Vương Động (tầng 4)', 'Tuyết Báo Động (tầng 8)', 'Phong Lăng Độ', 'Mạc Bắc Thảo Nguyên'],
+        partyTactic: 'Mở nội dung endgame — quái cực mạnh, cần phối hợp chặt chẽ',
+        details: 'Bước vào giai đoạn endgame. Cán Viên Động (map Voi — ác mộng Giả Tẩu). Quái rất mạnh, sát thương cao. Party cần phối hợp hoàn hảo.',
+        tips: ['⚠️ Cán Viên Động cực kỳ khó!', 'Farm đồ xanh/HKMP — nâng cấp trang bị đáng kể', 'NM heal 24/7 không được chậm', 'VĐ choáng liên tục giữ quái an toàn'],
+        formation: '💚NM(heal max) + 🛡️TL(tank endgame) + 🌀VĐ(control) + 🎯ĐM(DPS)'
+      },
+      {
+        levelRange: '110-130', levelMin: 110, levelMax: 130, maps: ['Vi Sơn Đảo', 'Mạc Câu Quật', 'Trường Bạch Sơn', 'Sa Mạc', 'Mật Cốc (VIP 90+)'],
+        partyTactic: 'Farm đồ xanh + lên level — balance DPS và sống sót',
+        details: 'Giai đoạn cày cuốc nặng. Vi Sơn Đảo chủ yếu farm huyền tinh và đồ tím. Mật Cốc quái cực đông, không đồ sát được. Farm đồ xanh + exp song song.',
+        tips: ['⚠️ Tẩy tủy lần 2 cho cả 4 acc!', 'Mật Cốc yêu cầu 90+, an toàn không bị PK', 'Vi Sơn Đảo farm huyền tinh + đồ tím', 'Tối ưu lại điểm tiềm năng cho endgame'],
+        formation: '🛡️TL(tank+gom) + 🎯ĐM(AoE max) + 🌀VĐ(debuff+control) + 💚NM(sustain)'
+      },
+      {
+        levelRange: '130-150', levelMin: 130, levelMax: 150, maps: ['Mật Cốc (VIP)', 'Mạc Câu Quật', 'Trường Bạch Sơn', 'Sa Mạc', 'Vi Sơn Đảo'],
+        partyTactic: 'Endgame cuối — full build, full skill, farm boss',
+        details: 'Đỉnh cao! Party đạt sức mạnh tối đa. Farm boss, PK chiến trường. Build hoàn thiện.',
+        tips: ['Full trang bị endgame', 'Tối ưu từng điểm tiềm năng cuối cùng', 'Party phối hợp hoàn hảo — mỗi acc đều quan trọng'],
+        formation: '💥 ENDGAME → 🛡️TL(bất tử) + 🎯ĐM(max crit) + 🌀VĐ(control god) + 💚NM(heal god)'
+      }
+    ];
 
-// ═══ PAGES ═══
-let currentPage = 'team', currentParam = '';
-const lockedStats = { sm: null, tp: null };
+    // ═══ CALCULATOR ═══
+    function calcStats(char, level, overrides) {
+      overrides = overrides || {};
+      const b = char.baseStats, g = char.buildGuide.calc;
+      const total = 100 + (level - 1) * 5;
+      // TP
+      let tp = overrides.tp != null ? overrides.tp : b.tp;
+      if (overrides.tp == null) { for (const r of g.tpRate) { const s = Math.max(r.f, 1), e = Math.min(r.t, level); if (e >= s) tp += (e - s + 1) * r.p; } }
+      // NL (pre-calc for ratio mode)
+      let nl, sk;
+      let nlVal;
+      if (g.nlFixed === -1) {
+        nlVal = null; // VD special: calc later
+      } else {
+        let nlDist = Math.round((Math.min(level, 90) / 90) * (g.nlFixed || 0));
+        nlVal = b.nl + nlDist;
+      }
+      // SM
+      let sm;
+      if (overrides.sm != null) {
+        sm = overrides.sm;
+      } else if (g.smRatio) {
+        // Tỷ lệ %: SM = available * ratio%
+        const available = total - tp - (nlVal != null ? nlVal : b.nl);
+        let ratio = 70;
+        for (const r of g.smRatio) { if (level >= r.f && level <= r.t) { ratio = r.p; break; } }
+        sm = Math.round(available * ratio / 100);
+      } else {
+        // Mốc cố định (mặc đồ): linear tới smTarget rồi cap
+        sm = level <= g.smReachAt ? Math.min(Math.round(b.sm + ((g.smTarget - b.sm) / g.smReachAt) * level), g.smTarget) : g.smTarget;
+      }
+      // SK & NL final
+      if (g.nlFixed === -1) {
+        const skr = level <= 60 ? 1 : 0.5;
+        sk = Math.round(b.sk + skr * (level - 1));
+        nl = Math.max(total - sm - tp - sk, b.nl);
+      } else {
+        nl = nlVal;
+        sk = Math.max(total - sm - tp - nl, b.sk);
+      }
+      return { sm, tp, sk, nl, total };
+    }
 
-function go(page, param) {
-  if (page !== 'char' || param !== currentParam) { lockedStats.sm = null; lockedStats.tp = null; }
-  currentPage = page; currentParam = param || '';
-  render();
-}
+    function getNote(char, level) {
+      for (const p of char.buildGuide.phases) {
+        const [a, z] = p.level.split('-').map(Number);
+        if (level >= a && level <= z) return p.note;
+      }
+      return '';
+    }
 
-function renderTeam() {
-  const fil = currentParam || 'all';
-  const favs = JSON.parse(localStorage.getItem('vltk_favs')||'[]');
-  let filtered = characters;
-  if(fil === 'fav') filtered = characters.filter(c => favs.includes(c.id));
-  else if(fil !== 'all') filtered = characters.filter(c => c.element === fil);
-  
-  return `<div class="page-header"><h1 class="page-title">Cẩm Nang Thập Đại Phái</h1>
+    // ═══ PAGES ═══
+    let currentPage = 'team', currentParam = '';
+    const lockedStats = { sm: null, tp: null };
+
+    function go(page, param) {
+      if (page !== 'char' || param !== currentParam) { lockedStats.sm = null; lockedStats.tp = null; }
+      currentPage = page; currentParam = param || '';
+      render();
+    }
+
+    function renderTeam() {
+      const fil = currentParam || 'all';
+      const favs = JSON.parse(localStorage.getItem('vltk_favs') || '[]');
+      let filtered = characters;
+      if (fil === 'fav') filtered = characters.filter(c => favs.includes(c.id));
+      else if (fil !== 'all') filtered = characters.filter(c => c.element === fil);
+
+      return `<div class="page-header"><h1 class="page-title">Cẩm Nang Thập Đại Phái</h1>
     <p class="page-subtitle">Tính toán điểm tiềm năng chuẩn xác cho 10 phái và hơn 20 đường build VLTK1</p></div>
     <div class="filters">
-      <button class="filter-btn ${fil==='all'?'active':''}" onclick="go('team','all')">Tất cả</button>
-      <button class="filter-btn ${fil==='fav'?'active':''}" onclick="go('team','fav')">❤️ Yêu Thích</button>
-      <button class="filter-btn ${fil==='Kim'?'active':''}" onclick="go('team','Kim')">⚔️ Kim</button>
-      <button class="filter-btn ${fil==='Mộc'?'active':''}" onclick="go('team','Mộc')">🌿 Mộc</button>
-      <button class="filter-btn ${fil==='Thủy'?'active':''}" onclick="go('team','Thủy')">💧 Thủy</button>
-      <button class="filter-btn ${fil==='Hỏa'?'active':''}" onclick="go('team','Hỏa')">🔥 Hỏa</button>
-      <button class="filter-btn ${fil==='Thổ'?'active':''}" onclick="go('team','Thổ')">🪨 Thổ</button>
+      <button class="filter-btn ${fil === 'all' ? 'active' : ''}" onclick="go('team','all')">Tất cả</button>
+      <button class="filter-btn ${fil === 'fav' ? 'active' : ''}" onclick="go('team','fav')">❤️ Yêu Thích</button>
+      <button class="filter-btn ${fil === 'Kim' ? 'active' : ''}" onclick="go('team','Kim')">⚔️ Kim</button>
+      <button class="filter-btn ${fil === 'Mộc' ? 'active' : ''}" onclick="go('team','Mộc')">🌿 Mộc</button>
+      <button class="filter-btn ${fil === 'Thủy' ? 'active' : ''}" onclick="go('team','Thủy')">💧 Thủy</button>
+      <button class="filter-btn ${fil === 'Hỏa' ? 'active' : ''}" onclick="go('team','Hỏa')">🔥 Hỏa</button>
+      <button class="filter-btn ${fil === 'Thổ' ? 'active' : ''}" onclick="go('team','Thổ')">🪨 Thổ</button>
     </div>
     <div class="team-grid">${filtered.length ? filtered.map(c => `
       <div class="char-card" onclick="go('char','${c.id}')" style="--card-color:${c.color};--card-glow:${c.colorGlow}">
-        <button class="fav-btn ${favs.includes(c.id)?'active':''}" onclick="event.stopPropagation();toggleFav('${c.id}')">❤️</button>
+        <button class="fav-btn ${favs.includes(c.id) ? 'active' : ''}" onclick="event.stopPropagation();toggleFav('${c.id}')">❤️</button>
         <div class="char-card-header"><div class="char-emoji">${c.emoji}</div>
           <div class="char-info"><h3>${c.name}</h3><span class="char-branch">${c.branch}</span></div></div>
         <span class="char-role" style="background:${c.colorGlow};color:${c.color}">${c.role}</span>
@@ -551,12 +1434,12 @@ function renderTeam() {
         <div class="char-card-footer"><span class="char-element">Hệ ${c.element}</span>
           <span class="char-view-btn">Xem chi tiết →</span></div>
       </div>`).join('') : '<p style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text-muted)">Chưa có phái yêu thích nào trong danh sách!</p>'}</div>`;
-}
+    }
 
-function renderChar(id) {
-  const c = characters.find(x => x.id === id);
-  if (!c) return '<p>Không tìm thấy</p>';
-  return `<button class="detail-back" onclick="go('team')">← Về đội hình</button>
+    function renderChar(id) {
+      const c = characters.find(x => x.id === id);
+      if (!c) return '<p>Không tìm thấy</p>';
+      return `<button class="detail-back" onclick="go('team')">← Về đội hình</button>
     <div class="detail-header" style="border-left:4px solid ${c.color}">
       <div class="detail-emoji">${c.emoji}</div>
       <div><h1 class="detail-name" style="color:${c.color}">${c.name} — ${c.branch}</h1>
@@ -599,11 +1482,11 @@ function renderChar(id) {
           <div class="skill-desc">${s.desc}</div></div></div>`).join('')}</div></div>
     <div class="tab-content" id="tab-equipment"><div class="equip-list">${c.equipment.map(e => `
       <div class="equip-item"><span class="equip-stat">${e.stat}</span><span class="equip-stars">${e.importance}</span><span class="equip-note">${e.note}</span></div>`).join('')}</div></div>`;
-}
+    }
 
-function renderTraining() {
-  const sv = localStorage.getItem('vltk_lv') || 1;
-  return `<div class="page-header"><h1 class="page-title">Bãi Train Party 4 ACC</h1>
+    function renderTraining() {
+      const sv = localStorage.getItem('vltk_lv') || 1;
+      return `<div class="page-header"><h1 class="page-title">Bãi Train Party 4 ACC</h1>
     <p class="page-subtitle">Chiến thuật train chung: ĐM(DPS) + NM(Heal) + TL(Tank) + VĐ(Control)</p></div>
     <div class="training-level-input"><label>📍 Level hiện tại:</label>
       <input type="number" id="training-level" min="1" max="150" value="${sv}" oninput="updateTraining()">
@@ -616,181 +1499,181 @@ function renderTraining() {
         <div class="training-formation">🎯 ${s.formation}</div>
         <p style="font-size:13px;color:var(--text-secondary);margin-bottom:8px">${s.details}</p>
         <ul class="training-tips">${s.tips.map(t => `<li>${t}</li>`).join('')}</ul></div>`).join('')}</div>`;
-}
+    }
 
-// ═══ UI HELPERS ═══
-function toggleFav(id) {
-  let favs = JSON.parse(localStorage.getItem('vltk_favs')||'[]');
-  if(favs.includes(id)) favs = favs.filter(x => x !== id);
-  else favs.push(id);
-  localStorage.setItem('vltk_favs', JSON.stringify(favs));
-  if(currentPage === 'team') render();
-}
+    // ═══ UI HELPERS ═══
+    function toggleFav(id) {
+      let favs = JSON.parse(localStorage.getItem('vltk_favs') || '[]');
+      if (favs.includes(id)) favs = favs.filter(x => x !== id);
+      else favs.push(id);
+      localStorage.setItem('vltk_favs', JSON.stringify(favs));
+      if (currentPage === 'team') render();
+    }
 
-function switchTab(tab, btn) {
-  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('tab-' + tab)?.classList.add('active');
-}
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('tab-' + tab)?.classList.add('active');
+    }
 
-function syncLevel(charId, val, source) {
-  let level = Math.max(1, Math.min(150, parseInt(val) || 1));
-  const slider = document.getElementById('level-slider');
-  const number = document.getElementById('level-number');
-  if (source === 'slider' && number) number.value = level;
-  if (source === 'number' && slider) slider.value = level;
-  updateCalc(charId, level);
-}
+    function syncLevel(charId, val, source) {
+      let level = Math.max(1, Math.min(150, parseInt(val) || 1));
+      const slider = document.getElementById('level-slider');
+      const number = document.getElementById('level-number');
+      if (source === 'slider' && number) number.value = level;
+      if (source === 'number' && slider) slider.value = level;
+      updateCalc(charId, level);
+    }
 
-function toggleLock(stat, charId) {
-  if (lockedStats[stat] != null) {
-    lockedStats[stat] = null;
-  } else {
-    const level = parseInt(document.getElementById('level-number').value) || 50;
-    const c = characters.find(x => x.id === charId);
-    const s = calcStats(c, level);
-    lockedStats[stat] = s[stat];
-  }
-  const level = parseInt(document.getElementById('level-number').value) || 50;
-  updateCalc(charId, level);
-}
+    function toggleLock(stat, charId) {
+      if (lockedStats[stat] != null) {
+        lockedStats[stat] = null;
+      } else {
+        const level = parseInt(document.getElementById('level-number').value) || 50;
+        const c = characters.find(x => x.id === charId);
+        const s = calcStats(c, level);
+        lockedStats[stat] = s[stat];
+      }
+      const level = parseInt(document.getElementById('level-number').value) || 50;
+      updateCalc(charId, level);
+    }
 
-function onLockInput(stat, charId, val) {
-  lockedStats[stat] = Math.max(0, parseInt(val) || 0);
-  const level = parseInt(document.getElementById('level-number').value) || 50;
-  updateCalc(charId, level);
-}
+    function onLockInput(stat, charId, val) {
+      lockedStats[stat] = Math.max(0, parseInt(val) || 0);
+      const level = parseInt(document.getElementById('level-number').value) || 50;
+      updateCalc(charId, level);
+    }
 
-function resetLocks(charId) {
-  lockedStats.sm = null; lockedStats.tp = null;
-  const level = parseInt(document.getElementById('level-number').value) || 50;
-  updateCalc(charId, level);
-}
+    function resetLocks(charId) {
+      lockedStats.sm = null; lockedStats.tp = null;
+      const level = parseInt(document.getElementById('level-number').value) || 50;
+      updateCalc(charId, level);
+    }
 
-function updateCalc(charId, level) {
-  level = parseInt(level);
-  const c = characters.find(x => x.id === charId);
-  const overrides = {};
-  if (lockedStats.sm != null) overrides.sm = lockedStats.sm;
-  if (lockedStats.tp != null) overrides.tp = lockedStats.tp;
-  const s = calcStats(c, level, overrides);
-  const mx = Math.max(s.sm, s.tp, s.sk, s.nl, 1);
-  const colors = {sm:'var(--crimson)',sk:'var(--orange)',tp:'var(--green)',nl:'var(--blue)'};
-  const labels = {sm:'Sức Mạnh',sk:'Sinh Khí',tp:'Thân Pháp',nl:'Nội Công'};
-  const lockableKeys = ['sm','tp'];
-  document.getElementById('calc-bars').innerHTML = Object.keys(labels).map(k => {
-    const isLockable = lockableKeys.includes(k);
-    const isLocked = lockedStats[k] != null;
-    const lockBtn = isLockable
-      ? `<button class="lock-btn ${isLocked?'locked':''}" onclick="toggleLock('${k}','${charId}')" title="${isLocked?'Mở khóa (Auto)':'Khóa để nhập tay mốc đồ'}">${isLocked?'🔒':'🔓'}</button>`
-      : '<span style="width:32px;display:inline-block"></span>';
-    const valHtml = isLocked
-      ? `<input type="number" class="lock-input" value="${s[k]}" min="0" max="${s.total}" onchange="onLockInput('${k}','${charId}',this.value)">`
-      : `<span class="calc-bar-value" style="color:${colors[k]}">${s[k]}</span>`;
-    return `<div class="calc-bar-row"><span class="calc-bar-label">${labels[k]}</span>
-      <div class="calc-bar-track"><div class="calc-bar-fill" style="width:${Math.max((s[k]/mx)*100,2)}%;background:${colors[k]}"></div></div>
+    function updateCalc(charId, level) {
+      level = parseInt(level);
+      const c = characters.find(x => x.id === charId);
+      const overrides = {};
+      if (lockedStats.sm != null) overrides.sm = lockedStats.sm;
+      if (lockedStats.tp != null) overrides.tp = lockedStats.tp;
+      const s = calcStats(c, level, overrides);
+      const mx = Math.max(s.sm, s.tp, s.sk, s.nl, 1);
+      const colors = { sm: 'var(--crimson)', sk: 'var(--orange)', tp: 'var(--green)', nl: 'var(--blue)' };
+      const labels = { sm: 'Sức Mạnh', sk: 'Sinh Khí', tp: 'Thân Pháp', nl: 'Nội Công' };
+      const lockableKeys = ['sm', 'tp'];
+      document.getElementById('calc-bars').innerHTML = Object.keys(labels).map(k => {
+        const isLockable = lockableKeys.includes(k);
+        const isLocked = lockedStats[k] != null;
+        const lockBtn = isLockable
+          ? `<button class="lock-btn ${isLocked ? 'locked' : ''}" onclick="toggleLock('${k}','${charId}')" title="${isLocked ? 'Mở khóa (Auto)' : 'Khóa để nhập tay mốc đồ'}">${isLocked ? '🔒' : '🔓'}</button>`
+          : '<span style="width:32px;display:inline-block"></span>';
+        const valHtml = isLocked
+          ? `<input type="number" class="lock-input" value="${s[k]}" min="0" max="${s.total}" onchange="onLockInput('${k}','${charId}',this.value)">`
+          : `<span class="calc-bar-value" style="color:${colors[k]}">${s[k]}</span>`;
+        return `<div class="calc-bar-row"><span class="calc-bar-label">${labels[k]}</span>
+      <div class="calc-bar-track"><div class="calc-bar-fill" style="width:${Math.max((s[k] / mx) * 100, 2)}%;background:${colors[k]}"></div></div>
       ${valHtml}${lockBtn}</div>`;
-  }).join('');
-  const hasLock = lockedStats.sm != null || lockedStats.tp != null;
-  const used = s.sm + s.tp + s.sk + s.nl;
-  let noteHtml = `<strong>Level ${level}</strong> — Tổng điểm: ${s.total}`;
-  if (hasLock) {
-    const li = []; if (lockedStats.sm != null) li.push('SM=' + lockedStats.sm); if (lockedStats.tp != null) li.push('TP=' + lockedStats.tp);
-    noteHtml += ` · 🔒 ${li.join(', ')}`;
-  }
-  const n = getNote(c, level); if (n) noteHtml += ' · ' + n;
-  document.getElementById('calc-note').innerHTML = noteHtml;
-  const wEl = document.getElementById('calc-warning');
-  if (wEl) { if (used > s.total && hasLock) { wEl.innerHTML = `⚠️ Vượt <b>${used - s.total}</b> điểm! Giảm SM/TP hoặc tăng Level.`; wEl.style.display = 'block'; } else { wEl.style.display = 'none'; } }
-  const rBtn = document.getElementById('calc-reset-lock');
-  if (rBtn) rBtn.style.display = hasLock ? 'inline-flex' : 'none';
-
-  // Kỹ Năng update - Thuật toán phân bổ điểm VLTK
-  let pts = level - 1; // 1 điểm mỗi cấp
-  let alloc = {};
-  let sortedSkills = [...c.skills].sort((a,b) => a.priority - b.priority);
-  sortedSkills.forEach(s => {
-    let rLvl = parseInt(s.level) * 10;
-    if(!isNaN(rLvl) && level >= rLvl) {
-      if (rLvl >= 90) {
-        // Kỹ năng 9x, 12x không tốn điểm cộng, chỉ đi luyện ở bãi để tự lên cấp
-        alloc[s.name] = "Luyện";
-      } else {
-        let limit = s.type === 'Trấn Phái' ? 30 : 20;
-        let maxAllowed = Math.min(limit, level - rLvl + 1); // Mỗi cấp qua reqLvl đc cộng thêm 1 điểm
-        let p = Math.min(pts, maxAllowed);
-        alloc[s.name] = p;
-        pts -= p;
+      }).join('');
+      const hasLock = lockedStats.sm != null || lockedStats.tp != null;
+      const used = s.sm + s.tp + s.sk + s.nl;
+      let noteHtml = `<strong>Level ${level}</strong> — Tổng điểm: ${s.total}`;
+      if (hasLock) {
+        const li = []; if (lockedStats.sm != null) li.push('SM=' + lockedStats.sm); if (lockedStats.tp != null) li.push('TP=' + lockedStats.tp);
+        noteHtml += ` · 🔒 ${li.join(', ')}`;
       }
-    } else {
-      alloc[s.name] = 0;
+      const n = getNote(c, level); if (n) noteHtml += ' · ' + n;
+      document.getElementById('calc-note').innerHTML = noteHtml;
+      const wEl = document.getElementById('calc-warning');
+      if (wEl) { if (used > s.total && hasLock) { wEl.innerHTML = `⚠️ Vượt <b>${used - s.total}</b> điểm! Giảm SM/TP hoặc tăng Level.`; wEl.style.display = 'block'; } else { wEl.style.display = 'none'; } }
+      const rBtn = document.getElementById('calc-reset-lock');
+      if (rBtn) rBtn.style.display = hasLock ? 'inline-flex' : 'none';
+
+      // Kỹ Năng update - Thuật toán phân bổ điểm VLTK
+      let pts = level - 1; // 1 điểm mỗi cấp
+      let alloc = {};
+      let sortedSkills = [...c.skills].sort((a, b) => a.priority - b.priority);
+      sortedSkills.forEach(s => {
+        let rLvl = parseInt(s.level) * 10;
+        if (!isNaN(rLvl) && level >= rLvl) {
+          if (rLvl >= 90) {
+            // Kỹ năng 9x, 12x không tốn điểm cộng, chỉ đi luyện ở bãi để tự lên cấp
+            alloc[s.name] = "Luyện";
+          } else {
+            let limit = s.type === 'Trấn Phái' ? 30 : 20;
+            let maxAllowed = Math.min(limit, level - rLvl + 1); // Mỗi cấp qua reqLvl đc cộng thêm 1 điểm
+            let p = Math.min(pts, maxAllowed);
+            alloc[s.name] = p;
+            pts -= p;
+          }
+        } else {
+          alloc[s.name] = 0;
+        }
+      });
+
+      const lbl = document.getElementById('skill-lbl-level');
+      if (lbl) lbl.textContent = level;
+      const leftOver = document.getElementById('skill-leftover');
+      if (leftOver) leftOver.innerHTML = `Đã phân bổ điểm tuần tự. Còn dư <b>${pts} điểm</b>, hãy tự cộng vào các chiêu hỗ trợ vòng ngoài hoặc chừa lại.`;
+
+      // Dynamic Skill UI
+      document.querySelectorAll('.skill-item').forEach(el => {
+        const sName = el.dataset.name;
+        const ptEl = el.querySelector('.skill-pt');
+        const p = alloc[sName];
+
+        if (ptEl) {
+          if (p === "Luyện") {
+            ptEl.innerHTML = `<span style="color:var(--orange);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(211,84,0,0.1);padding:2px 6px;border-radius:4px" title="Kỹ năng tự thăng cấp bằng cách đánh quái, không tốn điểm">🎯 Đánh Quái Để Lên Cấp</span>`;
+          } else {
+            let numericP = p || 0;
+            let limit = el.dataset.type === 'Trấn Phái' ? 30 : 20;
+            ptEl.innerHTML = numericP > 0 ? `<span style="color:var(--gold);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(212,175,55,0.1);padding:2px 6px;border-radius:4px">+${numericP}/${limit} đ</span>` : `<span style="color:var(--text-muted);margin-left:8px;font-size:14px">+0/${limit} đ</span>`;
+          }
+        }
+
+        const sLvl = parseInt(el.dataset.lvl);
+        if (!isNaN(sLvl)) {
+          if (level < sLvl) {
+            el.style.opacity = '0.3';
+            el.style.filter = 'grayscale(80%)';
+            el.style.transition = '0.3s';
+          } else {
+            el.style.opacity = '1';
+            el.style.filter = 'none';
+          }
+        }
+      });
     }
-  });
 
-  const lbl = document.getElementById('skill-lbl-level');
-  if(lbl) lbl.textContent = level;
-  const leftOver = document.getElementById('skill-leftover');
-  if(leftOver) leftOver.innerHTML = `Đã phân bổ điểm tuần tự. Còn dư <b>${pts} điểm</b>, hãy tự cộng vào các chiêu hỗ trợ vòng ngoài hoặc chừa lại.`;
-
-  // Dynamic Skill UI
-  document.querySelectorAll('.skill-item').forEach(el => {
-    const sName = el.dataset.name;
-    const ptEl = el.querySelector('.skill-pt');
-    const p = alloc[sName];
-    
-    if(ptEl) {
-      if (p === "Luyện") {
-        ptEl.innerHTML = `<span style="color:var(--orange);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(211,84,0,0.1);padding:2px 6px;border-radius:4px" title="Kỹ năng tự thăng cấp bằng cách đánh quái, không tốn điểm">🎯 Đánh Quái Để Lên Cấp</span>`;
-      } else {
-        let numericP = p || 0;
-        let limit = el.dataset.type === 'Trấn Phái' ? 30 : 20;
-        ptEl.innerHTML = numericP > 0 ? `<span style="color:var(--gold);font-weight:bold;margin-left:8px;font-size:14px;background:rgba(212,175,55,0.1);padding:2px 6px;border-radius:4px">+${numericP}/${limit} đ</span>` : `<span style="color:var(--text-muted);margin-left:8px;font-size:14px">+0/${limit} đ</span>`;
-      }
+    function updateTraining() {
+      const lv = Math.max(1, Math.min(150, parseInt(document.getElementById('training-level').value) || 1));
+      document.querySelectorAll('.training-spot').forEach(el => {
+        el.classList.toggle('current', lv >= parseInt(el.dataset.min) && lv <= parseInt(el.dataset.max));
+      });
+      const spot = trainingSpots.find(s => lv >= s.levelMin && lv <= s.levelMax);
+      const info = document.getElementById('training-level-info');
+      if (info && spot) info.textContent = '→ ' + spot.maps[0];
+      localStorage.setItem('vltk_lv', lv);
     }
-    
-    const sLvl = parseInt(el.dataset.lvl);
-    if (!isNaN(sLvl)) {
-      if (level < sLvl) {
-        el.style.opacity = '0.3';
-        el.style.filter = 'grayscale(80%)';
-        el.style.transition = '0.3s';
-      } else {
-        el.style.opacity = '1';
-        el.style.filter = 'none';
-      }
-    }
-  });
-}
 
-function updateTraining() {
-  const lv = Math.max(1, Math.min(150, parseInt(document.getElementById('training-level').value) || 1));
-  document.querySelectorAll('.training-spot').forEach(el => {
-    el.classList.toggle('current', lv >= parseInt(el.dataset.min) && lv <= parseInt(el.dataset.max));
-  });
-  const spot = trainingSpots.find(s => lv >= s.levelMin && lv <= s.levelMax);
-  const info = document.getElementById('training-level-info');
-  if (info && spot) info.textContent = '→ ' + spot.maps[0];
-  localStorage.setItem('vltk_lv', lv);
-}
+    // ═══ 4 ACC ═══
+    function getFourAccLv(id) { return parseInt(localStorage.getItem('vltk_4acc_lv_' + id)) || 10; }
 
-// ═══ 4 ACC ═══
-function getFourAccLv(id) { return parseInt(localStorage.getItem('vltk_4acc_lv_'+id)) || 10; }
+    function renderFourAcc() {
+      const favs = JSON.parse(localStorage.getItem('vltk_favs') || '[]');
+      const favChars = favs.map(id => characters.find(c => c.id === id)).filter(Boolean);
 
-function renderFourAcc() {
-  const favs = JSON.parse(localStorage.getItem('vltk_favs')||'[]');
-  const favChars = favs.map(id => characters.find(c => c.id === id)).filter(Boolean);
-
-  if (favChars.length === 0) {
-    return `<div class="page-header"><h1 class="page-title">🎮 Team 4 ACC</h1>
+      if (favChars.length === 0) {
+        return `<div class="page-header"><h1 class="page-title">🎮 Team 4 ACC</h1>
       <p class="page-subtitle">Quản lý điểm tiềm năng cho cả 4 account cùng lúc</p></div>
       <div class="four-acc-empty">Chưa có phái yêu thích nào!<br><br>
         Vào <a onclick="go('team','all')">Các Phái</a> → bấm ❤️ để thêm phái vào danh sách yêu thích.</div>`;
-  }
+      }
 
-  const cards = favChars.map(c => {
-    const lv = getFourAccLv(c.id);
-    return `
+      const cards = favChars.map(c => {
+        const lv = getFourAccLv(c.id);
+        return `
     <div class="four-acc-card" data-char-id="${c.id}" style="--card-color:${c.color}">
       <div class="four-acc-card-header">
         <div class="four-acc-emoji">${c.emoji}</div>
@@ -802,72 +1685,73 @@ function renderFourAcc() {
       <div class="calc-bars" id="four-bars-${c.id}"></div>
       <div class="calc-note" id="four-note-${c.id}"></div>
     </div>`;
-  }).join('');
+      }).join('');
 
-  return `<div class="page-header"><h1 class="page-title">🎮 Team 4 ACC</h1>
+      return `<div class="page-header"><h1 class="page-title">🎮 Team 4 ACC</h1>
     <p class="page-subtitle">Mỗi phái có slider level riêng — chỉnh từng acc trên 1 màn hình</p></div>
     <div class="four-acc-grid">${cards}</div>`;
-}
+    }
 
-function syncFourAccSingle(charId, val, source) {
-  let level = Math.max(1, Math.min(150, parseInt(val) || 1));
-  const slider = document.getElementById('four-slider-' + charId);
-  const number = document.getElementById('four-num-' + charId);
-  if (source === 'slider' && number) number.value = level;
-  if (source === 'number' && slider) slider.value = level;
-  localStorage.setItem('vltk_4acc_lv_' + charId, level);
-  updateFourAccSingle(charId, level);
-}
+    function syncFourAccSingle(charId, val, source) {
+      let level = Math.max(1, Math.min(150, parseInt(val) || 1));
+      const slider = document.getElementById('four-slider-' + charId);
+      const number = document.getElementById('four-num-' + charId);
+      if (source === 'slider' && number) number.value = level;
+      if (source === 'number' && slider) slider.value = level;
+      localStorage.setItem('vltk_4acc_lv_' + charId, level);
+      updateFourAccSingle(charId, level);
+    }
 
-function updateFourAccSingle(charId, level) {
-  const c = characters.find(x => x.id === charId);
-  if (!c) return;
-  const colors = {sm:'var(--crimson)',sk:'var(--orange)',tp:'var(--green)',nl:'var(--blue)'};
-  const labels = {sm:'Sức Mạnh',sk:'Sinh Khí',tp:'Thân Pháp',nl:'Nội Công'};
-  const s = calcStats(c, level);
-  const mx = Math.max(s.sm, s.tp, s.sk, s.nl, 1);
-  const barsEl = document.getElementById('four-bars-' + charId);
-  const noteEl = document.getElementById('four-note-' + charId);
-  if (!barsEl) return;
+    function updateFourAccSingle(charId, level) {
+      const c = characters.find(x => x.id === charId);
+      if (!c) return;
+      const colors = { sm: 'var(--crimson)', sk: 'var(--orange)', tp: 'var(--green)', nl: 'var(--blue)' };
+      const labels = { sm: 'Sức Mạnh', sk: 'Sinh Khí', tp: 'Thân Pháp', nl: 'Nội Công' };
+      const s = calcStats(c, level);
+      const mx = Math.max(s.sm, s.tp, s.sk, s.nl, 1);
+      const barsEl = document.getElementById('four-bars-' + charId);
+      const noteEl = document.getElementById('four-note-' + charId);
+      if (!barsEl) return;
 
-  barsEl.innerHTML = Object.keys(labels).map(k =>
-    `<div class="calc-bar-row"><span class="calc-bar-label">${labels[k]}</span>
-      <div class="calc-bar-track"><div class="calc-bar-fill" style="width:${Math.max((s[k]/mx)*100,2)}%;background:${colors[k]}"></div></div>
+      barsEl.innerHTML = Object.keys(labels).map(k =>
+        `<div class="calc-bar-row"><span class="calc-bar-label">${labels[k]}</span>
+      <div class="calc-bar-track"><div class="calc-bar-fill" style="width:${Math.max((s[k] / mx) * 100, 2)}%;background:${colors[k]}"></div></div>
       <span class="calc-bar-value" style="color:${colors[k]}">${s[k]}</span></div>`
-  ).join('');
+      ).join('');
 
-  if (noteEl) {
-    let html = `<strong>Lv ${level}</strong> — Tổng: ${s.total}`;
-    const n = getNote(c, level);
-    if (n) html += ' · ' + n;
-    noteEl.innerHTML = html;
-  }
-}
+      if (noteEl) {
+        let html = `<strong>Lv ${level}</strong> — Tổng: ${s.total}`;
+        const n = getNote(c, level);
+        if (n) html += ' · ' + n;
+        noteEl.innerHTML = html;
+      }
+    }
 
-function initFourAcc() {
-  const favs = JSON.parse(localStorage.getItem('vltk_favs')||'[]');
-  favs.forEach(id => {
-    const lv = getFourAccLv(id);
-    updateFourAccSingle(id, lv);
-  });
-}
+    function initFourAcc() {
+      const favs = JSON.parse(localStorage.getItem('vltk_favs') || '[]');
+      favs.forEach(id => {
+        const lv = getFourAccLv(id);
+        updateFourAccSingle(id, lv);
+      });
+    }
 
-// ═══ RENDER ═══
-function render() {
-  const el = document.getElementById('page-content');
-  document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active',
-    l.dataset.page === currentPage || (currentPage === 'char' && l.dataset.page === 'team')));
-  switch (currentPage) {
-    case 'team': el.innerHTML = renderTeam(); break;
-    case 'char': el.innerHTML = renderChar(currentParam); setTimeout(() => updateCalc(currentParam, 10), 10); break;
-    case 'fourAcc': el.innerHTML = renderFourAcc(); setTimeout(initFourAcc, 10); break;
-    case 'training': el.innerHTML = renderTraining(); setTimeout(updateTraining, 10); break;
-    default: el.innerHTML = renderTeam();
-  }
-  window.scrollTo(0, 0);
-}
+    // ═══ RENDER ═══
+    function render() {
+      const el = document.getElementById('page-content');
+      document.querySelectorAll('.nav-link').forEach(l => l.classList.toggle('active',
+        l.dataset.page === currentPage || (currentPage === 'char' && l.dataset.page === 'team')));
+      switch (currentPage) {
+        case 'team': el.innerHTML = renderTeam(); break;
+        case 'char': el.innerHTML = renderChar(currentParam); setTimeout(() => updateCalc(currentParam, 10), 10); break;
+        case 'fourAcc': el.innerHTML = renderFourAcc(); setTimeout(initFourAcc, 10); break;
+        case 'training': el.innerHTML = renderTraining(); setTimeout(updateTraining, 10); break;
+        default: el.innerHTML = renderTeam();
+      }
+      window.scrollTo(0, 0);
+    }
 
-render();
-</script>
+    render();
+  </script>
 </body>
+
 </html>
