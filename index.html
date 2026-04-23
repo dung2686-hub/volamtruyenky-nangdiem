@@ -1246,10 +1246,10 @@
     <nav id="main-nav">
       <div class="nav-brand"><span class="nav-icon">⚔️</span><span class="nav-title">VLTK Planner</span></div>
       <div class="nav-links">
-        <a class="nav-link active" data-page="team" onclick="go('team', 'all')"><span>📚</span><span>Các Phái</span></a>
+        <a class="nav-link active" data-page="nguhanh" onclick="go('nguhanh')"><span>☯️</span><span>Ngũ Hành</span></a>
+        <a class="nav-link" data-page="team" onclick="go('team', 'all')"><span>📚</span><span>Các Phái</span></a>
         <a class="nav-link" data-page="fourAcc" onclick="go('fourAcc')"><span>🎮</span><span>4 ACC</span></a>
         <a class="nav-link" data-page="training" onclick="go('training')"><span>🗺️</span><span>Bãi Train</span></a>
-        <a class="nav-link" data-page="nguhanh" onclick="go('nguhanh')"><span>☯️</span><span>Ngũ Hành</span></a>
       </div>
     </nav>
     <main id="page-content"></main>
@@ -1442,7 +1442,7 @@
     }
 
     // ═══ PAGES ═══
-    let currentPage = 'team', currentParam = '';
+    let currentPage = 'nguhanh', currentParam = '';
     const lockedStats = { sm: null, tp: null };
 
     function go(page, param) {
