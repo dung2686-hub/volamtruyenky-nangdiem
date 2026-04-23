@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="vi">
 
 <head>
@@ -1194,6 +1194,37 @@
       border-radius: var(--radius-md);
       margin-bottom: 24px;
     }
+
+    /* NGU HANH */
+    .nh-selector { display:flex; gap:12px; align-items:center; flex-wrap:wrap; padding:20px 24px; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); margin-bottom:24px; }
+    .nh-selector label { font-size:14px; font-weight:500; color:var(--text-secondary); }
+    .nh-select { padding:8px 14px; border:1px solid var(--border-subtle); border-radius:var(--radius-sm); background:var(--bg-secondary); color:var(--text-primary); font-family:var(--font-body); font-size:14px; outline:none; cursor:pointer; }
+    .nh-select:focus { border-color:var(--gold); box-shadow:0 0 10px rgba(212,175,55,0.2); }
+    .nh-solve-btn { padding:8px 24px; border:1px solid var(--gold); border-radius:var(--radius-sm); background:var(--gold-dim); color:var(--gold); font-family:var(--font-display); font-size:14px; font-weight:600; cursor:pointer; transition:var(--transition); }
+    .nh-solve-btn:hover { background:var(--gold); color:var(--bg-primary); box-shadow:0 0 20px rgba(212,175,55,0.4); }
+    .nh-steps { background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-lg); margin-bottom:24px; overflow:hidden; }
+    .nh-steps-header { display:flex; align-items:center; justify-content:space-between; padding:14px 20px; cursor:pointer; transition:var(--transition); border-bottom:1px solid var(--border-subtle); }
+    .nh-steps-header:hover { background:var(--bg-glass); }
+    .nh-steps-title { font-family:var(--font-display); font-size:15px; font-weight:600; color:var(--gold); }
+    .nh-steps-toggle { font-size:12px; color:var(--text-muted); }
+    .nh-steps-body { padding:16px 20px; display:none; }
+    .nh-steps-body.open { display:block; }
+    .nh-step { display:flex; gap:12px; padding:10px 0; border-bottom:1px solid var(--border-subtle); font-size:13px; line-height:1.6; }
+    .nh-step:last-child { border-bottom:none; }
+    .nh-step-num { width:28px; height:28px; display:flex; align-items:center; justify-content:center; border-radius:50%; background:var(--gold-dim); color:var(--gold); font-size:12px; font-weight:700; flex-shrink:0; }
+    .nh-step-text { color:var(--text-secondary); }
+    .nh-step-text strong { color:var(--text-primary); }
+    .nh-result-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(180px,1fr)); gap:12px; margin-bottom:24px; }
+    .nh-group-header { grid-column:1/-1; display:flex; align-items:center; gap:8px; margin-top:8px; }
+    .nh-item-card { display:flex; align-items:center; gap:12px; padding:14px 16px; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-md); border-left:4px solid var(--nh-color,var(--text-muted)); transition:var(--transition); }
+    .nh-item-card:hover { background:var(--bg-card-hover); transform:translateY(-2px); box-shadow:var(--shadow-card); }
+    .nh-item-card.nh-root { border:1px solid var(--gold); border-left:4px solid var(--gold); box-shadow:0 0 15px rgba(212,175,55,0.15); }
+    .nh-item-emoji { font-size:24px; width:40px; height:40px; display:flex; align-items:center; justify-content:center; background:var(--bg-glass); border-radius:var(--radius-sm); }
+    .nh-item-name { font-size:13px; font-weight:600; margin-bottom:2px; }
+    .nh-element-badge { display:inline-flex; align-items:center; gap:4px; padding:2px 10px; border-radius:12px; font-size:12px; font-weight:600; background:var(--nh-bg,var(--bg-glass)); color:var(--nh-color,var(--text-secondary)); }
+    .nh-summary { padding:16px 20px; background:var(--bg-card); border:1px solid var(--border-subtle); border-radius:var(--radius-md); border-left:3px solid var(--gold); font-size:14px; color:var(--text-secondary); line-height:1.7; }
+    .nh-summary strong { color:var(--gold); }
+    @media (max-width:768px) { .nh-selector { flex-direction:column; align-items:stretch; } .nh-result-grid { grid-template-columns:1fr 1fr; } }
   </style>
 </head>
 
@@ -1205,6 +1236,7 @@
         <a class="nav-link active" data-page="team" onclick="go('team', 'all')"><span>📚</span><span>Các Phái</span></a>
         <a class="nav-link" data-page="fourAcc" onclick="go('fourAcc')"><span>🎮</span><span>4 ACC</span></a>
         <a class="nav-link" data-page="training" onclick="go('training')"><span>🗺️</span><span>Bãi Train</span></a>
+        <a class="nav-link" data-page="nguhanh" onclick="go('nguhanh')"><span>☯️</span><span>Ngũ Hành</span></a>
       </div>
     </nav>
     <main id="page-content"></main>
@@ -1735,6 +1767,135 @@
       });
     }
 
+    // ═══ NGŨ HÀNH ═══
+    var NGU_HANH = ['Kim', 'Thủy', 'Mộc', 'Hỏa', 'Thổ'];
+    var NH_EMOJI = { 'Kim': '⚔️', 'Thủy': '💧', 'Mộc': '🌿', 'Hỏa': '🔥', 'Thổ': '🪨' };
+    var NH_COLOR = { 'Kim': '#f0c040', 'Thủy': '#3498db', 'Mộc': '#2ecc71', 'Hỏa': '#e74c3c', 'Thổ': '#a0522d' };
+    var NH_BG = { 'Kim': 'rgba(240,192,64,0.12)', 'Thủy': 'rgba(52,152,219,0.12)', 'Mộc': 'rgba(46,204,113,0.12)', 'Hỏa': 'rgba(231,76,60,0.12)', 'Thổ': 'rgba(160,82,45,0.12)' };
+    var SINH_BY = { 'Kim': 'Thổ', 'Thủy': 'Kim', 'Mộc': 'Thủy', 'Hỏa': 'Mộc', 'Thổ': 'Hỏa' };
+    var EQUIP_NAMES = ['Vũ khí', 'Nón', 'Áo', 'Dây chuyền', 'Nhẫn 1', 'Nhẫn 2', 'Bao tay', 'Ngọc bội', 'Thắt lưng', 'Giày'];
+    var EQUIP_EMOJI = { 'Vũ khí': '🗡️', 'Nón': '👒', 'Áo': '👘', 'Dây chuyền': '📿', 'Nhẫn 1': '💍', 'Nhẫn 2': '💍', 'Bao tay': '🧤', 'Ngọc bội': '🔮', 'Thắt lưng': '🪢', 'Giày': '👢' };
+    var EQUIP_SOURCES = {
+      'Vũ khí': ['Áo', 'Dây chuyền'],
+      'Nón': ['Vũ khí', 'Giày'],
+      'Áo': ['Nhẫn 2', 'Thắt lưng'],
+      'Dây chuyền': ['Nhẫn 2', 'Thắt lưng'],
+      'Nhẫn 1': ['Bao tay', 'Ngọc bội'],
+      'Nhẫn 2': ['Bao tay', 'Ngọc bội'],
+      'Bao tay': ['Giày', 'Nhẫn 1'],
+      'Ngọc bội': ['Giày', 'Nhẫn 1'],
+      'Thắt lưng': ['Bao tay', 'Ngọc bội'],
+      'Giày': ['Vũ khí', 'Nón']
+    };
+
+    function solveNguHanh(startItem, startElement) {
+      var res = {};
+      var steps = [];
+      res[startItem] = startElement;
+      steps.push({ item: startItem, element: startElement, sources: [], reason: 'Gốc (người chơi chọn)' });
+      var queue = [startItem];
+      while (queue.length > 0) {
+        var cur = queue.shift();
+        var curEl = res[cur];
+        var srcs = EQUIP_SOURCES[cur];
+        var parEl = SINH_BY[curEl];
+        var added = [];
+        for (var i = 0; i < srcs.length; i++) {
+          if (res[srcs[i]] == null) {
+            res[srcs[i]] = parEl;
+            added.push(srcs[i]);
+            queue.push(srcs[i]);
+          }
+        }
+        if (added.length > 0) {
+          steps.push({ item: cur, element: curEl, sources: added.map(function(a){ return {name:a, element:parEl}; }), reason: parEl + ' sinh ' + curEl });
+        }
+      }
+      return { result: res, steps: steps };
+    }
+
+    function onNguHanhSolve() {
+      var itemSel = document.getElementById('nh-item-select');
+      var elSel = document.getElementById('nh-element-select');
+      if (!itemSel || !elSel) return;
+      var sol = solveNguHanh(itemSel.value, elSel.value);
+      var box = document.getElementById('nh-output');
+      if (box) box.innerHTML = buildNhResult(sol, itemSel.value);
+    }
+
+    function toggleNhSteps() {
+      var b = document.getElementById('nh-steps-body');
+      var t = document.getElementById('nh-steps-toggle');
+      if (!b) return;
+      if (b.style.display === 'block') { b.style.display = 'none'; if(t) t.textContent = '▼ Mở rộng'; }
+      else { b.style.display = 'block'; if(t) t.textContent = '▲ Thu gọn'; }
+    }
+
+    function buildNhResult(sol, rootItem) {
+      var res = sol.result;
+      var steps = sol.steps;
+      var h = '';
+
+      // Steps section
+      var sh = '';
+      for (var i = 0; i < steps.length; i++) {
+        var st = steps[i];
+        sh += '<div class="nh-step"><div class="nh-step-num">' + (i+1) + '</div><div class="nh-step-text">';
+        if (i === 0) {
+          sh += '<strong>' + st.item + ' = ' + NH_EMOJI[st.element] + ' ' + st.element + '</strong> — ' + st.reason;
+        } else {
+          var sl = [];
+          for (var j = 0; j < st.sources.length; j++) sl.push('<strong>' + st.sources[j].name + '</strong> = ' + NH_EMOJI[st.sources[j].element] + ' ' + st.sources[j].element);
+          sh += '<strong>' + st.item + '</strong> = ' + NH_EMOJI[st.element] + ' ' + st.element + ' → ' + sl.join(', ') + '<br><span style="color:var(--text-muted);font-size:12px">Vì ' + st.reason + '</span>';
+        }
+        sh += '</div></div>';
+      }
+      h += '<div class="nh-steps"><div class="nh-steps-header" onclick="toggleNhSteps()"><span class="nh-steps-title">📋 Bước Suy Luận (' + steps.length + ' bước)</span><span class="nh-steps-toggle" id="nh-steps-toggle">▼ Mở rộng</span></div><div class="nh-steps-body" id="nh-steps-body">' + sh + '</div></div>';
+
+      // Group items by element
+      h += '<h3 class="calc-title" style="margin-bottom:16px">📊 Kết Quả Ngũ Hành</h3><div class="nh-result-grid">';
+      for (var ei = 0; ei < NGU_HANH.length; ei++) {
+        var el = NGU_HANH[ei];
+        var items = [];
+        for (var k = 0; k < EQUIP_NAMES.length; k++) { if (res[EQUIP_NAMES[k]] === el) items.push(EQUIP_NAMES[k]); }
+        if (items.length === 0) continue;
+        h += '<div class="nh-group-header"><span style="font-size:20px">' + NH_EMOJI[el] + '</span><span style="font-size:14px;font-weight:700;color:' + NH_COLOR[el] + '">' + el + '</span><span style="flex:1;height:1px;background:' + NH_COLOR[el] + ';opacity:0.2"></span><span style="font-size:12px;color:var(--text-muted)">' + items.length + ' món</span></div>';
+        for (var m = 0; m < items.length; m++) {
+          var nm = items[m];
+          var isRoot = nm === rootItem;
+          h += '<div class="nh-item-card' + (isRoot ? ' nh-root' : '') + '" style="--nh-color:' + NH_COLOR[el] + ';--nh-bg:' + NH_BG[el] + '">';
+          h += '<div class="nh-item-emoji">' + EQUIP_EMOJI[nm] + '</div>';
+          h += '<div><div class="nh-item-name">' + nm + (isRoot ? ' ⭐' : '') + '</div>';
+          h += '<span class="nh-element-badge">' + NH_EMOJI[el] + ' ' + el + '</span></div></div>';
+        }
+      }
+      h += '</div>';
+
+      // Summary
+      var counts = {};
+      for (var ci = 0; ci < EQUIP_NAMES.length; ci++) { var ce = res[EQUIP_NAMES[ci]]; counts[ce] = (counts[ce]||0) + 1; }
+      var sp = [];
+      for (var si = 0; si < NGU_HANH.length; si++) { if (counts[NGU_HANH[si]]) sp.push(NH_EMOJI[NGU_HANH[si]] + ' ' + NGU_HANH[si] + ' ×' + counts[NGU_HANH[si]]); }
+      h += '<div class="nh-summary"><strong>💡 Tóm tắt:</strong> Gốc <strong>' + rootItem + ' = ' + NH_EMOJI[res[rootItem]] + ' ' + res[rootItem] + '</strong><br>Phân bố: ' + sp.join(' · ') + '</div>';
+      return h;
+    }
+
+    function renderNguHanh() {
+      var savedItem = localStorage.getItem('vltk_nh_item') || 'Vũ khí';
+      var savedEl = localStorage.getItem('vltk_nh_element') || 'Kim';
+      var h = '<div class="page-header"><h1 class="page-title">☯️ Ngũ Hành Trang Bị</h1>';
+      h += '<p class="page-subtitle">Chọn 1 món + ngũ hành → tự động suy ra 9 món còn lại</p></div>';
+      h += '<div class="nh-selector">';
+      h += '<label>🎯 Chọn món:</label><select class="nh-select" id="nh-item-select" onchange="localStorage.setItem(\'vltk_nh_item\',this.value);onNguHanhSolve()">';
+      for (var i = 0; i < EQUIP_NAMES.length; i++) { var n = EQUIP_NAMES[i]; h += '<option value="' + n + '"' + (n === savedItem ? ' selected' : '') + '>' + EQUIP_EMOJI[n] + ' ' + n + '</option>'; }
+      h += '</select>';
+      h += '<label>☯️ Ngũ hành:</label><select class="nh-select" id="nh-element-select" onchange="localStorage.setItem(\'vltk_nh_element\',this.value);onNguHanhSolve()">';
+      for (var j = 0; j < NGU_HANH.length; j++) { var e = NGU_HANH[j]; h += '<option value="' + e + '"' + (e === savedEl ? ' selected' : '') + '>' + NH_EMOJI[e] + ' ' + e + '</option>'; }
+      h += '</select></div>';
+      h += '<div id="nh-output"></div>';
+      return h;
+    }
+
     // ═══ RENDER ═══
     function render() {
       const el = document.getElementById('page-content');
@@ -1745,6 +1906,7 @@
         case 'char': el.innerHTML = renderChar(currentParam); setTimeout(() => updateCalc(currentParam, 10), 10); break;
         case 'fourAcc': el.innerHTML = renderFourAcc(); setTimeout(initFourAcc, 10); break;
         case 'training': el.innerHTML = renderTraining(); setTimeout(updateTraining, 10); break;
+        case 'nguhanh': el.innerHTML = renderNguHanh(); setTimeout(onNguHanhSolve, 10); break;
         default: el.innerHTML = renderTeam();
       }
       window.scrollTo(0, 0);
