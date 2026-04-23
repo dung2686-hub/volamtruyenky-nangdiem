@@ -1801,27 +1801,40 @@
       'Giày': ['Vũ khí', 'Nón']
     };
 
+    // Canonical tree: always root at Vũ khí, depth determines element
+    // Depth 0: Vũ khí, Nón | Depth 1: Áo, Dây chuyền | Depth 2: Nhẫn 2, Thắt lưng
+    // Depth 3: Bao tay, Ngọc bội | Depth 4: Giày, Nhẫn 1
+    var EQUIP_DEPTH = { 'Vũ khí': 0, 'Nón': 0, 'Áo': 1, 'Dây chuyền': 1, 'Nhẫn 2': 2, 'Thắt lưng': 2, 'Bao tay': 3, 'Ngọc bội': 3, 'Giày': 4, 'Nhẫn 1': 4 };
+
     function solveNguHanh(startItem, startElement) {
+      // Tính hành Vũ khí từ item user chọn
+      var depth = EQUIP_DEPTH[startItem];
+      var eidx = NGU_HANH.indexOf(startElement);
+      var vkIdx = (eidx + depth) % 5;
+      var vkElement = NGU_HANH[vkIdx];
+
+      // Gán hành cho từng depth
       var res = {};
       var steps = [];
-      res[startItem] = startElement;
-      steps.push({ item: startItem, element: startElement, sources: [], reason: 'Gốc (người chơi chọn)' });
-      var queue = [startItem];
-      while (queue.length > 0) {
-        var cur = queue.shift();
-        var curEl = res[cur];
-        var srcs = EQUIP_SOURCES[cur];
-        var parEl = SINH_BY[curEl];
-        var added = [];
-        for (var i = 0; i < srcs.length; i++) {
-          if (res[srcs[i]] == null) {
-            res[srcs[i]] = parEl;
-            added.push(srcs[i]);
-            queue.push(srcs[i]);
+      for (var d = 0; d < 5; d++) {
+        var elIdx = (vkIdx - d + 5) % 5;
+        var el = NGU_HANH[elIdx];
+        var parentEl = SINH_BY[el];
+        var itemsAtDepth = [];
+        for (var k = 0; k < EQUIP_NAMES.length; k++) {
+          if (EQUIP_DEPTH[EQUIP_NAMES[k]] === d) {
+            res[EQUIP_NAMES[k]] = el;
+            itemsAtDepth.push(EQUIP_NAMES[k]);
           }
         }
-        if (added.length > 0) {
-          steps.push({ item: cur, element: curEl, sources: added.map(function(a){ return {name:a, element:parEl}; }), reason: parEl + ' sinh ' + curEl });
+        if (d === 0) {
+          steps.push({ item: startItem, element: startElement, sources: [], reason: 'Gốc (người chơi chọn)' });
+          if (startItem !== 'Vũ khí' && startItem !== 'Nón') {
+            steps.push({ item: startItem + ' → Vũ khí', element: vkElement, sources: itemsAtDepth.map(function(a){ return {name:a, element:el}; }), reason: 'Quy về gốc Vũ khí = ' + NH_EMOJI[vkElement] + ' ' + vkElement });
+          }
+        } else {
+          var prevEl = NGU_HANH[(vkIdx - d + 1 + 5) % 5];
+          steps.push({ item: 'Depth ' + d, element: el, sources: itemsAtDepth.map(function(a){ return {name:a, element:el}; }), reason: parentEl + ' sinh ' + el });
         }
       }
       return { result: res, steps: steps };
