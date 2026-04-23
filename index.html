@@ -101,6 +101,19 @@
     .nav-links {
       display: flex;
       gap: 4px;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+
+    .nav-links::-webkit-scrollbar { display: none; }
+
+    @media (max-width: 768px) {
+      #main-nav { padding: 0 12px; }
+      .nav-brand { display: none; }
+      .nav-links { flex: 1; }
+      .nav-link { padding: 8px 14px; font-size: 13px; white-space: nowrap; }
+      #page-content { padding: 72px 16px 32px; }
     }
 
     .nav-link {
